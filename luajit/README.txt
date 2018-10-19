@@ -1,1 +1,1 @@
-Doc of the internal of LuaJIT
+LuaJIT documentation

@@ -1,5 +1,26 @@
-\documentclass[a4paper]{report}
+\documentclass[12pt,a4paper]{report}
 
-hello world!
+% packages
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{graphicx}
+
+% title
+\title{\huge \textbf {LuaJIT}\\
+\LARGE \textbf {Documentation}}
+\author{Dario d'Andrea}
+\date{October 2018}
+
+
+\begin{document}
+
+\maketitle
+
+% chapters
+\input{luajit/chapter1.tex}
+
+% bibliogrphy
+\bibliographystyle{IEEEtran}
+\bibliography{luajit/references}
 
 \end{document}
