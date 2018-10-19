@@ -1,0 +1,251 @@
+%===============================================================================
+% Possible values in dumps
+%===============================================================================
+
+\chapter{Possible values in dumps}
+\label{Apendix:dump-values}
+
+In this appendix, is presented possible values that can be shown in some dump
+and their corresponding meaning.
+
+\begin{table}[H]
+\centering
+\caption{
+  Possible value for [link] (See jit\_trlinkname and TraceLink in lib\_jit.c
+  and lj\_jit.h)
+}
+\label{tab:dump-link}
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{value} & \multicolumn{1}{c|}{Meaning}\\\hline
+none                        & Incomplete trace. No link, yet.\\
+root                        & Link to other root trace.\\
+loop                        & Loop to same trace.\\
+tail-recursion              & Tail-recursion.\\
+up-recursion                & Up-recursion.\\
+down-recursion              & Down-recursion.\\\hline
+\multirow{2}{*}{interpreter}& Fallback to interpreter (stop a side trace record due\\
+& to maximum reached see \emph{sidecheck:} in lj\_record.c)\\\hline
+return                      & Return to interpreter.\\
+stitch                      & trace stitching.\\\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{
+  Possible value for SLOAD argument (See lj\_ir.h)
+}
+\label{tab:dump-sload}
+\begin{tabular}{|l|l|l|}
+\hline
+P & IRSLOAD\_PARENT    & Coalesce with parent trace.\\
+F & IRSLOAD\_FRAME     & Load 32 bits of ftsz.\\
+T & IRSLOAD\_TYPECHECK & Needs type check.\\
+C & IRSLOAD\_CONVERT   & Number to integer conversion.\\
+R & IRSLOAD\_READONLY  & Read-only, omit slot store.\\
+I & IRSLOAD\_INHERIT   & Inherited by exits/side traces.\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{
+  Possible value for XLOAD argument (See lj\_ir.h)
+}
+\label{tab:dump-xload}
+\begin{tabular}{|l|l|l|}
+\hline
+R & IRXLOAD\_READONLY  & Load from read-only data.\\
+V & IRXLOAD\_VOLATILE  & Load from volatile data.\\
+U & IRXLOAD\_UNALIGNED & Unaligned load.\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{
+  Possible value for FLOAD or FREF argument (See lj\_ir.h)
+}
+\label{tab:dump-fload-fref}
+\begin{tabular}{|l|l|l|}
+\hline
+str.len        & IRFL\_STR\_LEN        & String length \\
+func.env       & IRFL\_FUNC\_ENV       & function's environment for up-values \\
+func.pc        & IRFL\_FUNC\_PC        & PC of the function's prototype \\
+func.ffid      & IRFL\_FUNC\_FFID      & Function id \\
+thread.env     & IRFL\_THREAD\_ENV     & Thread environment for up-values \\
+tab.meta       & IRFL\_TAB\_META       & Metatable \\
+tab.array      & IRFL\_TAB\_ARRAY      & Table array part \\
+tab.node       & IRFL\_TAB\_NODE       & Table hash part \\
+tab.asize      & IRFL\_TAB\_ASIZE      & Size of array part\\
+tab.hmask      & IRFL\_TAB\_HMASK      & Size of hash part - 1\\\hline
+\multirow{3}{*}{tab.nomm} & \multirow{3}{*}{IRFL\_TAB\_NOMM} & Negative cache for fast \\
+& & metamethods bitmap, marking\\
+& & absent fields of the metatable\\\hline
+udata.meta     & IRFL\_UDATA\_META     & udata metatable\\
+udata.udtype   & IRFL\_UDATA\_UDTYPE   & See UDTYPE table\\
+udata.file     & IRFL\_UDATA\_FILE     & udata payload \\
+cdata.ctypeid  & IRFL\_CDATA\_CTYPEID  & cdata's ctypeid\\
+cdata.ptr      & IRFL\_CDATA\_PTR      & cdata payload \\
+cdata.int      & IRFL\_CDATA\_INT      & cdata payload \\
+cdata.int64    & IRFL\_CDATA\_INT64    & cdata payload \\
+cdata.int64\_4 & IRFL\_CDATA\_INT64\_4 & cdata payload \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{
+  Possible value for userdata types (See lj\_obj.h)
+}
+\label{tab:dump-udata}
+\begin{tabular}{|l|l|}
+\hline
+UDTYPE\_USERDATA  & Regular userdata.\\
+UDTYPE\_IO\_FILE  & I/O library FILE.\\
+UDTYPE\_FFI\_CLIB & FFI C library namespace.\\\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{
+  Possible value for FPMATH argument (See lj\_ir.h)
+}
+\label{tab:dump-fpmath}
+\begin{tabular}{|l|l|}
+\hline
+floor & FPM\_FLOOR \\
+ceil  & FPM\_CEIL  \\
+trunc & FPM\_TRUNC \\
+sqrt  & FPM\_SQRT  \\
+exp   & FPM\_EXP   \\
+exp2  & FPM\_EXP2  \\
+log   & FPM\_LOG   \\
+log2  & FPM\_LOG2  \\
+log10 & FPM\_LOG10 \\
+sin   & FPM\_SIN   \\
+cos   & FPM\_COS   \\
+tan   & FPM\_TAN   \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{
+  Possible value for BUFHDR argument (See lj\_ir.h)
+}
+\label{tab:dump-bufhdr}
+\begin{tabular}{|l|l|}
+\hline
+IRBUFHDR\_RESET  & Reset buffer \\
+IRBUFHDR\_APPEND & Append to buffer \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{
+  Possible value for TOSTR argument (See lj\_ir.h)
+}
+\label{tab:dump-tostr}
+\begin{tabular}{|l|l|l|}
+\hline
+INT  & IRTOSTR\_INT  & Convert integer to string.  \\
+NUM  & IRTOSTR\_NUM  & Convert number to string.  \\
+CHAR & IRTOSTR\_CHAR & Convert char value to string.  \\\hline
+\end{tabular}
+\end{table}
+
+
+%===============================================================================
+% Flame graphs
+%===============================================================================
+
+\chapter{Flame graphs}
+\label{Apendix:fl}
+
+First we need to get the FlameGraph \cite{flamegraph} tool.
+\begin{center}
+\begin{lstlisting}
+  git clone https://github.com/brendangregg/FlameGraph
+\end{lstlisting}
+\end{center}
+Then we need to, generate the raw dump from LuaJIT and use FlameGraph to generate
+the svg file. Assuming \emph{\$flamegraph} contains the path to the tool (/FlameGraph/flamegraph.pl)
+
+\begin{center}
+\begin{lstlisting}
+  export flamegraph=./FlameGraph/flamegraph.pl
+  mad -jp=G,myapp.out myapp.mad
+  $flamegraph myapp.out > myapp.svg
+\end{lstlisting}
+\end{center}
+Then you can open myapp.svg with your favorite viewer.
+
+%===============================================================================
+% DynASM: Assembler
+%===============================================================================
+
+\chapter{DynASM: Assembler}
+\label{Apendix:DynASM}
+
+DynASM is a Dynamic Assembler for code generation engines, it has been developed
+primarily as a tool for LuaJIT and its source code can be found in the dynasm
+folder of the LuaJIT project \cite{luajit-src}. It is currently used in LuaJIT
+v2 has a tool to write the fast VM interpreting the bytecode. It supports the
+following platforms : x86, x64, ARM, PowerPC, and MIPS. An unofficial
+documentation with tutorials is available \cite{dynasm}. In the remaining part
+of this appendix, a minimum amount of information is presented to give the
+ability to read and understand a DynASM file (\emph{.dasc}).
+
+
+\subsubsection{Main directives}
+
+\begin{itemize}
+    \item \keyword{.arch} : Specifies the architecture of the assembly code.
+    \item \keyword{.type} name, ctype [, default\_reg] : Makes easier to manipulate registers of type \emph{ctype*}. The provided syntactic sugar is depicted in
+Table~\ref{tab:type-sugar}.
+    \item \keyword{.macro} [...] \keyword{.endmacro} : Create a multi-lines
+macro instruction that can be invoked as a normal instruction and where arguments
+will be substituted.
+    \item \keyword{.define} : Defines a prepreprocessor substitution.
+    \item \keyword{.if} [...] \keyword{.elif} [...] \keyword{.else} [...] \keyword{.endif} : Preprocessor conditional construct similar as C preprocessor.
+\end{itemize}
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{Sugar} & \multicolumn{1}{c|}{Expansion} \\\hline
+\#name                      & sizeof(ctype)\\
+name:reg-\textgreater field & [reg + offsetof(ctype,field)]\\
+name:reg[imm32]             & [reg + sizeof(ctype)*imm32]\\
+name:reg[imm32].field       & [reg + sizeof(ctype)*imm32 + offsetof(ctype,field)]\\
+name:reg...                 & [reg + (int)(ptrdiff\_t)\&(((ctype*)0)...)]\\\hline
+\end{tabular}
+\caption{Syntactic sugar provided by \keyword{.type} macro}
+\label{tab:type-sugar}
+\end{table}
+
+\subsubsection{Line markers}
+Typical DynASM lines that emit some assembler instructions has to start with a
+vertical bare ("$\vert$"). If we want to emit some lines of \emph{C} code but
+still want DynASM's preprocessor to do substitutions, they must start with a double vertical bar ("$\vert\vert$"). Finally lines with no starting markers are
+truly untouched and discarded by DynASM. To be noted that lines of \emph{C} code that
+has to be inlined with a macro must start with a double vertical bar. \\
+
+\subsubsection{Labels}
+They exist multiple types of labels to refer to. The first category is global
+labels that have two types, static label ($\vert-$\textgreater name:) and dynamic ones ($\vert$=\textgreater imm32:).
+Those labels have to be unique in a DynASM file. The second category is local
+labels that use a single digit from 1 to 9 ($\vert$i:). They can be defined
+multiple times inside a same DynASM file and are used by jump instructions by
+means of the syntax \textless i or \textgreater i. They respectively point to
+the most recent, the next definition of i as the jump target.

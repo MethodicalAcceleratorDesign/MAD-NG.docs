@@ -1,1 +1,995 @@
 \chapter{Virtual Machine}
+\label{Chapt:VM}
+  
+%===============================================================================
+%% Frontend %
+%===============================================================================
+
+\section{Frontend}
+\label{Sec:frontend}
+
+%============================================================
+% Lexer
+%============================================================
+
+\subsection{Lexer}
+\label{Subsec:Lexer}
+
+The lexer is implemented in the \emph{lj\_lex.c} and \emph{lj\_lex.h} files.
+It use \emph{LexState} as a principal data structure. The user-provided
+\emph{rfunc} function is used to read a chunk of data to process. It is accessed
+through the \emph{p} and \emph{pe} pointers. The main function is
+\emph{lex\_scan} that dispatches the work to other functions depending of the
+type of data to be processed (comment, string literal, long string, numbers
+etc...). TValues (\emph{tokval}, \emph{lookaheadval}) are used to store the
+token values were \emph{LexToken} (\emph{tok}, \emph{lookahead}) determine the
+type. The string buffer (\emph{sb}) is used to accumulate characters of a future
+string before internalizing it. All Lua keyword are internalized as a string at
+the very beginning, GCstr has the field \emph{reserved} for marking them.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct LexState {
+  struct FuncState *fs; /* Current FuncState (lj_parse.c). */
+  struct lua_State *L;  /* Lua state. */
+  TValue tokval;        /* Current token value. */
+  TValue lookaheadval;  /* Lookahead token value. */
+  const char *p;        /* Current position in input buffer. */
+  const char *pe;       /* End of input buffer. */
+  LexChar c;            /* Current character. */
+  LexToken tok;         /* Current token. */
+  LexToken lookahead;   /* Lookahead token. */
+  SBuf sb;              /* String buffer for tokens. */
+  lua_Reader rfunc;     /* Reader callback. */
+  void *rdata;          /* Reader callback data. */
+  BCLine linenumber;    /* Input line counter. */
+  BCLine lastline;      /* Line of last token. */
+  GCstr *chunkname;     /* Current chunk name (interned string). */
+  const char *chunkarg; /* Chunk name argument. */
+  const char *mode;     /* load bytecode (b), source text (t). */
+  VarInfo *vstack;      /* Stack for local variables. */
+  MSize sizevstack;     /* Size of variable stack. */
+  MSize vtop;           /* Top of variable stack. */
+  BCInsLine *bcstack;   /* Stack for bytecode instr./line numbers. */
+  MSize sizebcstack;    /* Size of bytecode stack. */
+  uint32_t level;       /* Syntactical nesting level. */
+} LexState;
+\end{lstlisting}
+
+%============================================================% Parser
+%============================================================
+
+\subsection{Parser}
+\label{Subsec:Parser}
+
+The parser of LuaJIT is implemented in \emph{lj\_parse.c} and \emph{lj\_parse.h}
+files. It also uses \emph{LexState} as the principal data-structure. it is
+responsible for calling the lexer to get tokens. LuaJIT doesn't really have an
+abstract syntax tree representation of the parsed code. Instead it directly
+generates the bytecode on the fly using helpers from \emph{lj\_bc.h}.
+The \emph{lj\_parse} function is the entry point and parse the main chunck as a
+vararg function. The unit of emission is the function (\emph{GCproto}) and the structure used for the construction is \emph{FuncState}. Parsing is a succession
+of chuncks (\emph{parse\_chunk}) were \emph{parse\_stmt} is the principal
+function called for each line, dispatching the work depending of the current
+token type. \emph{FuncScope} is a linked-list of structure used for scope
+management.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct FuncState {
+  GCtab *kt;              /* Hash table for constants. */
+  LexState *ls;           /* Lexer state. */
+  lua_State *L;           /* Lua state. */
+  FuncScope *bl;          /* Current scope. */
+  struct FuncState *prev; /* Enclosing function. */
+  BCPos pc;               /* Next bytecode position. */
+  BCPos lasttarget;       /* BCsb position of last jump target. */
+  BCPos jpc;              /* Pending jump list to next bytecode. */
+  BCReg freereg;          /* First free register. */
+  BCReg nactvar;          /* Number of active local variables. */
+  BCReg nkn, nkgc;        /* Number of lua_Number/GCobj constants */
+  BCLine linedefined;     /* First line of function definition. */
+  BCInsLine *bcbase;      /* Base of bytecode stack. */
+  BCPos bclim;            /* Limit of bytecode stack. */
+  MSize vbase;            /* Base of variable stack for this func. */
+  uint8_t flags;          /* Prototype flags. */
+  uint8_t numparams;      /* Number of parameters. */
+  uint8_t framesize;      /* Fixed frame size. */
+  uint8_t nuv;            /* Number of upvalues */
+  VarIndex varmap[...];   /* Map from register to variable idx. */
+  VarIndex uvmap[...];    /* Map from upvalue to variable idx. */
+  VarIndex uvtmp[...];    /* Temporary upvalue map. */
+} FuncState;
+\end{lstlisting}
+
+%============================================================
+% Bytecode frontend
+%============================================================
+
+\subsection{Bytecode frontend}
+\label{Subsec:bc-frontend}
+
+Another frontend feature provided by LuaJIT is the possibility to save and load
+bytecode directly, allowing to skip the lexer and parser phase.
+
+The writing part is handled by the module \emph{bcsave.lua} that use the
+\emph{lj\_bcwrite} function from \emph{lj\_bcwrite.c} to generate the data to be written.
+
+The reading part is done by the code in \emph{lj\_bcread.c} file. When it is
+detected that the input file is a bc dump instead of a plain Lua code,
+\emph{cpparser} from \emph{lj\_load.c} calls \emph{lj\_bcread} instead of
+\emph{lj\_parse} normally. This reader also use \emph{LexState} as the principal
+data-structure.
+
+%===============================================================================
+% Internals
+%===============================================================================
+
+ \section{Internals}
+ \label{Sec:Internals}
+    
+%====================================================================
+% Tagged value
+%====================================================================
+
+\subsection{Tagged value}
+\label{Subsec:tagged-value}
+
+LuaJIT represent all internal elements as 64-bits \emph{TValue} (tagged value).
+It uses the nan-tagging technique to differentiate between numbers and other
+types of element. In fact, \emph{lua\_number} are 64-bits floating-points numbers
+following the \emph{ieee} standard. Doing so, numeric nan are canonized by the
+cpu FPU (0xfff8 in msb and zero otherwise), letting the possibility to use the
+lower bits to represent arbitrary data. Internally, LuaJIT has two different
+representations, one for 32-bits and another for 64-bits (\emph{LJ\_GC64}) mode
+(see Tables \ref{tab:tagged-gc32} and \ref{tab:tagged-gc64}). In those tables,
+\emph{itypes} are numbers identifying the type of the object.
+GC object (Garbage-Collected Object) represent all allocated object
+that are managed by the garbage collector. \emph{GCRef} are references to such
+object.
+
+\begin{table}[H]
+\centering
+\caption{Internal object tagging for 32-bits mode}
+\label{tab:tagged-gc32}
+\begin{tabular}{l|c|c|c|}
+\cline{2-4}
+                                              & \multicolumn{2}{c|}{MSW}         & LSW         \\ \hline
+\multicolumn{1}{|l|}{size}                    & \multicolumn{2}{c|}{32-bits}     & 32-bits     \\ \hline
+\multicolumn{1}{|l|}{primitive types}         & \multicolumn{2}{c|}{itypes}      &             \\
+\multicolumn{1}{|l|}{lightuserdata (32-bits)} & \multicolumn{2}{c|}{itypes}      & void *      \\
+\multicolumn{1}{|l|}{lightuserdata (64-bits)} & 0xffff           & \multicolumn{2}{c|}{void *} \\
+\multicolumn{1}{|l|}{GC objects}              & \multicolumn{2}{c|}{itypes}      & GCRef       \\
+\multicolumn{1}{|l|}{int}                     & \multicolumn{2}{c|}{itypes}      & int         \\
+\multicolumn{1}{|l|}{number}                  & \multicolumn{3}{c|}{double}                    \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Internal object tagging for 64-bits mode}
+\label{tab:tagged-gc64}
+\begin{tabular}{l|c|c|c|c|}
+\cline{2-5}
+                                      & \multicolumn{3}{c|}{MSW}         & LSW         \\ \hline
+\multicolumn{1}{|l|}{size}            & 13-bits & 4-bits & 15-bits       & 32-bits     \\ \hline
+\multicolumn{1}{|l|}{primitive types} & 1...1   & itype  & \multicolumn{2}{c|}{1...1}  \\
+\multicolumn{1}{|l|}{lightuserdata}   & 1...1   & itype  & \multicolumn{2}{c|}{void *} \\
+\multicolumn{1}{|l|}{GC objects}      & 1...1   & itype  & \multicolumn{2}{c|}{GCRef}  \\
+\multicolumn{1}{|l|}{int}             & 1...1   & itype  & 0...0         & int         \\
+\multicolumn{1}{|l|}{number}          & \multicolumn{4}{c|}{double}                    \\ \hline
+\end{tabular}
+\end{table}
+
+%====================================================================
+% String Internalization
+%====================================================================
+
+\subsection{String Internalization}
+\label{Subsec:string-inter}
+
+All strings that are manipulated by LuaJIT are internalized. This includes, all
+the strings literals of the user Lua code, all identifiers and tokens of the Lua
+language itself and also all the strings used internally by LuaJIT. Internalization
+mechanism does that, only one copy of a specific string is kept in memory. If
+multiple copies of a same string is requested, a pointer to the internalized
+version of the string is returned, instead of doing a new string allocation.
+Strings need to be immutable and are null-terminated. String's function are
+implemented in the \emph{lj\_str.c} file and internalization is done by the
+\emph{lj\_str\_new} function.
+
+For that, it implements a hash table and use a very sparse hash
+function. Collisions are handled by the use of singly-chained linked list.
+The table is resized and all string rehashed when a 100\% load is reached.
+The necessary states are saved in the \emph{global\_State} structure in the
+\emph{lj\_obj.h} file.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct global_State {
+  GCRef *strhash; /* String hash table (hash chain anchors). */
+  MSize strmask;  /* String hash mask (size of hash table - 1). */
+  MSize strnum;   /* Number of strings in hash table. */
+  [...]
+}
+\end{lstlisting}
+
+%====================================================================% Lua table
+%====================================================================
+
+\subsection{Lua table}
+\label{Subsec:table}
+
+Tables are garbage-collected objects represented by the structure below
+(\emph{GCtab} in \emph{lj\_obj.h}). Functions to manipulate them are in
+\emph{lj\_tab.c} and \emph{lj\_tab.h} files. It is composed of an array part and
+a hash part. If the array part is small, it is allocated directly after the
+structure in memory (collocation functionality), otherwise it is separated. The
+hash part is a hash table used to store all non-integer key (or integer too big
+to fit in the array part). It is implemented has an array using singly-linked
+list for collision, where nodes of the linked list are within the array (not
+allocated) and a variation of \emph{Brent's hashing methods} is used.
+New integer keys that are bigger than the array part are always inserted
+in the hash part until this one is full. It then triggers the resizing of the
+table. The new \emph{asize} and \emph{hmask} are both power of 2. The
+new \emph{asize} value corresponds to the biggest power of 2 such that at least
+50 percent of the integers below it are used as key. The new \emph{hmask} is
+picked such that all non-integer keys plus the integer keys that are bigger than
+the new \emph{asize} fit in it. When a resizing occur the hash values are
+re-hashed and integer key that does fit now in the array part are reintroduced
+there.
+
+The \emph{nomm} field of GCtab is a
+negative cache for fast metamethods checks. It is a bitmap marking absent fields
+of the metatable.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct GCtab {
+  GCHeader;
+  uint8_t nomm;    /* Negative cache for fast metamethods. */
+  int8_t colo;     /* Array colocation
+  (number of slot directly following in memory).*/
+  MRef array;      /* Array part. */
+  GCRef gclist;
+  GCRef metatable; /* Must be at same offset in GCudata. */
+  MRef node;       /* Hash part. */
+  uint32_t asize;  /* Size of array part (keys [0, asize-1]). */
+  uint32_t hmask;  /* Hash part mask (size of hash part - 1). */
+#if LJ_GC64
+  MRef freetop;    /* Top of free elements. */
+#endif
+} GCtab;
+\end{lstlisting}
+
+%====================================================================
+% Garbage collector
+%====================================================================
+
+\subsection{Garbage collector}
+\label{Subsec:gc}
+
+LuaJIT garbage collector has currently a tricolor, incremental mark and sweep
+type implementation. You can find a presentation of it on the wiki
+\cite{luajit-gc} in the tri-color section. Its source code can be found in the
+\emph{lj\_gc.h} and \emph{lj\_gc.c} files. It uses the GCState structure has a
+principal structure. The \emph{gc\_onestep} function is the principal one as it
+implements the states machine of the gc. Principal states with their meaning can be
+found in the enum below.
+
+\begin{lstlisting}[style=CStyle]
+enum {
+  GCSpause,
+  GCSpropagate,   /* One gray object is processed. */
+  GCSatomic,      /* Atomic transition from mark to sweep phase. */
+  GCSsweepstring, /* Sweep one chain of strings from the table. */
+  GCSsweep,       /* Sweep a few object from root. */
+  GCSfinalize     /* Finalize one userdata or cdata object. */
+};
+\end{lstlisting}
+
+\begin{lstlisting}[style=CStyle]
+typedef struct GCState {
+  GCSize total;         /* Memory currently allocated. */
+  GCSize threshold;     /* Memory threshold. */
+  uint8_t currentwhite; /* Current white color. */
+  uint8_t state;        /* GC state. */
+  uint8_t nocdatafin;   /* No cdata finalizer called. */
+  uint8_t unused2;
+  MSize sweepstr;       /* Sweep position in string table. */
+  GCRef root;           /* List of all collectable objects. */
+  MRef sweep;           /* Sweep position in root list. */
+  GCRef gray;           /* List of gray objects. */
+  GCRef grayagain;      /* List of objects for atomic traversal. */
+  GCRef weak;           /* List of weak tables (to be cleared). */
+  GCRef mmudata;        /* List of userdata (to be finalized). */
+  GCSize debt;          /* Debt (how much GC is behind schedule). */
+  GCSize estimate;      /* Estimate of memory actually in use. */
+  MSize stepmul;        /* Incremental GC step granularity. */
+  MSize pause;          /* Pause between successive GC cycles. */
+} GCState;
+\end{lstlisting}
+
+%====================================================================
+% Allocator
+%====================================================================
+
+\subsection{Allocator}
+\label{Subsec:alloc}
+
+LuaJIT has its own embedded allocator that is a customized version of \emph{dlmalloc}
+(Doug Lea's Malloc). Information on the original implementation can be found on
+the web article \cite{dlmalloc-art} or in the comment of the code
+\cite{dlmalloc-impl}. The allocator is implemented in the \emph{lj\_alloc.c}
+file. Its main structure \emph{malloc\_state} is shown below. Memory on the
+heap are allocated in chunks. Free chunks are managed as double linked-list with
+the size of the chunk at the beginning and end of it. Unallocated memory are
+grouped in bins of corresponding size. There are two types of bins. The
+smaller one contains chunk of same size and the top are anchored in
+\emph{smallbins}. The bigger one are stored as bitwise digital trees (aka tries)
+keyed by size were the top of a tree is anchored in \emph{treebins}. The
+allocator differentiates with two types of memory allocation, if it is higher than
+128KB then it asks the operating system for a new memory segment using mmap, if
+it is lower than that it uses chunks from the current segment. All allocated
+segments are kept in a linked list anchored in \emph{seg}. For such smaller
+allocation the allocator first try to find an exact fit from the available
+chunks to optimize for internal fragmentation. If it cannot find one and that
+the requested size is smaller than \emph{dvsize} then it uses the \emph{dv}
+chunk (designated victim) which is the last chunk that has been split. It does
+so to optimize for locality. Otherwise it goes for a best-fit match. If no chunk
+big enough is available, it asks the system to extend the segment and use the
+boundary chunk \emph{top} (always kept free). When memory is freed it does chunk
+coalescing to avoid memory fragmentation. If \emph{topsize} is bigger than
+\emph{trim\_check}, then the current segment is shrinked and the memory is given
+back to the OS. \emph{release\_checks} is a decreasing counter that when it
+riches zero triggers a check of all segments to release empty ones back to the OS.
+
+\begin{lstlisting}[style=CStyle]
+struct malloc_state {
+  binmap_t  smallmap;       /* marking non-empty smallbins */
+  binmap_t  treemap;        /* marking non-empty treebins  */
+  size_t    dvsize;         /* designated victim size      */
+  size_t    topsize;        /* boundary chunk size         */
+  mchunkptr dv;             /* designated victim           */
+  mchunkptr top;            /* boundary chunk              */
+  size_t    trim_check;     /* threshold size to release   */
+  size_t    release_checks; /* counter for mmap release    */
+  mchunkptr smallbins[...]; /* anchor for top small bins   */
+  tbinptr   treebins[...];  /* anchor for top tree bins    */
+  msegment  seg;            /* anchor for chained segments */
+};
+\end{lstlisting}
+
+%====================================================================
+% Function
+%====================================================================
+
+\subsection{Function}
+\label{Subsec:func}
+
+There are two distinct representation for function, the function's prototype,
+and the function's closure. Lua functions' prototypes are represented by \emph{GCproto} (\emph{lj\_obj.h}), and are followed by the functions' bytecodes in memory.
+The closures are represented by the GCfuncL for Lua function and GCfuncC for
+c function (using Lua's api). They contain the necessary information for
+upvalues. Upvalues are represented by the \emph{GCupval} that if close, contains
+the corresponding value or a reference to the stack slot containing the
+appropriate value otherwise. Closure can be managed by the functions present in
+\emph{lj\_func.c} allowing to create them, destroy them and closing their
+upvalues.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct GCproto {
+  GCHeader;
+  uint8_t numparams; /* Number of parameters. */
+  uint8_t framesize; /* Fixed frame size. */
+  MSize sizebc;      /* Number of bytecode instructions. */
+  [...]
+  GCRef gclist;
+  MRef k;            /* Split constant array (ptr to the middle).*/
+  MRef uv;           /* Upvalue list. local slot or parent uv idx. */
+  MSize sizekgc;     /* Number of collectable constants. */
+  MSize sizekn;      /* Number of lua_Number constants. */
+  MSize sizept;      /* Total size including colocated arrays. */
+  uint8_t sizeuv;    /* Number of upvalues. */
+  uint8_t flags;     /* Miscellaneous flags. */
+  uint16_t trace;    /* Anchor for chain of root traces. */
+  [...]
+} GCproto;
+\end{lstlisting}
+
+%====================================================================
+% Fast Function
+%====================================================================
+
+\subsection{Fast Function}
+\label{Subsec:ffunc}
+
+Fast functions are specially optimized standard library function. There are two
+parts for each function, the implementation part and the fallback handler.
+The implementation part is done in assembly in the \emph{vm\_*.dasc} files and
+handle the general case, called the fast pass. If the fast pass fail, the vm
+call the corresponding fallback handler (all \emph{LJLIB\_ASM} marked functions)
+that will try to recover from the failure if possible. Examples of recoverable
+cases might be : a wrong argument type if coercion succeeds or a stack overflow
+if stack reallocation succeeds (see comment in lj\_lib.h).
+
+%====================================================================
+% GC64 mode
+%====================================================================
+
+\subsection{GC64 mode}
+\label{Subsec:gc64}
+
+By default LuaJIT use 32-bit pointers which limit its memory on x86 to 4 GB on a
+32-bit platform and even 2 GB on a 64-bit platform (due to constant pointers being
+embedded as offsets in x86 addressing modes, which are signed 32-bit integers).
+This limitation has been there for many years but recently a \emph{GC64} mode
+has been developed and is currently in beta, allowing to fully use the well-known
+47-bit address space. To activate this mode you just have to uncomment in
+\emph{src/makefile} the LUAJIT\_ENABLE\_GC64 variable and to perform a full
+recompilation of LuaJIT.
+
+
+%===============================================================================
+% Bytecode interpreter
+%===============================================================================
+
+\section{Bytecode interpreter}
+\label{Sec:BI}
+
+Most of the VM mechanism is written using the DynASM syntax. To get a better
+understanding of the underlining technology see Appendix \ref{Apendix:DynASM}.
+
+The low-level VM code written for each architecture using this assembler can be
+found in \emph{vm\_(target).dasc} files. It is mainly composed of the switch
+case that generates the assembly code for each byte code, but it also contains
+code for other part that requires low level implementation such as the
+stack unwinding or the implementation of the fast path of asm fast library functions
+(see section \ref{Subsec:ffunc} for more).
+
+
+%===============================================================================
+% Library
+%===============================================================================
+
+\section{Library}
+\label{Sec:Library}
+    
+%!TEX root = ../../../FYP_Dissertation.tex
+
+%====================================================================
+% Standard library
+%====================================================================
+
+\subsection{Standard library}
+\label{Subsec:std-lib}
+
+LuaJIT is providing a full compatibility with Lua 5.1 and to do so, it
+implements the standard library. The code is copied and adapted from the
+\emph{PUC-RIO} Lua interpreter. A list of the corresponding files and the
+descriptions of what they are doing can be found in table
+\ref{tab:library-std-files}.
+
+\begin{table}[H]
+\centering
+\caption{Implementation's files of the Lua standard library}
+\label{tab:library-std-files}
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{File name} & \multicolumn{1}{c|}{Description}                     \\ \hline
+lib\_base.c                     & Base and coroutine library.                          \\
+lib\_debug.c                    & Debug library.                                       \\
+lib\_init.c                     & Load and initialize standard libraries.              \\
+lib\_io.c                       & Files and I/O library.                               \\
+lib\_math.c                     & Math library (abs, sqrt, log, random, etc...).       \\
+lib\_os.c                       & OS library (date, time, execute, remove, etc...).    \\
+lib\_package.c                  & Package library (load, require, etc...).             \\
+lib\_string.c                   & String library (gsub, match, etc...).                \\
+lib\_table.c                    & Table library (new, clear, insert, foreach, etc...). \\ \hline
+\end{tabular}
+\end{table}
+
+%====================================================================
+% LuaJIT extensions
+%====================================================================
+
+\subsection{LuaJIT extensions}
+\label{Subsec:lj-extensions}
+
+In addition to the standard library, LuaJIT comes equipped with some library
+extensions \cite{extensions}. In addition of a few improvements of existing
+modules it provides three new extension modules, namely, \emph{bit} in
+\emph{lib\_bit.c} that provides with bitwise operations \cite{bitOp}, \emph{ffi}
+in \emph{lib\_ffi.c} that provides functions to interact with the FFI library
+(see FFI Chapter \ref{Sec:FFI} for more) and \emph{JIT} in \emph{lib\_jit.c}
+that provides functions allowing to control the behavior of the JIT compiler
+engine (see JIT Part \ref{Chapt:JIT}).
+
+%====================================================================
+% The C API
+%====================================================================
+
+\subsection{The C API}
+\label{Subsec:c-api}
+
+All those libraries are implemented using the Lua C API that allows to create
+and manipulate Lua data, manage the Lua stack etc... The implementation for those
+functions can be found in \emph{lj\_api.c}, \emph{lj\_lib.c} and \emph{lib\_aux.c}.
+
+%====================================================================
+% Build Library
+%====================================================================
+
+\subsection{Build Library}
+\label{Subsec:build-lib}
+
+LuaJIT use multiple tricks to generate files automatically that are included
+during compilation to help with the building and loading of the standard library
+without the need for manual maintenance. We will describe here the different
+steps and what they are useful for.
+
+First of all, if no Lua interpreter
+(either PUC-Lua or LuaJIT) is available on the machine a simplified and
+minimized one is built from the \emph{minilua.c} file. Then the interpreter is
+used to run \emph{genlibbc.lua} that will be responsible for parsing all LuaJIT's
+source files searching for the \emph{LJLIB\_LUA} macro that surrounds library
+functions name that are written in Lua. It then generates the \emph{buildbm\_libbc.h}
+file that contains the Lua bytecodes for all those functions in the
+\emph{libbc\_code} array and a mapping of the function name and the bytecodes
+offset for that function in \emph{libbc\_map}.
+
+This newly generated file is
+built along with all \emph{buildvm\_*} files to create the \emph{buildvm}
+program that is used to parse from the library source code all other
+\emph{LJLIB\_*} macro and generates some files
+(\emph{lj\_bcdef.h, lj\_libdef.h, lj\_ffdef.h, lj\_recdef.h and vmdef.lua})
+that will be added to LuaJIT compilation. You can see, in Table
+\ref{tab:library-macro} the description of the macros and in Table
+\ref{tab:library-generated-files} the description of the corresponding generated
+file.
+
+\begin{table}[H]
+\centering
+\caption{Definition of the macros used to build the library}
+\label{tab:library-macro}
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\multicolumn{1}{|c|}{Macro}          & \multicolumn{1}{c|}{Description}                     \\\hline
+LJLIB\_MODULE\_*                     & register new module.                                 \\\hline
+LJLIB\_CF(name)                      & register C function.                                 \\\hline
+LJLIB\_ASM(name)                     & register fast function fallback handler.             \\\hline
+LJLIB\_ASM\_(name)                   &
+  \begin{tabular}[c]{@{}l@{}}
+  register fast function that uses previous\\
+  LJLIB\_ASM fallback handler.
+  \end{tabular}                                                                             \\\hline
+LJLIB\_LUA(name)                     & register Lua function.                               \\\hline
+\multirow{4}{*}{LJLIB\_SET(name)}    &
+  \begin{tabular}[c]{@{}l@{}}
+  register previous Lua stack value into the module\\
+  table with \emph{name} has key.
+  \end{tabular}
+  \begin{itemize}
+  \item '!' : last stack value became next function's env
+  \end{itemize}                                                                             \\\hline
+\multirow{7}{*}{LJLIB\_PUSH(val)}    & push \emph{val} on the Lua stask.
+  \begin{itemize}
+  \item 'lastcl'  : copy last stack value
+  \item 'top-x'   : copy last $x^{th}$ stack value
+  \item ' "..." ' : push internalized string
+  \end{itemize}                                                                             \\\hline
+\multirow{8}{*}{LJLIB\_REC(handler)} & register a handler to record a function.
+  \begin{itemize}
+  \item '.' : get the function's name
+  \item 'name data' :
+    \begin{itemize}
+      \item \emph{name} of recorder
+      \item auxiliary \emph{data} to put in \emph{recff\_idmap}
+    \end{itemize}
+  \end{itemize}                                                                             \\\hline
+LJLIB\_NOREGUV                       & to not register this function in module.             \\\hline
+LJLIB\_NOREG                         & to not register a function in lj\_lib\_cf\_*.        \\\hline
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Generated files description}
+\label{tab:library-generated-files}
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\multicolumn{1}{|c|}{File}          & \multicolumn{1}{c|}{Description}                      \\\hline
+\emph{lj\_bcdef.h}                  &
+  for each fast functions, \emph{lj\_bc\_ofs} contains the offset from
+  \emph{lj\_vm\_asm\_begin} (in \emph{lj\_vm.h}) to the mcode of the function
+  and \emph{lj\_bc\_mode} contains the byte code operande mode (all set to
+  \emph{BCMODE\_FF}) (see \emph{lj\_bc.h} and this \emph{Introduction} section
+  of the wiki \cite{luajit-bc}).                                                            \\\hline
+\emph{lj\_ffdef.h}                  & list of all library function name                     \\\hline
+\emph{lj\_libdef.h}                 &
+  \emph{lj\_lib\_cf\_*} arrays contains the list of function pointers for the
+  * library. \emph{lj\_lib\_init\_*} are arrays of packed data describing how
+  the corresponding library should be loaded (see \emph{lj\_lib\_register} in
+  \emph{lj\_lib.c} for the function that parse those data).                                 \\\hline
+\emph{lj\_recdef.h}                 &
+  for each library functions \emph{recff\_idmap} contains an optional auxiliary
+  data (opcode, literal) allowing to handle similar functionalities in a
+  common handler. \emph{recff\_func} contains the list of record handler.                   \\\hline
+\emph{vmdef.lua}                    &
+  contains all vm definition for use in Lua.
+  \begin{itemize}
+  \item bcnames  : bytecode names
+  \item irnames  : IR instructions names
+  \item irfpm    : floating point math function names
+  \item irfield  : maps field id to field name (specific field that the IR instruction is accessing)
+  \item ircall   : name of special function for calls instruction.
+  \item traceerr : maps error num to error message
+  \item ffnames  : maps library function id to function name
+  \end{itemize}                                                                             \\\hline
+\end{tabularx}
+\end{table}
+
+
+%===============================================================================
+% Foreign function interface
+%===============================================================================
+
+\section{Foreign function interface}
+\label{Sec:FFI}
+
+%!TEX root = ../../../FYP_Dissertation.tex
+
+The FFI (Foreign Function Interface) is one of LuaJIT extensions modules. It
+allows to call external C functions and use C data structures from pure Lua code.
+A very small (not representative) example can be seen below.
+
+\begin{lstlisting}[style=LuaStyle]
+local ffi = require("ffi")
+ffi.cdef[[
+  typedef struct points { int x,y,z; } points;
+]]
+local p1 = ffi.new("points", { 1, 2, 3 })
+print(p1.x) --  1
+p1.x = 11
+print(p1.x) -- 11
+\end{lstlisting}
+There is some official documentation for FFI users on \emph{luajit.org}
+where you can find the motivation for the FFI module \cite{ffi-motivation},
+a small tutorial \cite{ffi-tuto}, the API documentation \cite{ffi-api} and the
+FFI semantics \cite{ffi-semantics}. There is also a reflection
+library for FFI ctypes \cite{ffi-reflect} and its documentation
+\cite{ffi-reflect-doc} for anyone interested in exploring the ctype of a given cdata.
+
+This chapter will present the internal implementation of the FFI and not its use.
+The organisation of the information will follow the actual implementation files.
+
+\paratitle{lib\_ffi.c:}\\
+This file is the top level file of the FFI library. It contains the
+implementation of the FFI API, the function that makes the connection between
+Lua and C using the standard Lua \emph{C API}.
+It is also responsible for loading the FFI module (\emph{luaopen\_ffi}).
+This file mainly use and connect together functionalities implemented in other
+files. It is for example responsible to allocate and initialize the main state
+(\emph{CTState}) explained below.
+
+\paratitle{lj\_obj.h:}\\
+From this file, we are only interested in this chapter by the \emph{GCcdata}
+structure that is the garbage-collected object representing any C data use
+through and with the FFI. You can see its composition bellow. The main thing to
+see here is the \emph{ctypeid} which is the index of the ctype describing the
+attached data (the payload follows the structure in memory).
+\begin{lstlisting}[style=CStyle]
+typedef struct GCcdata {
+  GCHeader;
+  uint16_t ctypeid;	/* C type ID. */
+} GCcdata;
+\end{lstlisting}
+
+\paratitle{lj\_ctype.h:}\\
+Below is the \emph{CType} data structure responsible for describing to the ffi
+what kind of data the \emph{cdata} represent (e.g. variable, struct,
+function, etc.). A detailed breakdown of how the information is laid out can
+be seen in Table \ref{tab:ffi-ctype}. The meaning of the abbreviations used in
+the previous table can be seen in Table \ref{tab:ffi-ctype2}.
+\begin{lstlisting}[style=CStyle]
+typedef struct CType {
+  CTInfo info;   /* Type info. */
+  CTSize size;   /* Type size or other info. */
+  CTypeID1 sib;  /* Sibling element. */
+  CTypeID1 next; /* Next element in hash chain. */
+  GCRef name;    /* Element name (GCstr). */
+} CType;
+\end{lstlisting}
+
+%          +----------------------------+--------+-------+-------+-------+
+%          |            info            |        |       |       |       |
+%          +----------------------------+  size  |  sid  | next  | name  |
+%          |type|  flags | A  |   cid   |        |       |       |       |
+% +-------------------------------------+--------------------------------+
+% |size    | 4  |    8   | 4  |   16    |   32   |  16   |  16   | GCRef |
+% |--------+----------------------------+--------+-------+-------+-------+
+% |NUM     |0000|BFcvUL..| A  |    x    | size   |       | type  |       |
+% |STRUCT  |0001|..cvu..V| A  |    x    | size   | field | name? | name? |
+% |PTR     |0010|..cvR...| A  |   cid   | size   |       | type  |       |
+% |ARRAY   |0011|VCcv...V| A  |   cid   | size   |       | type  |       |
+% |VOID    |0100|..cv....| A  |    x    | size   |       | type  |       |
+% |ENUM    |0101|........| A  |   cid   | size   | const | name? | name? |
+% |FUNC    |0110|....VS..|..cc|   cid   | nargs  | field | name? | name? |
+% |TYPEDEF |0111|........|....|   cid   |   x    |       | name  | name  |
+% |ATTRIB  |1000|....|attrnum |   cid   | attr   | sib?  | type? |       |
+% |FIELD   |1001|........|....|   cid   | offset | field |       | name? |
+% |BITFIELD|1010|B.cvU| csz   |.bsz|.pos| offset | field |       | name? |
+% |CONSTVAL|1011|..c.....|....|   cid   | value  | const | name  | name  |
+% |EXTERN  |1100|........|....|   cid   |   x    | sib?  | name  | name  |
+% |KW      |1101|........|....|   tok   | size   |       | name  | name  |
+% +-------------------------------------+--------+-------+-------+-------+
+\begin{table}[p]
+\footnotesize
+\centering
+\caption{Summary of CType informations}
+\label{tab:ffi-ctype}
+\begin{tabular}{l|c|c|c|c|c|l|c|c|c|c|}
+\cline{2-11}
+                               & \multicolumn{6}{c|}{info}                                                         & \multirow{2}{*}{size} & \multirow{2}{*}{sid} & \multirow{2}{*}{next} & \multirow{2}{*}{name} \\ \cline{2-7}
+                               & type & \multicolumn{2}{c|}{flags}          & A         & \multicolumn{2}{c|}{cid} &                       &                      &                       &                       \\ \hline
+\multicolumn{1}{|l|}{size}     & 4    & \multicolumn{2}{c|}{8}              & 4         & \multicolumn{2}{c|}{16}  & 32                    & 16                   & 16                    & GCRef                 \\ \hline
+\multicolumn{1}{|l|}{NUM}      & 0000 & \multicolumn{2}{c|}{BFcvUL..}       & A         & \multicolumn{2}{c|}{}    & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{STRUCT}   & 0001 & \multicolumn{2}{c|}{..cvu..V}       & A         & \multicolumn{2}{c|}{}    & size                  & field                & name                  & name                  \\
+\multicolumn{1}{|l|}{PTR}      & 0010 & \multicolumn{2}{c|}{..cvR...}       & A         & \multicolumn{2}{c|}{cid} & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{ARRAY}    & 0011 & \multicolumn{2}{c|}{$V^2$Ccv...V}   & A         & \multicolumn{2}{c|}{cid} & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{VOID}     & 0100 & \multicolumn{2}{c|}{..cv....}       & A         & \multicolumn{2}{c|}{}    & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{ENUM}     & 0101 & \multicolumn{2}{c|}{........}       & A         & \multicolumn{2}{c|}{cid} & size                  & const                & name                  & name                  \\
+\multicolumn{1}{|l|}{FUNC}     & 0110 & \multicolumn{2}{c|}{....$V^3$S..}   & ..cc      & \multicolumn{2}{c|}{cid} & nargs                 & field                & name                  & name                  \\
+\multicolumn{1}{|l|}{TYPEDEF}  & 0111 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} &                       &                      & name                  & name                  \\
+\multicolumn{1}{|l|}{ATTRIB}   & 1000 & ....             & \multicolumn{2}{c|}{attrnum} & \multicolumn{2}{c|}{cid} & attr                  & sib                  & type                  &                       \\
+\multicolumn{1}{|l|}{FIELD}    & 1001 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} & offset                & field                &                       & name                  \\
+\multicolumn{1}{|l|}{BITFIELD} & 1010 & B.cvU            & \multicolumn{2}{c|}{csz}     & .bsz        & .pos       & offset                & field                &                       & name                  \\
+\multicolumn{1}{|l|}{CONSTVAL} & 1011 & \multicolumn{2}{c|}{..c.....}       & ....      & \multicolumn{2}{c|}{cid} & value                 & const                & name                  & name                  \\
+\multicolumn{1}{|l|}{EXTERN}   & 1100 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} &                       & sib                  & name                  & name                  \\
+\multicolumn{1}{|l|}{KW}       & 1101 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{tok} & size                  &                      & name                  & name                  \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\footnotesize
+\centering
+\caption{Definition of CType fields}
+\label{tab:ffi-ctype2}
+\begin{tabular}{ll|l|l|}
+\hline
+\multicolumn{2}{|c|}{\textit{\textbf{flags}}} & \multicolumn{2}{c|}{\textit{\textbf{A}}}                                    \\ \hline
+\multicolumn{1}{|l|}{B}      & Boolean        & A                      & allignement of $2^A$ bytes                         \\
+\multicolumn{1}{|l|}{F}      & Float          & cc                     & calling convention                                 \\
+\multicolumn{1}{|l|}{c}      & const          & attrnum                & Attributes number (see CTA\_* in lj\_ctype.h)      \\
+\multicolumn{1}{|l|}{v}      & volatile       & csz                    & size of the memory slot                            \\ \cline{3-4}
+\multicolumn{1}{|l|}{U}      & Unsigned       & \multicolumn{2}{c|}{\textit{\textbf{cid}}}                                  \\ \cline{3-4}
+\multicolumn{1}{|l|}{L}      & Long           & cid                    & child id                                           \\
+\multicolumn{1}{|l|}{u}      & union          & bsz                    & number of bits of the bit-field                    \\
+\multicolumn{1}{|l|}{V}      & VLA            & pos                    & starting position in bit inside the memory slot    \\
+\multicolumn{1}{|l|}{R}      & reference      & tok                    & token id                                           \\ \cline{3-4}
+\multicolumn{1}{|l|}{$V^2$}  & Vector         & \multicolumn{2}{c|}{\textit{\textbf{size}}}                                 \\ \cline{3-4}
+\multicolumn{1}{|l|}{C}      & Complex        & size                   & size in bytes                                      \\
+\multicolumn{1}{|l|}{$V^3$}  & Vararg         & nargs                  & number of fixed arguments of a function            \\
+\multicolumn{1}{|l|}{S}      & SSE arguments  & offset                 & offset in bytes from the start of the struct       \\ \cline{1-2}
+                             &                & value                  & the actual constant value                          \\
+                             &                & attr                   & value of the attribute                             \\ \cline{3-4}
+                             &                & \multicolumn{2}{c|}{\textit{\textbf{sib}}}                                  \\ \cline{3-4}
+                             &                & field                  & function args or struc/union field                 \\
+                             &                & const                  & constant value                                     \\
+                             &                & sib                    & chain of attribute or object of the attribute      \\ \cline{3-4}
+                             &                & \textit{\textbf{name}} & GCRef to a string containing the identifier.       \\ \cline{3-4}
+                             &                & \textit{\textbf{next}} & chain for hash collisions in cts-\textgreater hash \\ \cline{3-4}
+\end{tabular}
+\end{table}
+
+The most important struct of the FFI is the \emph{CTState} bellow. It contains
+all the internalize ctype in the \emph{tab} table. \emph{finalizer} is a weak
+keyed Lua table (values can be garbage collected if the key is not referenced
+elsewhere) containing all finalizer registered with the \emph{ffi.gc} method.
+\emph{miscmap} is a Lua table mapping all metatable of ctypes registered using
+the \emph{ffi.metatype} method in the negative CTypeID range and all callback
+functions in the positive callback slot range. Any metatable added to miscmap is
+definitive and never collected. \emph{hash} is an array used as a hash table
+for quick CTypeID checks. It map both, the hashed name of named elements and the
+hashed type (info and size) for unnamed elements to the corresponding CTypeID.
+Collisions are handled in a linked list using the \emph{next} field of the
+\emph{CType} struct.
+
+\begin{adjustbox}{max width=\textwidth}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle]
+typedef struct CTState {
+  CType *tab;        /* C type table. */
+  CTypeID top;       /* Current top of C type table. */
+  MSize sizetab;     /* Size of C type table. */
+  lua_State *L;      /* Lua state (for errors and allocations). */
+  global_State *g;   /* Global state. */
+  GCtab *finalizer;  /* Map of cdata to finalizer. */
+  GCtab *miscmap;    /* Map -CTypeID->metatable and cb slot->func. */
+  CCallback cb;      /* Temporary callback state. */
+  CTypeID1 hash[...];/* Hash anchors for C type table. */
+} CTState;
+\end{lstlisting}
+\end{minipage}
+\end{adjustbox}
+
+\paratitle{lj\_ctype.c:}\\
+This file provides functions to manage \emph{CType}. It is divided into three
+parts. The first one is the allocation, creation and internalization of
+\emph{CType}. The second one is providing getters to get C type information.
+The last one is  type representation, providing the necessary functions to
+convert a \emph{CType} to a human readable string representation.
+\emph{lj\_ctype\_repr} is the entry function that returns the internalize string
+representation. It uses the struct \emph{CTRepr} bellow to create the
+representation by appending/prepending characters through the pb/pe pointers
+into the buffer. The main function is the \emph{ctype\_repr} that contains a
+switch on the \emph{CType} info.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CTRepr {
+  char *pb, *pe; /* Points to begining/end inside the buffer*/
+  CTState *cts;  /* C type state. */
+  lua_State *L;
+  int needsp;    /* Next append needs an extra space character */
+  int ok;        /* Indicate if buf is currently a valid type */
+  char buf[...]; /* String buffer of the ctype being constructed */
+} CTRepr;
+\end{lstlisting}
+
+\paratitle{lj\_cparse.h:}\\
+The cparser is responsible for parsing the string of the C declarations looking
+for types or external symbols. Its code structure is quite close to the
+Lua lexer/parser. Its principal struct is the \emph{CPState} bellow which is
+similar to \emph{LexState}. In this struct, \emph{tmask} is a mask constraining
+the possible ctype of the next identifier. The \emph{mode} defines the behavior
+of the parser with respect to the input. It's different behavior can be of the
+type: accepting multiple declaration, skipping errors, accept/reject abstract
+declarators, accept/reject implicit declarators etc... (see CPARSE\_MODE\_* for
+full definition).
+
+\begin{adjustbox}{bgcolor=backgroundColour, max width=\textwidth}
+\begin{lstlisting}[style=CStyle]
+typedef struct CPState {
+  CPChar c;               /* Current character. */
+  CPToken tok;            /* Current token. */
+  CPValue val;            /* Token value. */
+  GCstr *str;             /* Interned string of identifier/keyword. */
+  CType *ct;              /* C type table entry. */
+  const char *p;          /* Current position in input buffer. */
+  SBuf sb;                /* String buffer for tokens. */
+  lua_State *L;           /* Lua state. */
+  CTState *cts;           /* C type state. */
+  TValue *param;          /* C type parameters. ($xyz)*/
+  const char *srcname;    /* Current source name. */
+  BCLine linenumber;      /* Input line counter. */
+  int depth;              /* Recursive declaration depth. */
+  uint32_t tmask;         /* Type mask for next identifier. */
+  uint32_t mode;          /* C parser mode. */
+  uint8_t packstack[...]; /* Stack for pack pragmas. */
+  uint8_t curpack;        /* Current position in pack pragma stack. */
+} CPState;
+\end{lstlisting}
+\end{adjustbox}
+
+\paratitle{lj\_cparse.c:}\\
+This file contains the code of a simple lexer and a simplified, not valid c
+parser. It uses the \emph{CPState} for the parsing of the input
+string and the \emph{CPDecl} structure below for the construction of the
+corresponding CType. During parsing the chain of typdef is unrolled (typdef are
+still internalized for future reference but are not chained to the created
+ctype.)
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CPDecl {
+  CPDeclIdx top;     /* Top of declaration stack. */
+  CPDeclIdx pos;     /* Insertion position in declaration chain. */
+  CPDeclIdx specpos; /* Saved position for declaration specifier. */
+  uint32_t mode;     /* Declarator mode (same as CPState) */
+  CPState *cp;       /* C parser state. */
+  GCstr *name;       /* Name of declared identifier (if direct). */
+  GCstr *redir;      /* Redirected symbol name. */
+  CTypeID nameid;    /* Existing typedef for declared identifier. */
+  CTInfo attr;       /* Attributes. */
+  CTInfo fattr;      /* Function attributes. */
+  CTInfo specattr;   /* Saved attributes. */
+  CTInfo specfattr;  /* Saved function attributes. */
+  CTSize bits;       /* Field size in bits (see Ctype bsz). */
+  CType stack[...];  /* Type declaration stack. */
+} CPDecl;
+\end{lstlisting}
+
+\paratitle{lj\_cdata.c:}\\
+This file contains the functions responsible for doing cdata management, such as
+allocations, free, finilizer, getter, setter and indexing.
+
+\paratitle{lj\_cconv.c:}\\
+This file is responsible for ctype conversion. It is divided in 5 parts: C type
+compatibility checks, C type to C type conversion, C type to TValue conversion
+(from C to Lua : i.e returned values), TValue to C type conversion (from Lua to
+c: i.e passed arguments), and initializing C type with TValues (Initialization
+of struct/union/array with Lua object)
+
+\paratitle{lj\_carith.c:}\\%
+This file contains the implementation far all built-in cdata arithmetic, such
+as pointers arithmetic and integer arithmetic. It mainly manipulate some
+\emph{CDArith} structure shown below.
+\begin{lstlisting}[style=CStyle]
+typedef struct CDArith {
+  uint8_t *p[2]; /* data  of the two operands */
+  CType  *ct[2]; /* ctype of the two operands */
+} CDArith;
+\end{lstlisting}
+
+\paratitle{lj\_ccall.c:}\\
+This file contains the code handling calls to C function. It does struct/array
+register classification (see CCALL\_RCL\_*), computing how it can be passed
+as argument/return values (in gp register, sse register or memory). It handles
+then the decomposition/packing depending of the calling convention picked.
+
+\paratitle{lj\_ccall.h:}\\
+Below is the main structure use for C function call.
+\begin{lstlisting}[style=CStyle]
+typedef struct CCallState {
+  void (*func)(void); /* Pointer to called function. */
+  uint32_t spadj;     /* Stack pointer adjustment. */
+  uint8_t nsp;        /* Number of stack slots. */
+  uint8_t retref;     /* Return value by reference. */
+  uint8_t ngpr;       /* Number of arguments in GPRs. */
+  uint8_t nfpr;       /* Number of arguments in FPRs. */
+  [...]
+  FPRArg fpr[...];    /* Arguments/results in FPRs. (SSE) */
+  GPRArg gpr[...];    /* Arguments/results in GPRs. */
+  GPRArg stack[...];  /* Stack slots. */
+} CCallState;
+\end{lstlisting}
+
+\paratitle{lj\_ccallback.c:}\\
+This file contains the FFI C callback handling. The principal structure is the
+\emph{CCallback} below (see \emph{lj\_ctype.h}) mainly use through the cb field
+of the \emph{CTState}
+structure. Each callback is associated with a unique cb slot and the
+\emph{cts-$>$miscmap} contains the mapping between cb slot and function
+pointers. The \emph{cts.cb.cbid} is a table mapping cb slot to the corresponding
+CTypeID. \emph{cts.cb.mcode} is an mmap'ed executable page that contains a push
+of slot id and a jump to \emph{lj\_vm\_ffi\_callback} (the entry in this page
+corresponds to the cb address provided to the C code). Below is a description
+of the call order when a callback is called.
+
+\begin{itemize}
+	\item C call a callback address
+	\item arrive in the callback mcode page (push the appropriate slot id and call lj\_vm\_ffi\_callback)
+	\item arrive in lj\_vm\_ffi\_callback that charge in registers the callback.fpr/gpr + stack in registers
+	\item arrive in lj\_ccallback\_enter that prepare the Lua state and do conversion of argument from C to Lua type.
+	\item arrive in lj\_vm\_ffi\_callback : execute the callback with this Lua state
+	\item Lua callback
+	\item arrive in $|->$cont\_ffi\_callback: call lj\_ccallback\_leave
+	\item arrive in lj\_ccallback\_leave convert return value from Lua to C.
+	\item arrive in $|->$cont\_ffi\_callback: return to C code with the return value in register/stack.
+	\item arrive in C code.
+\end{itemize}
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CCallback {
+  FPRCBArg fpr[...]; /* Arguments/results in FPRs. */
+  intptr_t gpr[...]; /* Arguments/results in GPRs. */
+  intptr_t *stack;   /* Pointer to arguments on stack. */
+  void *mcode;       /* Machine code for callback func. pointers. */
+  CTypeID1 *cbid;    /* Callback type table. */
+  MSize sizeid;      /* Size of callback type table. */
+  MSize topid;       /* Highest unused callback type table slot. */
+  MSize slot;        /* Current callback slot. */
+} CCallback;
+\end{lstlisting}
+
+\paratitle{lj\_clib.c:}\\
+This file contains the necessary code to load/unload ffi library. It also handles
+the indexing of the external library using named symbol. It uses platform
+specific tools to explore the exposed symbols. Every symbol is resolved only once
+and cached in the \emph{CLibrary} cache table.
+
+\paratitle{lj\_clib.h:}\\
+\begin{lstlisting}[style=CStyle]
+typedef struct CLibrary {
+  void *handle; /* Opaque handle for dynamic library loader. */
+  GCtab *cache; /* Cache resolved symbols. Anchored in ud->env. */
+} CLibrary;
+\end{lstlisting}
+
+
+    
