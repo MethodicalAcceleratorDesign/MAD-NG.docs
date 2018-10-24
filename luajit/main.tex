@@ -62,6 +62,26 @@
     language          = C,
 }
 
+\lstdefinestyle{DumpStyle}{
+    backgroundcolor   = \color{backgroundColour},
+    commentstyle      = \color{mGreen},
+    keywordstyle      = \color{magenta},
+    numberstyle       = \tiny\color{mGray},
+    stringstyle       = \color{mPurple},
+    basicstyle        = \footnotesize,
+    % breakatwhitespace = false,
+    % breaklines        = true,
+    captionpos        = b,
+    keepspaces        = true,
+    numbers           = left,
+    numbersep         = 5pt,
+    showspaces        = false,
+    showstringspaces  = false,
+    showtabs          = false,
+    tabsize           = 2,
+    language          = C,
+}
+
 % customized commands
 \newcommand{\keyword}[1]{\textcolor{red}{\emph{#1}}}
 
@@ -82,6 +102,7 @@
 \input{luajit/chapter2.tex}
 \input{luajit/chapter3.tex}
 \input{luajit/chapter4.tex}
+\input{luajit/chapter5.tex}
 
 % appendix
 \appendix

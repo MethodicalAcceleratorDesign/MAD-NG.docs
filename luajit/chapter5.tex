@@ -1,0 +1,41 @@
+\chapter{Dumps}
+
+\section{Simple examples}
+
+\section{Simple Loop}
+
+\subsubsection{Empty loop}
+
+\begin{lstlisting}[style=LuaStyle]
+-- Empty loop
+for i=1,100 do
+end
+\end{lstlisting}
+
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start loop_empty.lua:2
+---- TRACE 1 IR
+0001    int SLOAD  #1    CI
+0002  + int ADD    0001  +1  
+0003 >  int LE     0002  +100
+0004 ------ LOOP ------------
+0005  + int ADD    0002  +1  
+0006 >  int LE     0005  +100
+0007    int PHI    0002  0005
+---- TRACE 1 stop -> loop
+
+---- TRACE 1 exit 3
+\end{lstlisting}
+
+In line 0001 SLOAD (store a value) is used to init the register used by the loop. Lines 0002-0005 contain the loop where the same instructions are showed twice. The first iteration of the loop is unrolled (0002-0003) and the two lines after the LOOP label contain the actual loop (0005-0006). The first iteration ensures the pre-conditions for all subsequent instructions are met. Control dependencies are implicit, based on
+the order of the IR. Traditional LICM (Loop-invariant code motion) does not work well when compiling dynamic languages. It has trouble moving control-dependent instructions
+out of a loop, of which there are many in the IR for a dynamic language.
+
+Also, the first iteration actually performs some work, too. So, maybe it produces a little I-cache waste, but not at a performance loss.
+
+Be careful that only the inner part from the LOOP label to the backwards
+branch to the LOOP is executed repeatedly.
+The PHI instruction positioned at the end of the looping trace (line 0007). The left operand holds a reference to the initial value, the right operand holds a reference to the value after each loop iteration.\\
+
+Ref. \textit{https://www.freelists.org/post/luajit/how-to-understand-the-structure-of-irmcode-dump,1}
+
