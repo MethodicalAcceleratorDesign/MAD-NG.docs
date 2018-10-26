@@ -2,9 +2,7 @@
 
 \section{Simple examples}
 
-\section{Simple Loop}
-
-\subsubsection{Empty loop}
+\subsection{Empty loop}
 
 \begin{lstlisting}[style=LuaStyle]
 -- Empty loop
@@ -27,15 +25,183 @@ end
 ---- TRACE 1 exit 3
 \end{lstlisting}
 
-In line 0001 SLOAD (store a value) is used to init the register used by the loop. Lines 0002-0005 contain the loop where the same instructions are showed twice. The first iteration of the loop is unrolled (0002-0003) and the two lines after the LOOP label contain the actual loop (0005-0006). The first iteration ensures the pre-conditions for all subsequent instructions are met. Control dependencies are implicit, based on
-the order of the IR. Traditional LICM (Loop-invariant code motion) does not work well when compiling dynamic languages. It has trouble moving control-dependent instructions
-out of a loop, of which there are many in the IR for a dynamic language.
+In line 0001 SLOAD (store a value) is used to init the register used by the loop. 
 
-Also, the first iteration actually performs some work, too. So, maybe it produces a little I-cache waste, but not at a performance loss.
+Lines 0002-0005 contain the loop: ADD increments the loop counter \textit{i} and LE (left $\leq$ right) check if the exit condition is satisfied $i\leq100$. Note that the same instructions are showed twice. The first iteration of the loop is unrolled (lines 0002-0003), then the actual loop is showed after the LOOP label (lines 0005-0006). The first iteration ensures the pre-conditions for all subsequent instructions are met. Control dependencies are implicit, based on
+the order of the IR. Traditional LICM (Loop-invariant code motion) does not work well when compiling dynamic languages. It has trouble moving control-dependent instructions out of a loop, of which there are many in the IR for a dynamic language. Moreover, the first iteration actually performs some work, too. So, maybe it produces a little I-cache waste, but not at a performance loss. Be careful that only the inner part from the LOOP label to the backward branch to the LOOP is executed repeatedly (lines 0005-0006).
 
-Be careful that only the inner part from the LOOP label to the backwards
-branch to the LOOP is executed repeatedly.
-The PHI instruction positioned at the end of the looping trace (line 0007). The left operand holds a reference to the initial value, the right operand holds a reference to the value after each loop iteration.\\
+The PHI instruction is  positioned at the end of the looping trace (line 0007). The left operand holds a reference to the initial value, the right operand holds a reference to the value after each loop iteration.
 
-Ref. \textit{https://www.freelists.org/post/luajit/how-to-understand-the-structure-of-irmcode-dump,1}
+Ref. \textit{https://www.freelists.org/post/luajit/how-to-understand-the-structure-of-irmcode-dump,1}.\\
 
+\subsection{Loop with assignment}
+
+\begin{lstlisting}[style=LuaStyle]
+-- Loop with assignment
+N = 100
+x = 0
+for i=1,N do
+	x = 42
+end
+\end{lstlisting}
+
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start loop_assignment.lua:4
+---- TRACE 1 IR
+0001 >  int SLOAD  #2    CRI
+0002 >  int LE     0001  +2147483646
+0003    int SLOAD  #1    CI
+0004    fun SLOAD  #0    R
+0005    tab FLOAD  0004  func.env
+0006    int FLOAD  0005  tab.hmask
+0007 >  int EQ     0006  +63 
+0008    p32 FLOAD  0005  tab.node
+0009 >  p32 HREFK  0008  "x"  @33
+0010    tab FLOAD  0005  tab.meta
+0011 >  tab EQ     0010  NULL
+0012    num HSTORE 0009  +42 
+0013    nil TBAR   0005
+0014  + int ADD    0003  +1  
+0015 >  int LE     0014  0001
+0016 ------ LOOP ------------
+0017  + int ADD    0014  +1  
+0018 >  int LE     0017  0001
+0019    int PHI    0014  0017
+---- TRACE 1 stop -> loop
+
+---- TRACE 1 exit 3
+\end{lstlisting}
+
+Differently from the other script a variable $N=100$ is used as maximum loop counter value. Thus, SLOAD at line 0001 load the register \textit{N} and in line 0002 it it checked if the value falls into the signed 32-bit integer range (it is smaller than +2147483646).
+
+Again at line 0003 SLOAD (store a value) is used to init the register used by the loop.
+
+Line 0004-0010 contains the instruction to load the variable \textit{x}.
+
+Line 00012 performs a compiler optimization for loop-invariant code (LICM). It consists of statements or expressions which can be moved outside the body of a loop without affecting the semantics of the program. In this case $x=42$ is moved outside the loop.
+
+Thus, in lines 0015-0019 it is shown an empty loop as described in the previous paragraph.\\
+
+\subsection{Loop with if statements }
+
+
+
+
+\begin{lstlisting}[style=LuaStyle]
+-- Loop with if statement
+
+n = 10000
+x = 0
+
+for i=1,n do
+	if i%10 == 0 then
+		x = x + 1
+	end
+end
+\end{lstlisting}
+
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start loop_if.lua:6
+---- TRACE 1 IR
+0001 >  int SLOAD  #2    CRI
+0002 >  int LE     0001  +2147483646
+0003    int SLOAD  #1    CI
+0004    int MOD    0003  +10 
+0005 >  int NE     0004  +0  
+0006  + int ADD    0003  +1  
+0007 >  int LE     0006  0001
+0008 ------ LOOP ------------
+0009    int MOD    0006  +10 
+0010 >  int NE     0009  +0  
+0011  + int ADD    0006  +1  
+0012 >  int LE     0011  0001
+0013    int PHI    0006  0011
+---- TRACE 1 stop -> loop
+
+---- TRACE 2 start 1/4 loop_if.lua:8
+---- TRACE 2 IR
+0001    int SLOAD  #1    PI
+0002    int SLOAD  #2    PRI
+0003    fun SLOAD  #0    R
+0004    tab FLOAD  0003  func.env
+0005    int FLOAD  0004  tab.hmask
+0006 >  int EQ     0005  +63 
+0007    p32 FLOAD  0004  tab.node
+0008 >  p32 HREFK  0007  "x"  @33
+0009 >  num HLOAD  0008
+0010    num ADD    0009  +1  
+0011    num HSTORE 0008  0010
+0012    int ADD    0001  +1  
+0013 >  int LE     0012  0002
+0014    num CONV   0012  num.int
+---- TRACE 2 stop -> 1
+\end{lstlisting}
+
+SLOAD at line 0001 loads the register \textit{N} and in line 0002 it it checked if the value falls into the signed 32-bit integer range (it is smaller than +2147483646).
+
+At line 0003 SLOAD (store a value) is used to init the register used by the loop.
+
+Lines 0004-0007 contain the loop unrolled and lines 0009-0012 the actual loop. It is performed the modulus operation (MOD), it is checked that its result is not equal to zero (NE), then the loop is incremented (ADD) and  it is checked the loop termination (LE). The loop is empty because in the root trace (TRACE 1) the if-statement condition is not satisfied. 
+
+As it is showed in the dump here there are  two traces: the original root trace (TRACE 1) and a new trace (TRACE 2) called side trace. This is necessary because there is a branch (if-statement) in the code and traces are not allowed to have internal branches. The root trace will internally handle the case when the loop index is not multiple of 10 but it will exit to the side trace otherwise. The side trace then rejoins the root trace as is written in the dump \texttt{---- TRACE 2 stop -> 1}. The effect is that the loop alternates between saying inside the root trace and exiting to the side trace. Line 0005 contains a guard indicated by the symbol $>$ that is a possible exit from the trace.
+
+The first two lines of TRACE 2 are simple init of the registers. Lines 0003-0009 take the reference and load \textit{x}. Then, in line 0010 it is executed $x=x+1$ and the result is stored (line 0011). Finally the loop is incremented (line 0012) and it is checked the loop termination (line 0013). The last line 0014 converts the number in integer.\\
+\texttt{Ref. https://github.com/lukego/blog/issues/}\\
+
+\subsection{Nested loop}
+In the case of nested loop the compiler generates again two traces: one that refers to the inner loop (TRACE 1) and another for the outer loop (TRACE 2). Remember that for each loop there will always be a corresponding trace.
+\begin{lstlisting}[style=LuaStyle]
+-- Nested loop
+x = 0
+for i=1,10e3 do
+	x = x*3
+	for j=1,999 do
+		x = x+1
+	end
+end
+\end{lstlisting}
+
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start loop_nested.lua:5
+---- TRACE 1 IR
+0001    int SLOAD  #5    CI
+0002    fun SLOAD  #0    R
+0003    tab FLOAD  0002  func.env
+0004    int FLOAD  0003  tab.hmask
+0005 >  int EQ     0004  +63 
+0006    p32 FLOAD  0003  tab.node
+0007 >  p32 HREFK  0006  "x"  @33
+0008 >  num HLOAD  0007
+0009  + num ADD    0008  +1  
+0010    num HSTORE 0007  0009
+0011  + int ADD    0001  +1  
+0012 >  int LE     0011  +999
+0013 ------ LOOP ------------
+0014  + num ADD    0009  +1  
+0015    num HSTORE 0007  0014
+0016  + int ADD    0011  +1  
+0017 >  int LE     0016  +999
+0018    int PHI    0011  0016
+0019    num PHI    0009  0014
+---- TRACE 1 stop -> loop
+
+---- TRACE 2 start 1/3 loop_nested.lua:3
+---- TRACE 2 IR
+0001    num SLOAD  #1    I
+0002    num ADD    0001  +1  
+0003 >  num LE     0002  +10000
+0004    fun SLOAD  #0    R
+0005    tab FLOAD  0004  func.env
+0006    int FLOAD  0005  tab.hmask
+0007 >  int EQ     0006  +63 
+0008    p32 FLOAD  0005  tab.node
+0009 >  p32 HREFK  0008  "x"  @33
+0010 >  num HLOAD  0009
+0011    num MUL    0010  +3  
+0012    num HSTORE 0009  0011
+---- TRACE 2 stop -> 1
+\end{lstlisting}
+
+TRACE 1 contains the instruction of the inner loop. At line 0001 SLOAD (store a value) is used to init the register used by the loop. Lines 0002-0008 take the reference and load \textit{x}. Lines 0009-0012 contain the loop unrolled and lines 0014-0017 the actual loop. The value of x is incremented by 1 (ADD) and the result is stored (HSTORE), then the loop is incremented (ADD) and  it is checked the loop termination (LE). Then, in line 0010 it is executed $x=x+1$ and the result is stored (line 0011). Finally the loop is incremented (line 0012) and it is checked the loop termination (line 0013). The last line 0014 converts the number in integer.
+
+In TRACE 2 it is shown the instruction related to the outer loop. In this case is computed the operation $x=x*3$ (line 0011). The other lines show instruction previously described.\\
