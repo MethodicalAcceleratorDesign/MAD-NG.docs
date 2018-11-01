@@ -2,7 +2,7 @@
 
 \section{Simple examples}
 
-\subsection{Empty loop}
+\subsection{Loops}
 
 \begin{lstlisting}[style=LuaStyle]
 -- Empty loop
@@ -205,3 +205,79 @@ end
 TRACE 1 contains the instruction of the inner loop. At line 0001 SLOAD (store a value) is used to init the register used by the loop. Lines 0002-0008 take the reference and load \textit{x}. Lines 0009-0012 contain the loop unrolled and lines 0014-0017 the actual loop. The value of x is incremented by 1 (ADD) and the result is stored (HSTORE), then the loop is incremented (ADD) and  it is checked the loop termination (LE). Then, in line 0010 it is executed $x=x+1$ and the result is stored (line 0011). Finally the loop is incremented (line 0012) and it is checked the loop termination (line 0013). The last line 0014 converts the number in integer.
 
 In TRACE 2 it is shown the instruction related to the outer loop. In this case is computed the operation $x=x*3$ (line 0011). The other lines show instruction previously described.\\
+
+NOTE: If the inner loop has a low iteration count, it'll be
+unrolled and inlined. For most loop nestings there'll be a single trace for the outer loop that goes 'around' the inner loop and joins its exit with its entry. Otherwise traces link to each other
+in linear pieces.\\
+Ref. Mike Pall \textit{https://www.freelists.org/post/luajit/How-does-LuaJITs-trace-compiler-work,1}\\
+
+\section{Function}
+
+\subsection{Recursive function}
+
+\begin{lstlisting}[style=LuaStyle]
+-- Recursive Factorial Function
+
+N = 1e4 
+
+function factorial(n)
+	if n>=1 then
+		return n * factorial(n-1)
+	else
+		return 1
+	end
+end
+
+factorial(N)
+\end{lstlisting}
+
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start function_recursive.lua:5
+---- TRACE 1 IR
+0001 >  num SLOAD  #1    T
+0002 >  num GE     0001  +1  
+0003    fun SLOAD  #0    R
+0004    tab FLOAD  0003  func.env
+0005    int FLOAD  0004  tab.hmask
+0006 >  int EQ     0005  +63 
+0007    p32 FLOAD  0004  tab.node
+0008 >  p32 HREFK  0007  "factorial" @34
+0009 >  fun HLOAD  0008
+0010    num SUB    0001  +1  
+0011 >  fun EQ     0009  function_recursive.lua:5
+0012 >  num GE     0010  +1  
+0013    tab FLOAD  function_recursive.lua:5  func.env
+0014    int FLOAD  0013  tab.hmask
+0015 >  int EQ     0014  +63 
+0016    p32 FLOAD  0013  tab.node
+0017 >  p32 HREFK  0016  "factorial" @34
+0018 >  fun HLOAD  0017
+0019    num SUB    0010  +1  
+0020 >  fun EQ     0018  function_recursive.lua:5
+0021 >  num GE     0019  +1  
+0022    num SUB    0019  +1  
+---- TRACE 1 stop -> up-recursion
+\end{lstlisting}
+
+
+\section{Aborts}
+
+\subsection{Abort messages}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{8cm}|}
+\hline
+loop unroll limit reached & the loop unrolling  optimisation has been applied too many times in a given trace. The default is 15, but this number can be raised\\
+\hline
+
+\end{tabular}
+\caption{Abort messages}
+\label{tab:abort-messages}
+\end{table}
+
+
+
+
+
+\newpage
