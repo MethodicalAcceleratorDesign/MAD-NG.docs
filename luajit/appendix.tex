@@ -151,9 +151,7 @@ IRBUFHDR\_APPEND & Append to buffer \\
 
 \begin{table}[H]
 \centering
-\caption{
-  Possible value for TOSTR argument (See lj\_ir.h)
-}
+\caption{Possible value for TOSTR argument (See lj\_ir.h)}
 \label{tab:dump-tostr}
 \begin{tabular}{|l|l|l|}
 \hline
@@ -184,7 +182,7 @@ the svg file. Assuming \emph{\$flamegraph} contains the path to the tool (/Flame
 \begin{lstlisting}
   export flamegraph=./FlameGraph/flamegraph.pl
   mad -jp=G,myapp.out myapp.mad
-  $flamegraph myapp.out > myapp.svg
+  \$flamegraph myapp.out > myapp.svg
 \end{lstlisting}
 \end{center}
 Then you can open myapp.svg with your favorite viewer.
@@ -230,7 +228,7 @@ name:reg[imm32]             & [reg + sizeof(ctype)*imm32]\\
 name:reg[imm32].field       & [reg + sizeof(ctype)*imm32 + offsetof(ctype,field)]\\
 name:reg...                 & [reg + (int)(ptrdiff\_t)\&(((ctype*)0)...)]\\\hline
 \end{tabular}
-\caption{Syntactic sugar provided by tab\keyword{.type} macro}
+\caption{Syntactic sugar provided by \keyword{.type} macro}
 \label{tab:type-sugar}
 \end{table}
 

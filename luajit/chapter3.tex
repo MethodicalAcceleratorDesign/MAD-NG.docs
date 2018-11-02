@@ -28,7 +28,7 @@ This can be noted in two ways. First, when the BC is a loop the counters are
 decremented twice as fast as for function call. Second, in most cases, if a
 parent trace hit an inner loop, it is aborted.
 
-\paratitle{Loops:}
+\subsubsection{Loops:}
 
 \begin{itemize}
 	\item \emph{hotloop} : hash the pc, decrement the corresponding counter and
@@ -37,7 +37,7 @@ jmp to vm\_hotloop if it underflows (vm\_(arch).dasc).
 	\item \emph{lj\_trace\_hot} : start recording a trace (lj\_trace.c).
 \end{itemize}
 
-\paratitle{Functions:}
+\subsubsection{Functions:}
 
 \begin{itemize}
 	\item \emph{hotcall} : hash the pc, decrement the corresponding counter and
@@ -209,15 +209,13 @@ optimization \cite{luajit-sink} and a mail on the subject \cite{luajit-mail-1}.
 
 
 
-
 %===============================================================================
 % TRACE OPTIMIZER
 %===============================================================================
 
 \section{Trace optimizer}
 \label{Sec:TO}
-    
-    
+
 We can differentiate in the code, three types of optimizations.
 First of all, there are the optimizations present in the optimization engine.
 They are implemented in the \emph{lj\_opt\_*.c} files and thus easy to spot out.
@@ -340,9 +338,7 @@ elimination and array bounds check elimination.
 
 The memory access optimization perform by the FOLD engine and implemented
 in the lj\_opt\_mem.c file consists of three components, the alias
-analysis using high-level semantic disambiguation, Load to load and store to load
-forwarding, and finally dead-store elimination.
-
+analysis using high-level semantic disambiguation, Load to load and store to load forwarding, and finally dead-store elimination.    
 
 %===============================================================================
 %   ASSEMBLER
@@ -378,5 +374,3 @@ and call the compiled trace instead.
 %     - tail-rec is detected (limit reach in the same framedepth)
 %     - limit reach in up recursion (positive frame depth)
 %   - hit a compiled function (link to its trace)
-    
-    

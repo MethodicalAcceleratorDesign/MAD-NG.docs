@@ -8,15 +8,16 @@
 \section{Frontend}
 \label{Sec:frontend}
 
-%============================================================
+
+%===============================================================================
 % Lexer
-%============================================================
+%===============================================================================
 
 \subsection{Lexer}
 \label{Subsec:Lexer}
 
 The lexer is implemented in the \emph{lj\_lex.c} and \emph{lj\_lex.h} files.
-It use \emph{LexState} as a principal data structure. The user-provided
+It uses \emph{LexState} as a principal data structure. The user-provided
 \emph{rfunc} function is used to read a chunk of data to process. It is accessed
 through the \emph{p} and \emph{pe} pointers. The main function is
 \emph{lex\_scan} that dispatches the work to other functions depending of the
@@ -55,8 +56,9 @@ typedef struct LexState {
 } LexState;
 \end{lstlisting}
 
-%============================================================% Parser
-%============================================================
+%===============================================================================
+% Parser
+%===============================================================================
 
 \subsection{Parser}
 \label{Subsec:Parser}
@@ -100,9 +102,9 @@ typedef struct FuncState {
 } FuncState;
 \end{lstlisting}
 
-%============================================================
+%===============================================================================
 % Bytecode frontend
-%============================================================
+%===============================================================================
 
 \subsection{Bytecode frontend}
 \label{Subsec:bc-frontend}
@@ -125,10 +127,10 @@ data-structure.
 
  \section{Internals}
  \label{Sec:Internals}
-    
-%====================================================================
+
+%===============================================================================
 % Tagged value
-%====================================================================
+%===============================================================================
 
 \subsection{Tagged value}
 \label{Subsec:tagged-value}
@@ -179,9 +181,9 @@ object.
 \end{tabular}
 \end{table}
 
-%====================================================================
+%===============================================================================
 % String Internalization
-%====================================================================
+%===============================================================================
 
 \subsection{String Internalization}
 \label{Subsec:string-inter}
@@ -211,8 +213,9 @@ typedef struct global_State {
 }
 \end{lstlisting}
 
-%====================================================================% Lua table
-%====================================================================
+%===============================================================================
+% Lua table
+%===============================================================================
 
 \subsection{Lua table}
 \label{Subsec:table}
@@ -258,9 +261,9 @@ typedef struct GCtab {
 } GCtab;
 \end{lstlisting}
 
-%====================================================================
+%===============================================================================
 % Garbage collector
-%====================================================================
+%===============================================================================
 
 \subsection{Garbage collector}
 \label{Subsec:gc}
@@ -306,9 +309,9 @@ typedef struct GCState {
 } GCState;
 \end{lstlisting}
 
-%====================================================================
+%===============================================================================
 % Allocator
-%====================================================================
+%===============================================================================
 
 \subsection{Allocator}
 \label{Subsec:alloc}
@@ -356,9 +359,9 @@ struct malloc_state {
 };
 \end{lstlisting}
 
-%====================================================================
+%===============================================================================
 % Function
-%====================================================================
+%===============================================================================
 
 \subsection{Function}
 \label{Subsec:func}
@@ -393,9 +396,9 @@ typedef struct GCproto {
 } GCproto;
 \end{lstlisting}
 
-%====================================================================
+%===============================================================================
 % Fast Function
-%====================================================================
+%===============================================================================
 
 \subsection{Fast Function}
 \label{Subsec:ffunc}
@@ -409,9 +412,9 @@ that will try to recover from the failure if possible. Examples of recoverable
 cases might be : a wrong argument type if coercion succeeds or a stack overflow
 if stack reallocation succeeds (see comment in lj\_lib.h).
 
-%====================================================================
+%===============================================================================
 % GC64 mode
-%====================================================================
+%===============================================================================
 
 \subsection{GC64 mode}
 \label{Subsec:gc64}
@@ -451,11 +454,9 @@ stack unwinding or the implementation of the fast path of asm fast library funct
 \section{Library}
 \label{Sec:Library}
     
-%!TEX root = ../../../FYP_Dissertation.tex
-
-%====================================================================
+%===============================================================================
 % Standard library
-%====================================================================
+%===============================================================================
 
 \subsection{Standard library}
 \label{Subsec:std-lib}
@@ -485,9 +486,9 @@ lib\_table.c                    & Table library (new, clear, insert, foreach, et
 \end{tabular}
 \end{table}
 
-%====================================================================
+%===============================================================================
 % LuaJIT extensions
-%====================================================================
+%===============================================================================
 
 \subsection{LuaJIT extensions}
 \label{Subsec:lj-extensions}
@@ -501,9 +502,9 @@ in \emph{lib\_ffi.c} that provides functions to interact with the FFI library
 that provides functions allowing to control the behavior of the JIT compiler
 engine (see JIT Part \ref{Chapt:JIT}).
 
-%====================================================================
+%===============================================================================
 % The C API
-%====================================================================
+%===============================================================================
 
 \subsection{The C API}
 \label{Subsec:c-api}
@@ -512,9 +513,9 @@ All those libraries are implemented using the Lua C API that allows to create
 and manipulate Lua data, manage the Lua stack etc... The implementation for those
 functions can be found in \emph{lj\_api.c}, \emph{lj\_lib.c} and \emph{lib\_aux.c}.
 
-%====================================================================
+%===============================================================================
 % Build Library
-%====================================================================
+%===============================================================================
 
 \subsection{Build Library}
 \label{Subsec:build-lib}
@@ -625,7 +626,6 @@ LJLIB\_NOREG                         & to not register a function in lj\_lib\_cf
 \end{tabularx}
 \end{table}
 
-
 %===============================================================================
 % Foreign function interface
 %===============================================================================
@@ -636,6 +636,363 @@ LJLIB\_NOREG                         & to not register a function in lj\_lib\_cf
 %!TEX root = ../../../FYP_Dissertation.tex
 
 The FFI (Foreign Function Interface) is one of LuaJIT extensions modules. It
+allows to call external C functions and use C data structures from pure Lua code.
+A very small (not representative) example can be seen below.
+
+\begin{lstlisting}[style=LuaStyle]
+local ffi = require("ffi")
+ffi.cdef[[
+  typedef struct points { int x,y,z; } points;
+]]
+local p1 = ffi.new("points", { 1, 2, 3 })
+print(p1.x) --  1
+p1.x = 11
+print(p1.x) -- 11
+\end{lstlisting}
+There is some official documentation for FFI users on \emph{luajit.org}
+where you can find the motivation for the FFI module \cite{ffi-motivation},
+a small tutorial \cite{ffi-tuto}, the API documentation \cite{ffi-api} and the
+FFI semantics \cite{ffi-semantics}. There is also a reflection
+library for FFI ctypes \cite{ffi-reflect} and its documentation
+\cite{ffi-reflect-doc} for anyone interested in exploring the ctype of a given cdata.
+
+This chapter will present the internal implementation of the FFI and not its use.
+The organisation of the information will follow the actual implementation files.
+
+\paratitle{lib\_ffi.c:}\\
+This file is the top level file of the FFI library. It contains the
+implementation of the FFI API, the function that makes the connection between
+Lua and C using the standard Lua \emph{C API}.
+It is also responsible for loading the FFI module (\emph{luaopen\_ffi}).
+This file mainly use and connect together functionalities implemented in other
+files. It is for example responsible to allocate and initialize the main state
+(\emph{CTState}) explained below.
+
+\paratitle{lj\_obj.h:}\\
+From this file, we are only interested in this chapter by the \emph{GCcdata}
+structure that is the garbage-collected object representing any C data use
+through and with the FFI. You can see its composition bellow. The main thing to
+see here is the \emph{ctypeid} which is the index of the ctype describing the
+attached data (the payload follows the structure in memory).
+\begin{lstlisting}[style=CStyle]
+typedef struct GCcdata {
+  GCHeader;
+  uint16_t ctypeid;	/* C type ID. */
+} GCcdata;
+\end{lstlisting}
+
+\paratitle{lj\_ctype.h:}\\
+Below is the \emph{CType} data structure responsible for describing to the ffi
+what kind of data the \emph{cdata} represent (e.g. variable, struct,
+function, etc.). A detailed breakdown of how the information is laid out can
+be seen in Table \ref{tab:ffi-ctype}. The meaning of the abbreviations used in
+the previous table can be seen in Table \ref{tab:ffi-ctype2}.
+\begin{lstlisting}[style=CStyle]
+typedef struct CType {
+  CTInfo info;   /* Type info. */
+  CTSize size;   /* Type size or other info. */
+  CTypeID1 sib;  /* Sibling element. */
+  CTypeID1 next; /* Next element in hash chain. */
+  GCRef name;    /* Element name (GCstr). */
+} CType;
+\end{lstlisting}
+
+%          +----------------------------+--------+-------+-------+-------+
+%          |            info            |        |       |       |       |
+%          +----------------------------+  size  |  sid  | next  | name  |
+%          |type|  flags | A  |   cid   |        |       |       |       |
+% +-------------------------------------+--------------------------------+
+% |size    | 4  |    8   | 4  |   16    |   32   |  16   |  16   | GCRef |
+% |--------+----------------------------+--------+-------+-------+-------+
+% |NUM     |0000|BFcvUL..| A  |    x    | size   |       | type  |       |
+% |STRUCT  |0001|..cvu..V| A  |    x    | size   | field | name? | name? |
+% |PTR     |0010|..cvR...| A  |   cid   | size   |       | type  |       |
+% |ARRAY   |0011|VCcv...V| A  |   cid   | size   |       | type  |       |
+% |VOID    |0100|..cv....| A  |    x    | size   |       | type  |       |
+% |ENUM    |0101|........| A  |   cid   | size   | const | name? | name? |
+% |FUNC    |0110|....VS..|..cc|   cid   | nargs  | field | name? | name? |
+% |TYPEDEF |0111|........|....|   cid   |   x    |       | name  | name  |
+% |ATTRIB  |1000|....|attrnum |   cid   | attr   | sib?  | type? |       |
+% |FIELD   |1001|........|....|   cid   | offset | field |       | name? |
+% |BITFIELD|1010|B.cvU| csz   |.bsz|.pos| offset | field |       | name? |
+% |CONSTVAL|1011|..c.....|....|   cid   | value  | const | name  | name  |
+% |EXTERN  |1100|........|....|   cid   |   x    | sib?  | name  | name  |
+% |KW      |1101|........|....|   tok   | size   |       | name  | name  |
+% +-------------------------------------+--------+-------+-------+-------+
+\begin{table}[p]
+\footnotesize
+\centering
+\caption{Summary of CType informations}
+\label{tab:ffi-ctype}
+\begin{tabular}{l|c|c|c|c|c|l|c|c|c|c|}
+\cline{2-11}
+                               & \multicolumn{6}{c|}{info}                                                         & \multirow{2}{*}{size} & \multirow{2}{*}{sid} & \multirow{2}{*}{next} & \multirow{2}{*}{name} \\ \cline{2-7}
+                               & type & \multicolumn{2}{c|}{flags}          & A         & \multicolumn{2}{c|}{cid} &                       &                      &                       &                       \\ \hline
+\multicolumn{1}{|l|}{size}     & 4    & \multicolumn{2}{c|}{8}              & 4         & \multicolumn{2}{c|}{16}  & 32                    & 16                   & 16                    & GCRef                 \\ \hline
+\multicolumn{1}{|l|}{NUM}      & 0000 & \multicolumn{2}{c|}{BFcvUL..}       & A         & \multicolumn{2}{c|}{}    & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{STRUCT}   & 0001 & \multicolumn{2}{c|}{..cvu..V}       & A         & \multicolumn{2}{c|}{}    & size                  & field                & name                  & name                  \\
+\multicolumn{1}{|l|}{PTR}      & 0010 & \multicolumn{2}{c|}{..cvR...}       & A         & \multicolumn{2}{c|}{cid} & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{ARRAY}    & 0011 & \multicolumn{2}{c|}{$V^2$Ccv...V}   & A         & \multicolumn{2}{c|}{cid} & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{VOID}     & 0100 & \multicolumn{2}{c|}{..cv....}       & A         & \multicolumn{2}{c|}{}    & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{ENUM}     & 0101 & \multicolumn{2}{c|}{........}       & A         & \multicolumn{2}{c|}{cid} & size                  & const                & name                  & name                  \\
+\multicolumn{1}{|l|}{FUNC}     & 0110 & \multicolumn{2}{c|}{....$V^3$S..}   & ..cc      & \multicolumn{2}{c|}{cid} & nargs                 & field                & name                  & name                  \\
+\multicolumn{1}{|l|}{TYPEDEF}  & 0111 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} &                       &                      & name                  & name                  \\
+\multicolumn{1}{|l|}{ATTRIB}   & 1000 & ....             & \multicolumn{2}{c|}{attrnum} & \multicolumn{2}{c|}{cid} & attr                  & sib                  & type                  &                       \\
+\multicolumn{1}{|l|}{FIELD}    & 1001 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} & offset                & field                &                       & name                  \\
+\multicolumn{1}{|l|}{BITFIELD} & 1010 & B.cvU            & \multicolumn{2}{c|}{csz}     & .bsz        & .pos       & offset                & field                &                       & name                  \\
+\multicolumn{1}{|l|}{CONSTVAL} & 1011 & \multicolumn{2}{c|}{..c.....}       & ....      & \multicolumn{2}{c|}{cid} & value                 & const                & name                  & name                  \\
+\multicolumn{1}{|l|}{EXTERN}   & 1100 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} &                       & sib                  & name                  & name                  \\
+\multicolumn{1}{|l|}{KW}       & 1101 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{tok} & size                  &                      & name                  & name                  \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\footnotesize
+\centering
+\caption{Definition of CType fields}
+\label{tab:ffi-ctype2}
+\begin{tabular}{ll|l|l|}
+\hline
+\multicolumn{2}{|c|}{\textit{\textbf{flags}}} & \multicolumn{2}{c|}{\textit{\textbf{A}}}                                    \\ \hline
+\multicolumn{1}{|l|}{B}      & Boolean        & A                      & allignement of $2^A$ bytes                         \\
+\multicolumn{1}{|l|}{F}      & Float          & cc                     & calling convention                                 \\
+\multicolumn{1}{|l|}{c}      & const          & attrnum                & Attributes number (see CTA\_* in lj\_ctype.h)      \\
+\multicolumn{1}{|l|}{v}      & volatile       & csz                    & size of the memory slot                            \\ \cline{3-4}
+\multicolumn{1}{|l|}{U}      & Unsigned       & \multicolumn{2}{c|}{\textit{\textbf{cid}}}                                  \\ \cline{3-4}
+\multicolumn{1}{|l|}{L}      & Long           & cid                    & child id                                           \\
+\multicolumn{1}{|l|}{u}      & union          & bsz                    & number of bits of the bit-field                    \\
+\multicolumn{1}{|l|}{V}      & VLA            & pos                    & starting position in bit inside the memory slot    \\
+\multicolumn{1}{|l|}{R}      & reference      & tok                    & token id                                           \\ \cline{3-4}
+\multicolumn{1}{|l|}{$V^2$}  & Vector         & \multicolumn{2}{c|}{\textit{\textbf{size}}}                                 \\ \cline{3-4}
+\multicolumn{1}{|l|}{C}      & Complex        & size                   & size in bytes                                      \\
+\multicolumn{1}{|l|}{$V^3$}  & Vararg         & nargs                  & number of fixed arguments of a function            \\
+\multicolumn{1}{|l|}{S}      & SSE arguments  & offset                 & offset in bytes from the start of the struct       \\ \cline{1-2}
+                             &                & value                  & the actual constant value                          \\
+                             &                & attr                   & value of the attribute                             \\ \cline{3-4}
+                             &                & \multicolumn{2}{c|}{\textit{\textbf{sib}}}                                  \\ \cline{3-4}
+                             &                & field                  & function args or struc/union field                 \\
+                             &                & const                  & constant value                                     \\
+                             &                & sib                    & chain of attribute or object of the attribute      \\ \cline{3-4}
+                             &                & \textit{\textbf{name}} & GCRef to a string containing the identifier.       \\ \cline{3-4}
+                             &                & \textit{\textbf{next}} & chain for hash collisions in cts-\textgreater hash \\ \cline{3-4}
+\end{tabular}
+\end{table}
+
+The most important struct of the FFI is the \emph{CTState} bellow. It contains
+all the internalize ctype in the \emph{tab} table. \emph{finalizer} is a weak
+keyed Lua table (values can be garbage collected if the key is not referenced
+elsewhere) containing all finalizer registered with the \emph{ffi.gc} method.
+\emph{miscmap} is a Lua table mapping all metatable of ctypes registered using
+the \emph{ffi.metatype} method in the negative CTypeID range and all callback
+functions in the positive callback slot range. Any metatable added to miscmap is
+definitive and never collected. \emph{hash} is an array used as a hash table
+for quick CTypeID checks. It map both, the hashed name of named elements and the
+hashed type (info and size) for unnamed elements to the corresponding CTypeID.
+Collisions are handled in a linked list using the \emph{next} field of the
+\emph{CType} struct.
+
+\begin{adjustbox}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle]
+typedef struct CTState {
+  CType *tab;        /* C type table. */
+  CTypeID top;       /* Current top of C type table. */
+  MSize sizetab;     /* Size of C type table. */
+  lua_State *L;      /* Lua state (for errors and allocations). */
+  global_State *g;   /* Global state. */
+  GCtab *finalizer;  /* Map of cdata to finalizer. */
+  GCtab *miscmap;    /* Map -CTypeID->metatable and cb slot->func. */
+  CCallback cb;      /* Temporary callback state. */
+  CTypeID1 hash[...];/* Hash anchors for C type table. */
+} CTState;
+\end{lstlisting}
+\end{minipage}
+\end{adjustbox}
+
+\paratitle{lj\_ctype.c:}\\
+This file provides functions to manage \emph{CType}. It is divided into three
+parts. The first one is the allocation, creation and internalization of
+\emph{CType}. The second one is providing getters to get C type information.
+The last one is  type representation, providing the necessary functions to
+convert a \emph{CType} to a human readable string representation.
+\emph{lj\_ctype\_repr} is the entry function that returns the internalize string
+representation. It uses the struct \emph{CTRepr} bellow to create the
+representation by appending/prepending characters through the pb/pe pointers
+into the buffer. The main function is the \emph{ctype\_repr} that contains a
+switch on the \emph{CType} info.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CTRepr {
+  char *pb, *pe; /* Points to begining/end inside the buffer*/
+  CTState *cts;  /* C type state. */
+  lua_State *L;
+  int needsp;    /* Next append needs an extra space character */
+  int ok;        /* Indicate if buf is currently a valid type */
+  char buf[...]; /* String buffer of the ctype being constructed */
+} CTRepr;
+\end{lstlisting}
+
+\paratitle{lj\_cparse.h:}\\
+The cparser is responsible for parsing the string of the C declarations looking
+for types or external symbols. Its code structure is quite close to the
+Lua lexer/parser. Its principal struct is the \emph{CPState} bellow which is
+similar to \emph{LexState}. In this struct, \emph{tmask} is a mask constraining
+the possible ctype of the next identifier. The \emph{mode} defines the behavior
+of the parser with respect to the input. It's different behavior can be of the
+type: accepting multiple declaration, skipping errors, accept/reject abstract
+declarators, accept/reject implicit declarators etc... (see CPARSE\_MODE\_* for
+full definition).
+
+\begin{adjustbox}{bgcolor=backgroundColour, max width=\textwidth}
+\begin{lstlisting}[style=CStyle]
+typedef struct CPState {
+  CPChar c;               /* Current character. */
+  CPToken tok;            /* Current token. */
+  CPValue val;            /* Token value. */
+  GCstr *str;             /* Interned string of identifier/keyword. */
+  CType *ct;              /* C type table entry. */
+  const char *p;          /* Current position in input buffer. */
+  SBuf sb;                /* String buffer for tokens. */
+  lua_State *L;           /* Lua state. */
+  CTState *cts;           /* C type state. */
+  TValue *param;          /* C type parameters. (\$xyz)*/
+  const char *srcname;    /* Current source name. */
+  BCLine linenumber;      /* Input line counter. */
+  int depth;              /* Recursive declaration depth. */
+  uint32_t tmask;         /* Type mask for next identifier. */
+  uint32_t mode;          /* C parser mode. */
+  uint8_t packstack[...]; /* Stack for pack pragmas. */
+  uint8_t curpack;        /* Current position in pack pragma stack. */
+} CPState;
+\end{lstlisting}
+\end{adjustbox}
+
+\paratitle{lj\_cparse.c:}\\
+This file contains the code of a simple lexer and a simplified, not valid c
+parser. It uses the \emph{CPState} for the parsing of the input
+string and the \emph{CPDecl} structure below for the construction of the
+corresponding CType. During parsing the chain of typdef is unrolled (typdef are
+still internalized for future reference but are not chained to the created
+ctype.)
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CPDecl {
+  CPDeclIdx top;     /* Top of declaration stack. */
+  CPDeclIdx pos;     /* Insertion position in declaration chain. */
+  CPDeclIdx specpos; /* Saved position for declaration specifier. */
+  uint32_t mode;     /* Declarator mode (same as CPState) */
+  CPState *cp;       /* C parser state. */
+  GCstr *name;       /* Name of declared identifier (if direct). */
+  GCstr *redir;      /* Redirected symbol name. */
+  CTypeID nameid;    /* Existing typedef for declared identifier. */
+  CTInfo attr;       /* Attributes. */
+  CTInfo fattr;      /* Function attributes. */
+  CTInfo specattr;   /* Saved attributes. */
+  CTInfo specfattr;  /* Saved function attributes. */
+  CTSize bits;       /* Field size in bits (see Ctype bsz). */
+  CType stack[...];  /* Type declaration stack. */
+} CPDecl;
+\end{lstlisting}
+
+\paratitle{lj\_cdata.c:}\\
+This file contains the functions responsible for doing cdata management, such as
+allocations, free, finilizer, getter, setter and indexing.
+
+\paratitle{lj\_cconv.c:}\\
+This file is responsible for ctype conversion. It is divided in 5 parts: C type
+compatibility checks, C type to C type conversion, C type to TValue conversion
+(from C to Lua : i.e returned values), TValue to C type conversion (from Lua to
+c: i.e passed arguments), and initializing C type with TValues (Initialization
+of struct/union/array with Lua object)
+
+\paratitle{lj\_carith.c:}\\%
+This file contains the implementation far all built-in cdata arithmetic, such
+as pointers arithmetic and integer arithmetic. It mainly manipulate some
+\emph{CDArith} structure shown below.
+\begin{lstlisting}[style=CStyle]
+typedef struct CDArith {
+  uint8_t *p[2]; /* data  of the two operands */
+  CType  *ct[2]; /* ctype of the two operands */
+} CDArith;
+\end{lstlisting}
+
+\paratitle{lj\_ccall.c:}\\
+This file contains the code handling calls to C function. It does struct/array
+register classification (see CCALL\_RCL\_*), computing how it can be passed
+as argument/return values (in gp register, sse register or memory). It handles
+then the decomposition/packing depending of the calling convention picked.
+
+\paratitle{lj\_ccall.h:}\\
+Below is the main structure use for C function call.
+\begin{lstlisting}[style=CStyle]
+typedef struct CCallState {
+  void (*func)(void); /* Pointer to called function. */
+  uint32_t spadj;     /* Stack pointer adjustment. */
+  uint8_t nsp;        /* Number of stack slots. */
+  uint8_t retref;     /* Return value by reference. */
+  uint8_t ngpr;       /* Number of arguments in GPRs. */
+  uint8_t nfpr;       /* Number of arguments in FPRs. */
+  [...]
+  FPRArg fpr[...];    /* Arguments/results in FPRs. (SSE) */
+  GPRArg gpr[...];    /* Arguments/results in GPRs. */
+  GPRArg stack[...];  /* Stack slots. */
+} CCallState;
+\end{lstlisting}
+
+\paratitle{lj\_ccallback.c:}\\
+This file contains the FFI C callback handling. The principal structure is the
+\emph{CCallback} below (see \emph{lj\_ctype.h}) mainly use through the cb field
+of the \emph{CTState}
+structure. Each callback is associated with a unique cb slot and the
+\emph{cts-$>$miscmap} contains the mapping between cb slot and function
+pointers. The \emph{cts.cb.cbid} is a table mapping cb slot to the corresponding
+CTypeID. \emph{cts.cb.mcode} is an mmap'ed executable page that contains a push
+of slot id and a jump to \emph{lj\_vm\_ffi\_callback} (the entry in this page
+corresponds to the cb address provided to the C code). Below is a description
+of the call order when a callback is called.
+
+\begin{itemize}
+	\item C call a callback address
+	\item arrive in the callback mcode page (push the appropriate slot id and call lj\_vm\_ffi\_callback)
+	\item arrive in lj\_vm\_ffi\_callback that charge in registers the callback.fpr/gpr + stack in registers
+	\item arrive in lj\_ccallback\_enter that prepare the Lua state and do conversion of argument from C to Lua type.
+	\item arrive in lj\_vm\_ffi\_callback : execute the callback with this Lua state
+	\item Lua callback
+	\item arrive in $|->$cont\_ffi\_callback: call lj\_ccallback\_leave
+	\item arrive in lj\_ccallback\_leave convert return value from Lua to C.
+	\item arrive in $|->$cont\_ffi\_callback: return to C code with the return value in register/stack.
+	\item arrive in C code.
+\end{itemize}
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CCallback {
+  FPRCBArg fpr[...]; /* Arguments/results in FPRs. */
+  intptr_t gpr[...]; /* Arguments/results in GPRs. */
+  intptr_t *stack;   /* Pointer to arguments on stack. */
+  void *mcode;       /* Machine code for callback func. pointers. */
+  CTypeID1 *cbid;    /* Callback type table. */
+  MSize sizeid;      /* Size of callback type table. */
+  MSize topid;       /* Highest unused callback type table slot. */
+  MSize slot;        /* Current callback slot. */
+} CCallback;
+\end{lstlisting}
+
+\paratitle{lj\_clib.c:}\\
+This file contains the necessary code to load/unload ffi library. It also handles
+the indexing of the external library using named symbol. It uses platform
+specific tools to explore the exposed symbols. Every symbol is resolved only once
+and cached in the \emph{CLibrary} cache table.
+
+\paratitle{lj\_clib.h:}\\
+\begin{lstlisting}[style=CStyle]
+typedef struct CLibrary {
+  void *handle; /* Opaque handle for dynamic library loader. */
+  GCtab *cache; /* Cache resolved symbols. Anchored in ud->env. */
+} CLibrary;
+\end{lstlisting}
+
+
+    The FFI (Foreign Function Interface) is one of LuaJIT extensions modules. It
 allows to call external C functions and use C data structures from pure Lua code.
 A very small (not representative) example can be seen below.
 
@@ -855,7 +1212,7 @@ typedef struct CPState {
   SBuf sb;                /* String buffer for tokens. */
   lua_State *L;           /* Lua state. */
   CTState *cts;           /* C type state. */
-  TValue *param;          /* C type parameters. ($xyz)*/
+  TValue *param;          /* C type parameters. (\$xyz)*/
   const char *srcname;    /* Current source name. */
   BCLine linenumber;      /* Input line counter. */
   int depth;              /* Recursive declaration depth. */
@@ -866,7 +1223,6 @@ typedef struct CPState {
 } CPState;
 \end{lstlisting}
 \end{adjustbox}
-
 \paratitle{lj\_cparse.c:}\\
 This file contains the code of a simple lexer and a simplified, not valid c
 parser. It uses the \emph{CPState} for the parsing of the input
@@ -874,7 +1230,6 @@ string and the \emph{CPDecl} structure below for the construction of the
 corresponding CType. During parsing the chain of typdef is unrolled (typdef are
 still internalized for future reference but are not chained to the created
 ctype.)
-
 \begin{lstlisting}[style=CStyle]
 typedef struct CPDecl {
   CPDeclIdx top;     /* Top of declaration stack. */
@@ -893,18 +1248,15 @@ typedef struct CPDecl {
   CType stack[...];  /* Type declaration stack. */
 } CPDecl;
 \end{lstlisting}
-
 \paratitle{lj\_cdata.c:}\\
 This file contains the functions responsible for doing cdata management, such as
 allocations, free, finilizer, getter, setter and indexing.
-
 \paratitle{lj\_cconv.c:}\\
 This file is responsible for ctype conversion. It is divided in 5 parts: C type
 compatibility checks, C type to C type conversion, C type to TValue conversion
 (from C to Lua : i.e returned values), TValue to C type conversion (from Lua to
 c: i.e passed arguments), and initializing C type with TValues (Initialization
 of struct/union/array with Lua object)
-
 \paratitle{lj\_carith.c:}\\%
 This file contains the implementation far all built-in cdata arithmetic, such
 as pointers arithmetic and integer arithmetic. It mainly manipulate some
@@ -915,13 +1267,11 @@ typedef struct CDArith {
   CType  *ct[2]; /* ctype of the two operands */
 } CDArith;
 \end{lstlisting}
-
 \paratitle{lj\_ccall.c:}\\
 This file contains the code handling calls to C function. It does struct/array
 register classification (see CCALL\_RCL\_*), computing how it can be passed
 as argument/return values (in gp register, sse register or memory). It handles
 then the decomposition/packing depending of the calling convention picked.
-
 \paratitle{lj\_ccall.h:}\\
 Below is the main structure use for C function call.
 \begin{lstlisting}[style=CStyle]
@@ -938,7 +1288,6 @@ typedef struct CCallState {
   GPRArg stack[...];  /* Stack slots. */
 } CCallState;
 \end{lstlisting}
-
 \paratitle{lj\_ccallback.c:}\\
 This file contains the FFI C callback handling. The principal structure is the
 \emph{CCallback} below (see \emph{lj\_ctype.h}) mainly use through the cb field
@@ -950,7 +1299,6 @@ CTypeID. \emph{cts.cb.mcode} is an mmap'ed executable page that contains a push
 of slot id and a jump to \emph{lj\_vm\_ffi\_callback} (the entry in this page
 corresponds to the cb address provided to the C code). Below is a description
 of the call order when a callback is called.
-
 \begin{itemize}
 	\item C call a callback address
 	\item arrive in the callback mcode page (push the appropriate slot id and call lj\_vm\_ffi\_callback)
@@ -963,7 +1311,6 @@ of the call order when a callback is called.
 	\item arrive in $|->$cont\_ffi\_callback: return to C code with the return value in register/stack.
 	\item arrive in C code.
 \end{itemize}
-
 \begin{lstlisting}[style=CStyle]
 typedef struct CCallback {
   FPRCBArg fpr[...]; /* Arguments/results in FPRs. */
@@ -976,13 +1323,11 @@ typedef struct CCallback {
   MSize slot;        /* Current callback slot. */
 } CCallback;
 \end{lstlisting}
-
 \paratitle{lj\_clib.c:}\\
 This file contains the necessary code to load/unload ffi library. It also handles
 the indexing of the external library using named symbol. It uses platform
 specific tools to explore the exposed symbols. Every symbol is resolved only once
 and cached in the \emph{CLibrary} cache table.
-
 \paratitle{lj\_clib.h:}\\
 \begin{lstlisting}[style=CStyle]
 typedef struct CLibrary {
@@ -990,6 +1335,3 @@ typedef struct CLibrary {
   GCtab *cache; /* Cache resolved symbols. Anchored in ud->env. */
 } CLibrary;
 \end{lstlisting}
-
-
-    
