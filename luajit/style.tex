@@ -1,0 +1,119 @@
+\definecolor{mGreen}{rgb}{0,0.5,0}
+\definecolor{mGray}{rgb}{0.95,0.95,0.95}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{mViolet}{rgb}{0.6,0.19,0.8}
+\definecolor{mBlue}{rgb}{0.36,0.44,0.92}
+\definecolor{backgroundColour}{rgb}{1,1,1}
+\definecolor{mBlack}{rgb}{0,0,0}
+
+
+\lstdefinestyle{LuaStyle}
+{
+  %backgroundcolor   = \color{white},
+  commentstyle      = \color{mGreen},
+  keywordstyle      = \color{magenta},
+  numberstyle       = \tiny\color{gray},
+  stringstyle       = \color{mPurple},
+  basicstyle        = \scriptsize\ttfamily,
+  captionpos        = b,
+  keepspaces        = true,
+  numbers           = left,
+  numbersep         = 9pt,
+  showspaces        = false,
+  showstringspaces  = false,
+  showtabs          = false,
+  tabsize           = 2,
+  language          = {[5.2]Lua},
+}
+\lstset{style=LuaStyle}
+
+\mdfdefinestyle{LuaStyleFrame}{
+    backgroundcolor=black!5,
+    linecolor=white,
+    innertopmargin=0.5pt,
+    innerbottommargin=0.5pt,
+    innerrightmargin=4pt,
+    innerleftmargin=4pt,
+    leftmargin = 4pt,
+    rightmargin = 4pt,
+}
+
+\mdfdefinestyle{DumpStyleFrame}{
+    backgroundcolor=white,
+    linecolor=white,
+    innertopmargin=0.5pt,
+    innerbottommargin=0.5pt,
+    innerrightmargin=4pt,
+    innerleftmargin=4pt,
+    leftmargin = 4pt,
+    rightmargin = 4pt,
+}
+
+\lstdefinestyle{CStyle}{
+    backgroundcolor   = \color{backgroundColour},
+    commentstyle      = \color{mGreen},
+    keywordstyle      = \color{magenta},
+    numberstyle       = \tiny\color{mGray},
+    stringstyle       = \color{mPurple},
+    basicstyle        = \scriptsize\ttfamily, 
+    % breakatwhitespace = false,
+    % breaklines        = true,
+    captionpos        = b,
+    keepspaces        = true,
+    numbers           = left,
+    numbersep         = 5pt,
+    showspaces        = false,
+    showstringspaces  = false,
+    showtabs          = false,
+    tabsize           = 2,
+    language          = C,
+}
+
+\lstdefinestyle{DumpStyle}{
+    %backgroundcolor = \color{white},
+    stringstyle       = \color{mGreen},
+    basicstyle        = \scriptsize\ttfamily\color{black},
+    breaklines=false,
+    numbers=none,
+    language = ir,
+}
+
+\lstdefinelanguage{ir}
+{
+keywords=[1]{num},
+keywords=[2]{tab},
+keywords=[3]{int},
+keywords=[4]{NULL},
+keywordstyle=[1]\color{mBlue},
+keywordstyle=[2]\color{red},
+keywordstyle=[3]\color{mViolet},
+keywordstyle=[4]\color{red},
+sensitive=false,
+morestring=[b]",
+}
+
+\lstset{numbers=none, style=DumpStyle}
+
+
+\tikzstyle{squarednode} = [rectangle, line width=1pt, draw=black, fill=black!5, minimum width=2cm, align=left]
+\tikzstyle{emptynode} = [draw=none, fill=none]
+\tikzstyle{frame} = [line width=1pt, draw=gray, inner sep=7mm, minimum width=4mm,minimum height=5mm]
+\tikzstyle{frame_loop} = [line width=1pt, draw=gray, inner sep=5mm, minimum width=1mm,minimum height=1mm]
+\tikzset{font={\fontsize{9pt}{12}\ttfamily}}
+
+% Multicolumns
+\setlength{\columnsep}{1cm}
+
+% customized commands
+\newcommand{\keyword}[1]{\textcolor{red}{\emph{#1}}}
+\newcommand{\myblocknode}[2]{\node[squarednode,label={[shift={(0.0,0)}]\scriptsize[#1] \hspace{0.5cm} #2}] }
+\newcommand{\myloopframe}[2]{\node[label={[shift={(0,0)}]LOOP \hspace{1.3cm} \scriptsize0001}, frame_loop,fit= (#1) (#2)]{}}
+\newcommand{\mylooplabel}[1]{LOOP \hspace{1.3cm} \scriptsize#1}
+\newcommand{\mymargin}[1]{}
+
+% shift -0.4 \hspace{0.3cm} (0001)
+
+% To remember
+% Command to shift the label: \node[label={[shift={(-1.2,0)}]name},...]
+% Command to make a curve line without control: \draw[->] (node9.east) to[out=0,in=90, distance=5cm] (node0.north);
+% Command to make straight lines (see example tikz) \draw[|->] (node6.south) --++  (-3,-1) |- (node4.west) node[near start, above] {\tiny{T}};

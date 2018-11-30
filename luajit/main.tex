@@ -1,96 +1,13 @@
 \documentclass[12pt,a4paper]{report}
 
 % packages
-\usepackage[utf8]{inputenc}
-\usepackage{cite}
-\usepackage{graphicx}
-\usepackage{appendix}
+\input{luajit/def.tex}
 
-% pseudo code, algorithms and source codes
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{listings}
-
-\usepackage{tabularx}
-\usepackage{multirow}
-\usepackage{todonotes}
-
-\definecolor{mGreen}{rgb}{0,0.6,0}
-\definecolor{mGray}{rgb}{0.5,0.5,0.5}
-\definecolor{mPurple}{rgb}{0.58,0,0.82}
-\definecolor{backgroundColour}{rgb}{1,1,1}
-
-\lstdefinestyle{LuaStyle}
-{
-  backgroundcolor   = \color{backgroundColour},
-  commentstyle      = \color{mGreen},
-  keywordstyle      = \color{magenta},
-  numberstyle       = \tiny\color{mGray},
-  stringstyle       = \color{mPurple},
-  basicstyle        = \footnotesize,
-  % breakatwhitespace = false,
-  % breaklines        = true,
-  captionpos        = b,
-  keepspaces        = true,
-  numbers           = left,
-  numbersep         = 5pt,
-  showspaces        = false,
-  showstringspaces  = false,
-  showtabs          = false,
-  tabsize           = 2,
-  language          = {[5.2]Lua},
-}
-\lstset{style=LuaStyle}
-
-\lstdefinestyle{CStyle}{
-    backgroundcolor   = \color{backgroundColour},
-    commentstyle      = \color{mGreen},
-    keywordstyle      = \color{magenta},
-    numberstyle       = \tiny\color{mGray},
-    stringstyle       = \color{mPurple},
-    basicstyle        = \footnotesize,
-    % breakatwhitespace = false,
-    % breaklines        = true,
-    captionpos        = b,
-    keepspaces        = true,
-    numbers           = left,
-    numbersep         = 5pt,
-    showspaces        = false,
-    showstringspaces  = false,
-    showtabs          = false,
-    tabsize           = 2,
-    language          = C,
-}
-
-\lstdefinestyle{DumpStyle}{
-    backgroundcolor   = \color{black},
-    commentstyle      = \color{mGreen},
-    keywordstyle      = \color{magenta},
-    numberstyle       = \tiny\color{mGray},
-    stringstyle       = \color{mPurple},
-    basicstyle        = \footnotesize\color{white},
-    % breakatwhitespace = false,
-    % breaklines        = true,
-    captionpos        = b,
-    keepspaces        = true,
-    numbers           = left,
-    numbersep         = 5pt,
-    showspaces        = false,
-    showstringspaces  = false,
-    showtabs          = false,
-    tabsize           = 2,
-    language          = C,
-}
-
-% customized commands
-\newcommand{\keyword}[1]{\textcolor{red}{\emph{#1}}}
-
+% style and new commands
+\input{luajit/style.tex}
 
 % title
-\title{\huge \textbf {LuaJIT}\\
-\LARGE \textbf {Documentation}}
-\author{Dario d'Andrea}
-\date{October 2018}
+\input{./luajit/title.tex}
 
 \begin{document}
 
@@ -98,15 +15,16 @@
 \tableofcontents
 
 % chapters
-\input{luajit/chapter1.tex}
-\input{luajit/chapter2.tex}
-\input{luajit/chapter3.tex}
-\input{luajit/chapter4.tex}
+%\input{luajit/chapter1.tex}
+%\input{luajit/chapter2.tex}
+%\input{luajit/chapter3.tex}
+%\input{luajit/chapter4.tex}
 \input{luajit/chapter5.tex}
+%\input{luajit/chapter6.tex}
 
 % appendix
-\appendix
-\input{luajit/appendix.tex}
+%\appendix
+%\input{luajit/appendix.tex}
 
 
 % bibliogrphy

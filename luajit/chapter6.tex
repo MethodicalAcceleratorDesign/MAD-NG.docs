@@ -1,0 +1,581 @@
+\chapter{Variables allocation}
+
+\begin{multicols}{2}
+\noindent
+\textbf{Prerequisites}\\
+To read this chapter you are supposed to know: what is a tracing JIT; the mechanism of traces and side traces; what are SSA intermediate representation (IR) and bytecode (see Chapter \ref{}).
+
+\columnbreak
+\noindent
+\textbf{What you want to learn}\\
+After reading this chapter you will learn how LuaJIT handles variables allocation.
+\end{multicols}
+
+\section{Introduction}
+\noindent
+The aim of this chapter is to describe how variables are allocated in the bytecode and in the SSA IR. In particular, (i) the first paragraph investigates the allocation of local variables, (ii) the second paragraph considers the case of global variables and (iii) the last paragraphs examines upvalues. In each of them it will be shown an example that clarifies what explained.
+
+\section{Local variables}
+
+\begin{comment} %% -------------------------------
+
+\subsection{Loop}
+\begin{mdframed}[style=LuaStyleFrame]
+\begin{lstlisting}[style=LuaStyle]
+-- Loop with local variables
+
+local x = 0
+local N = 1e3
+local s = 1
+
+for i=1,N,s do
+	x = x + 11
+end
+\end{lstlisting}
+\end{mdframed}
+
+\noindent
+Bytecode
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:7
+0008  ADDVN    0   0   0  ; 11
+0009  FORL     3 => 0008
+---- TRACE 1 stop -> loop
+
+\end{lstlisting}
+
+\noindent
+IR
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:7
+---- TRACE 1 IR
+0001 rax   >  int SLOAD  #5    CRI
+0002 rcx   >  int SLOAD  #6    CRI
+0003       >  int GE     0002  +0  
+0004 rbx   >  int ADDOV  0002  0001
+0005          int USE    0004
+0006 rbp      int SLOAD  #4    CI
+0007 xmm7  >  num SLOAD  #1    T
+0008 xmm7   + num ADD    0007  +11 
+0009 rbp    + int ADD    0006  0002
+0010       >  int LE     0009  0001
+0011 ------------ LOOP ------------
+0012 xmm7   + num ADD    0008  +11 
+0013 rbp    + int ADD    0009  0002
+0014       >  int LE     0013  0001
+0015 rbp      int PHI    0009  0013
+0016 xmm7     num PHI    0008  0012
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+\end{multicols}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+            Structure & Type & Variable & Stack slot number\\
+        \hline
+        \multirow{3}{*}{initialisation} & local var & \texttt{x} & \texttt{\#1} \\
+        & local var & \texttt{N} & \texttt{\#2} \\
+        & local var & \texttt{s} & \texttt{\#3} \\
+        \hline
+        \multirow{4}{*}{loop} & index \footnotesize{(internal copy)} & \texttt{i} & \texttt{\#4} \\
+        & limit & \texttt{N} & \texttt{\#5} \\
+        & step & \texttt{s} & \texttt{\#6} \\
+        & index \footnotesize{(external copy)} & \texttt{i} & \texttt{\#7} \\
+        \hline
+    \end{tabular}
+    \caption{Table}
+    \label{tab:my_label}
+\end{table}
+
+\subsection{Nested loop}
+
+\end{comment} %% ----------------------------
+
+Local variables are stored in stack slots according to the order they appear in the code. When a local variable is declared a single slot is reserved to store it. On the other hand, each \texttt{for} loop reserves 4 slots: the first contains the internal copy of the index, the second the limit of the loop, the third the step of each iteration and the fourth the external copy of the index. 
+\begin{mdframed}[style=LuaStyleFrame]
+\begin{lstlisting}[style=LuaStyle]
+-- Nested loop with local variables
+
+local iN, iS = 1e3, 2   -- i limit, step
+local jN, jS = 1e4, 3   -- j limit, step
+
+for i=1,iN,iS do        -- outer loop
+  local x = 0
+  for j=1,jN,jS do      -- inner loop
+    i = i + 1
+    x = x + i
+  end
+end
+\end{lstlisting}
+\end{mdframed}
+
+\noindent
+The example above contains in order: variables declaration (line \texttt{4}), for loop (line \texttt{6}), variable declaration (line \texttt{7}), for loop (line \texttt{8}). Thus, variables will be allocated in order in the stack slots as show in table \ref{tab:allocation-local}.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+            Structure & Type & Variable & Stack slot number\\
+        \hline
+        \multirow{4}{*}{declaration} & local var & \texttt{iN} & \texttt{\#1} \\
+        & local var & \texttt{iS} & \texttt{\#2} \\
+        & local var & \texttt{jN} & \texttt{\#3} \\
+        & local var & \texttt{jS} & \texttt{\#4} \\
+       
+        \hline
+        \multirow{4}{*}{outer loop} & index \footnotesize{(internal copy)} & \texttt{i} & \texttt{\#5}\\
+        & limit & \texttt{iN} & \texttt{\#6} \\
+        & step & \texttt{iS} & \texttt{\#7} \\
+        & index \footnotesize{(external copy)} & \texttt{i} & \texttt{\#8} \\
+        \hline
+        declaration & local var & \texttt{x} & \texttt{\#9} \\
+        \hline
+        \multirow{4}{*}{inner loop} & index \footnotesize{(internal copy)} & \texttt{j} & \texttt{\#10}\\
+        & limit & \texttt{jN} & \texttt{\#11} \\
+        & step & \texttt{jS} & \texttt{\#12} \\
+        & index \footnotesize{(external copy)} & \texttt{j} & \texttt{\#13} \\
+        \hline
+    \end{tabular}
+    \caption{Local variables allocation}
+    \label{tab:allocation-local}
+\end{table}
+
+\begin{comment}
+\noindent
+Bytecode
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:8
+0014  ADDVN    7   7   0  ; 1
+0015  ADDVV    8   8   7
+0016  FORL     9 => 0014
+---- TRACE 1 stop -> loop
+
+---- TRACE 2 start 1/3 Ex.lua:6
+0017  FORL     4 => 0009
+0009  KSHORT   8   0
+0010  KSHORT   9   1
+0011  MOV     10   2
+0012  MOV     11   3
+0013  JFORI    9 => 0017
+---- TRACE 2 stop -> 1
+\end{lstlisting}
+\end{multicols}
+
+\end{comment}
+
+\noindent
+Below it is shown the IR dump. Variables are loaded with the \texttt{SLOAD} (stack slot load) operation where the left operand  \texttt{\#}\textit{n} refers to the variable slot number and the right operand contains flags (see \ref{} for details about flags).
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:8
+---- TRACE 1 IR
+0001 rax   >  int SLOAD  #11   CRI
+0002 rcx   >  int SLOAD  #12   CRI
+0003       >  int GE     0002  +0  
+0004 rbx   >  int ADDOV  0002  0001
+0005          int USE    0004
+0006 rbp      int SLOAD  #10   CI
+0007 xmm6  >  num SLOAD  #8    T
+0008 xmm6   + num ADD    0007  +1  
+0009 xmm7  >  num SLOAD  #9    T
+0010 xmm7   + num ADD    0009  0008
+0011 rbp    + int ADD    0006  0002
+0012       >  int LE     0011  0001
+0013 ------------ LOOP ------------
+0014 xmm6   + num ADD    0008  +1  
+0015 xmm7   + num ADD    0014  0010
+0016 rbp    + int ADD    0011  0002
+0017       >  int LE     0016  0001
+0018 rbp      int PHI    0011  0016
+0019 xmm6     num PHI    0008  0014
+0020 xmm7     num PHI    0010  0015
+---- TRACE 1 stop -> loop
+
+---- TRACE 2 start 1/3 Ex.lua:6
+---- TRACE 2 IR
+0001 xmm6     num SLOAD  #8    PI
+0002 xmm7     num SLOAD  #9    PI
+0003 xmm2     num SLOAD  #6    RI
+0004 xmm1     num SLOAD  #7    RI
+0005       >  num GE     0004  +0  
+0006 xmm7     num SLOAD  #5    I
+0007 xmm7     num ADD    0006  0004
+0008       >  num LE     0007  0003
+0009 xmm4  >  num SLOAD  #3    T
+0010 xmm3  >  num SLOAD  #4    T
+0011 rbp   >  int CONV   0009  int.num
+0012 rbx   >  int CONV   0010  int.num
+0013       >  int GE     0012  +0  
+0014 rbx   >  int ADDOV  0012  0011
+0015          int USE    0014
+0016       >  int GE     0011  +1  
+---- TRACE 2 stop -> 1
+
+\end{lstlisting}
+\end{multicols}
+
+\noindent
+Note that \texttt{\#0} indicates the closure/frame slot and \texttt{\#1} the first variable slot (corresponding to slot \texttt{0} of the bytecode). Moreover, there are no store operations for stack slots. When the execution flow exits from a trace, values on stack slots are restored. All stores to stack slots are effectively sunk into exits or side traces \cite{luajit-ir}.
+
+\section{Global variables}
+Dealing with global variables is more delicate because their value can be modified from different part of the code.
+\begin{comment} %% --------------------------------------------------
+
+\begin{mdframed}[style=LuaStyleFrame]
+\begin{lstlisting}[style=LuaStyle]
+-- Loop with global variable
+
+x = 0
+
+for i=1,1e3 do
+	x = x + 11
+end
+\end{lstlisting}
+\end{mdframed}
+
+\noindent
+Bytecode
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start variables_global.lua:5
+0007  GGET     4   0      ; "x"
+0008  ADDVN    4   4   0  ; 11
+0009  GSET     4   0      ; "x"
+0010  FORL     0 => 0007
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+
+\noindent
+IR
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:5
+---- TRACE 1 IR
+0001 rbp      int SLOAD  #1    CI
+0002 rbx      fun SLOAD  #0    R
+0003 rdx      tab FLOAD  0002  func.env
+0004          int FLOAD  0003  tab.hmask
+0005       >  int EQ     0004  +63 
+0006 rcx      p32 FLOAD  0003  tab.node
+0007 rax   >  p32 HREFK  0006  "x"  @33
+0008 xmm7  >  num HLOAD  0007
+0009 xmm7   + num ADD    0008  +11 
+0010          num HSTORE 0007  0009
+0011 rbp    + int ADD    0001  +1  
+0012       >  int LE     0011  +1000
+0013 ------------ LOOP ------------
+0014 xmm7   + num ADD    0009  +11 
+0015          num HSTORE 0007  0014
+0016 rbp    + int ADD    0011  +1  
+0017       >  int LE     0016  +1000
+0018 rbp      int PHI    0011  0016
+0019 xmm7     num PHI    0009  0014
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+\end{multicols}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{mdframed}[style=LuaStyleFrame]
+\begin{lstlisting}[style=LuaStyle]
+-- Loop with global variable
+
+y = 0 
+
+for i=1,1e3 do
+	y = 11
+end
+\end{lstlisting}
+\end{mdframed}
+
+\noindent
+Bytecode
+
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start variables_global.lua:5
+0007  KSHORT   4  11
+0008  GSET     4   0      ; "y"
+0009  FORL     0 => 0007
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+
+
+\noindent
+IR
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:5
+---- TRACE 1 IR
+0001 rbp      int SLOAD  #1    CI
+0002 rdx      fun SLOAD  #0    R
+0003 rax      tab FLOAD  0002  func.env
+0004          int FLOAD  0003  tab.hmask
+0005       >  int EQ     0004  +63 
+0006 rcx      p32 FLOAD  0003  tab.node
+0007       >  p32 HREFK  0006  "y"  @34
+0008          tab FLOAD  0003  tab.meta
+0009       >  tab EQ     0008  NULL
+0010          num HSTORE 0007  +11 
+0011          nil TBAR   0003
+0012 rbp    + int ADD    0001  +1  
+0013       >  int LE     0012  +1000
+0014 ------------ LOOP ------------
+0015 rbp    + int ADD    0012  +1  
+0016       >  int LE     0015  +1000
+0017 rbp      int PHI    0012  0015
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+\end{multicols}
+
+\end{comment} %% --------------------------------------------------
+
+
+\begin{mdframed}[style=LuaStyleFrame]
+\begin{lstlisting}[style=LuaStyle]
+-- Loop with global variable
+
+x, y = 0, 0
+
+for i=1,1e3 do
+	x = x + 11
+	y = 22
+end
+\end{lstlisting}
+\end{mdframed}
+
+\noindent
+Bytecode
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:5
+0009  GGET     4   1      ; "x"
+0010  ADDVN    4   4   0  ; 11
+0011  GSET     4   1      ; "x"
+0012  KSHORT   4  22
+0013  GSET     4   0      ; "y"
+0014  FORL     0 => 0009
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+\end{multicols}
+
+\noindent
+IR
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:5
+---- TRACE 1 IR
+0001 rbp      int SLOAD  #1    CI
+0002 rbx      fun SLOAD  #0    R
+0003 rcx      tab FLOAD  0002  func.env
+0004          int FLOAD  0003  tab.hmask
+0005       >  int EQ     0004  +63 
+0006 rdx      p32 FLOAD  0003  tab.node
+0007 rax   >  p32 HREFK  0006  "x"  @33
+0008 xmm7  >  num HLOAD  0007
+0009 xmm7   + num ADD    0008  +11 
+0010          num HSTORE 0007  0009
+0011       >  p32 HREFK  0006  "y"  @34
+0012          tab FLOAD  0003  tab.meta
+0013       >  tab EQ     0012  NULL
+0014          num HSTORE 0011  +22 
+0015          nil TBAR   0003
+0016 rbp    + int ADD    0001  +1  
+0017       >  int LE     0016  +1000
+0018 ------------ LOOP ------------
+0019 xmm7   + num ADD    0009  +11 
+0020          num HSTORE 0007  0019
+0021 rbp    + int ADD    0016  +1  
+0022       >  int LE     0021  +1000
+0023 rbp      int PHI    0016  0021
+0024 xmm7     num PHI    0009  0019
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+\end{multicols}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+\section{Upvalue}
+
+\begin{mdframed}[style=LuaStyleFrame]
+\begin{lstlisting}[style=LuaStyle]
+-- Recursive function with upvalue
+
+local function f(x)
+  return function(y)    -- return a closure
+    x = x + 1
+    return x + y
+  end
+end
+
+local a = 0
+local b = f(0)
+
+for i=1,1e3 do
+	a = b(i) + 2
+end
+\end{lstlisting}
+\end{mdframed}
+
+\noindent
+Bytecode
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:13
+0010  MOV      7   2
+0011  MOV      8   6
+0012  CALL     7   2   2
+0000  . FUNCF    2          ; Ex.lua:4
+0001  . UGET     1   0      ; x
+0002  . ADDVN    1   1   0  ; 1
+0003  . USETV    0   1      ; x
+0004  . UGET     1   0      ; x
+0005  . ADDVV    1   1   0
+0006  . RET1     1   2
+0013  ADDVN    1   7   0  ; 2
+0014  FORL     3 => 0010
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+\end{multicols}
+
+\noindent
+IR
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:13
+---- TRACE 1 IR
+0001 rbp      int SLOAD  #4    CI
+0002       >  fun SLOAD  #3    T
+0003       >  fun EQ     0002  Ex.lua:4
+0004       >  p32 UREFC  Ex.lua:4  #0  
+0005 xmm6  >  num ULOAD  0004
+0006 xmm6   + num ADD    0005  +1  
+0007          num USTORE 0004  0006
+0008 xmm7     num CONV   0001  num.int
+0009 xmm7     num ADD    0008  0006
+0010 xmm7   + num ADD    0009  +2  
+0011 rbp    + int ADD    0001  +1  
+0012       >  int LE     0011  +1000
+0013 ------------ LOOP ------------
+0014 xmm6   + num ADD    0006  +1  
+0015          num USTORE 0004  0014
+0016 xmm7     num CONV   0011  num.int
+0017 xmm7     num ADD    0016  0014
+0018 xmm7   + num ADD    0017  +2  
+0019 rbp    + int ADD    0011  +1  
+0020       >  int LE     0019  +1000
+0021 rbp      int PHI    0011  0019
+0022 xmm6     num PHI    0006  0014
+0023 xmm7     num PHI    0010  0018
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+\end{multicols}
+
+
+\iffalse
+
+\subsection{Loop with assignment and global variable}
+This example has been designed to analyse what happens if the loop contains variable assignments in the case of global or local variables. Moreover, it will be shown that the compiler is able to move invariant instructions out of loops \cite{lj-mail-understand-ir}. It performs the traditional loop-invariant code motion (LICM) optimisation. Another small difference from the previous example is that the maximum loop counter is not a literal but it is a variable ($N=100$). 
+\begin{mdframed}[style=LuaStyleFrame]
+\begin{lstlisting}[style=LuaStyle]
+-- Loop with assignment
+
+y = 0
+local x = 0
+local N = 100
+
+for i=1,N do
+	 y = 2      -- global variable assignment
+	 x = x+3    -- local variable assignment
+end
+\end{lstlisting}
+\end{mdframed}
+
+\noindent
+As shown in the bytecode below, the fact that \texttt{y} is a global variable implies the \texttt{GSET} instruction ('global' set) when doing the assignment $y=2$. Then, \texttt{ADDVN} simply computes the $x=x+3$ operation. 
+
+Here it is clear that at bytecode level the LICM optimisation is not applied because the execution flow makes a backward jump to line \texttt{0009} and $y=2$ is repeated at each iteration of the loop. In fact, no optimisation is performed by LuaJIT on bytecode.
+
+\begin{lstlisting}[style=DumpStyle]
+---- TRACE 1 start Ex.lua:7
+0009  KSHORT   6   2
+0010  GSET     6   0      ; "y"
+0011  ADDVN    0   0   0  ; 3
+0012  FORL     2 => 0009
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+
+\noindent
+In the IR below it is possible to see more details of what really occurs. It should be noted that the initialisation of variable values are performed outside traces because these instruction are not executed repeatedly but they are executed just once.
+
+\begin{multicols}{2}
+\begin{lstlisting}[style=DumpStyle]
+0001 >  int SLOAD  #4    CRI
+0002 >  int LE     0001 +2147483646
+0003    int SLOAD  #3    CI
+0004    fun SLOAD  #0    R
+0005    tab FLOAD  0004  func.env
+0006    int FLOAD  0005  tab.hmask
+0007 >  int EQ     0006  +63 
+0008    p32 FLOAD  0005  tab.node
+0009 >  p32 HREFK  0008  "y"  @34
+0010    tab FLOAD  0005  tab.meta
+0011 >  tab EQ     0010  NULL
+0012    num HSTORE 0009  +2  
+0013    nil TBAR   0005
+0014 >  num SLOAD  #1    T
+0015  + num ADD    0014  +3  
+0016  + int ADD    0003  +1  
+0017 >  int LE     0016  0001
+0018 ------ LOOP ------------
+0019  + num ADD    0015  +3  
+0020  + int ADD    0016  +1  
+0021 >  int LE     0020  0001
+0022    int PHI    0016  0020
+0023    num PHI    0015  0019
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+\end{multicols} 
+
+\noindent
+The first two lines refer to the maximum loop counter \textit{N}: \texttt{SLOAD} (line \texttt{0001}) with flag read-only (R) is used to init \textit{N} and in line \texttt{0002} it is checked if its value falls into the signed 32-bit integer range ($N\leq+2147483646$). In this way, the compiler can discriminate if the loop will be done over integer or floating point values.
+
+As said before, \textit{y} is a global variable, its value can be modified from different part of the code. Because of this, in lines \texttt{0004-0011} \textit{y} is accessed according to the LUA method of dealing with global variables (see \cite{lua-ref-man} for more details).
+
+In the IR it is possible to see a compiler optimisation. The value of \textit{x} changes at each iteration of the loop. Thus, the \texttt{ADD} instruction $x=x+3$ is contained both in the pre-loop (line \texttt{0015}) and in the actual loop (line \texttt{0019}). On the other hand, the expression $y=2$ (line \texttt{0012}) can be moved outside the body of the loop by LICM without affecting the semantic of the program. TBAR (line \texttt{0013}) is a write barrier needed for the incremental garbage collector.
+
+At the end of the dump there are two \texttt{PHI} functions. The first (line \texttt{0022}) refers to the variable \textit{i} as explained in the previous example. The second (line \texttt{0023}) refers to the variable \textit{x} and it is necessary for the same reason.
+
+
+\section{Aborts}
+
+\subsection{Abort messages}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{8cm}|}
+\hline
+loop unroll limit reached & the loop unrolling  optimisation has been applied too many times in a given trace. The default is 15, but this number can be raised\\
+\hline
+
+\end{tabular}
+\caption{Abort messages}
+\label{tab:abort-messages}
+\end{table}
+
+\fi
