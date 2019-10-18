@@ -1,0 +1,224 @@
+\chapter{Strategy}
+
+The aim of this chapter is to define a strategy to apply in order to produce code in a JIT-friendly style. The relevant questions we should ask ourselves are: \textit{Did I code in such a way that programs execution can profit the most from trace-based just-in-time compilation? How can I ensure that? Do I need any tools to help me in my analysis and decisions to take?}
+
+Specially new users of LuaJIT, which do not really understand how the JIT-compiler works, do not aim to write code in a JIT-friendly style. On the other hand, their first goal is to make a program that works (in the sense that it fulfils its functional requirements), preferably respecting the good practices of software engineering. This is reasonable because firstly we should be able to deliver the program itself, but then we must focus on improving its performance adapting our code in a JIT-friendly style. Even better, we should design from the beginning our software application in a way that programs execution can profit the most from just-in-time compilation.
+
+In the following, we provide a strategy to improve the performances of LuaJIT code.  We developed this strategy while analysing a very complex scientific software application which involves loads of computations. We believe that this way to approach coding in LuaJIT can also be used by other people in different contexts. To achieve our goals we basically used the analysis tools provided by Mike Pall with LuaJIT and our Dump extension presented in the previous chapter.
+
+\section{Profiling}
+The profiler is a very powerful tool provided by LuaJIT. It is a statistical profiler with very low overhead which allows sampling the currently executing stack and other parameters in regular intervals. Through the profiler, it is possible to get some insights on programs executions. It shows where the program spends most of the time. In \ref{Sec:Profiler} we presented how to use the profiler with its options. Here we will show how we used the options of the profiler in order to get useful information.
+
+Through the combination of the options \texttt{jp=vl}, the output of the profiler displays the percentage of time spent in each of the VM states (if one of the states does not appears, the time spent in that state is negligible). The profiler also shows for each state the percentage of time spent in each \texttt{module:line}.
+
+The example below illustrates a practical case.\\
+
+\noindent
+Input:
+\begin{lstlisting}[style=CommandsLuaJIT]
+  ./luajit -jp=vl myapp.lua
+\end{lstlisting}
+
+\noindent
+Output:
+\begin{lstlisting}[style=CommandsLuaJIT]
+  40%  Compiled
+	  -- 50%  fun1.lua:111
+	  -- 25%  fun2.lua:222
+	     ...
+  25%  Garbage Collector
+	  -- 33%  fun1.lua:111
+	  -- 20%  fun3.lua:333
+	     ...
+  15%  Interpreted
+	  -- 35%  fun1.lua:111
+	  -- 10%  fun2.lua:222
+	     ...
+  15%  JIT Compiler
+	  -- 25%  fun1.lua:111
+	     ...
+   5%  C code
+	  -- 20%  fun4.lua:444
+	     ...
+\end{lstlisting}
+
+\noindent
+Here we can see that LuaJIT spent 40\% of the time executing machine code and only 15\% of the time in the interpreter. This can be view as a good indicator because running compiled code is supposed to be faster than interpreting bytecode instructions. 5\% of the time in the C code can be reasonable if the program does not call frequently C functions. 25\% of the time spent in the garbage collector might seem a big percentage, but it can be necessary for some situations. 15\% of the time spent in the JIT compiler is also a consistent time slice. Ideally, the time spent in the JIT compiler (that is the time spent in recording, generating mcode, etc.) must be kept to the bare minimum, e.g. under 5\% of the total execution time.
+
+Moreover, thanks to the option '\texttt{l}' we can dig deeper into the specific percentage of time spent in each \texttt{module:line} of the VM states. For instance, in the example above the fragment of code at \texttt{fun1.lua:111} appears in many VM states with considerable percentages. This means that it is a critical part of the program which must be analysed in details and eventually optimised. 
+
+
+Thanks to the profiler we can see how the changes in our program may affect the percentage of time spent in each VM state. Ideally, we want to maximise the time spent in the \textit{Compiled} state and minimise the time spent in the \textit{Interpreted}. The time spent in the \textit{C code} is related to the specific application. Finally, we must keep to the bare minimum the time spent in the \textit{JIT compiler} and \textit{Garbage Collector}. It should be noted that this is a general and reasonable guideline to follow, but the overall execution time might be faster even with a slightly disadvantageous configuration (e.g. 70\% compiled, 25\% Interpreted, 5\% JIT Compiler is not necessarily better than 60\% compiled, 30\% Interpreted, 10\% JIT Compiler).
+
+Another interesting combination of options is \texttt{jp=Fl}. It can give interesting insights about the specific function and \texttt{module:line} where the program spends most of the execution time. In particular, the profiler shows the percentage of time spent in each function and \texttt{module:line}.
+
+The example below illustrates a practical case.\\
+
+\noindent
+Input:
+\begin{lstlisting}[style=CommandsLuaJIT]
+  ./luajit -jp=Fl myapp.lua
+\end{lstlisting}
+
+\noindent
+Output:
+\begin{lstlisting}[style=CommandsLuaJIT]
+  13%  file1.lua:func1
+	  -- 67%  file1.lua:866
+	  -- 16%  file1.lua:886
+	  --  5%  file1.lua:869
+	  --  4%  file1.lua:868
+  10%  file2.lua:func2
+	  -- 69%  file2.lua:194
+	  -- 13%  file2.lua:192
+	  -- 10%  file2.lua:195
+	  --  7%  file2.lua:191
+  9%  file3.lua:func3
+	  -- 68%  file3.lua:714
+	  -- 11%  file3.lua:736
+	  --  5%  file3.lua:718
+	  --  3%  file3.lua:733
+	  --  3%  file3.lua:734
+	  --  3%  file3.lua:735
+  ...
+\end{lstlisting}
+
+\noindent
+To conclude our discussion about the profiler, we want to highlight the fact that when running the profiler LuaJIT calls a function to flush all traces (see \texttt{lj\_profile.c} for more details).
+
+
+\section{Dump mode and post-execution analysis}
+The profiler is a very powerful tool that can help us to detect critical parts of the code where programs spend most of the time. It also shows how the changes we make to the code impact on the time spent in each state of the VM. However, what is missing in the profiler is the information about the traces generated by the JIT compiler. Having information about traces can guide us to change our code in a "good" way so that the compiler will generate traces more efficiently. 
+
+The Dump mode provides useful information about traces at different levels of granularity. In this context, we used the Dump tool with our small patch as explained in Sec. \ref{sec:dump-extension}. 
+
+The example below illustrates a practical case.\\
+
+\noindent
+Input:
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+  ./LuaJITpatched/src/luajit -jdump=t myapp.lua -o nil >output.txt 2<&1
+\end{lstlisting}
+
+\noindent
+Output:
+\begin{lstlisting}[style=CommandsLuaJIT]
+---- TRACE 1 start file1.lua:328
+---- TRACE 1 info abort penalty pc errno=7 valpenalty=144 -- PC=0x7f10791ab78c [36]
+---- TRACE 1 abort file1.lua:335 -- NYI: bytecode 50
+
+---- TRACE 1 start madl_utest.lua:1921
+---- TRACE 1 info success trace compilation -- PC=0x7f1079126a58 [23]
+---- TRACE 1 stop -> loop
+
+---- TRACE 2 start file1.lua:328
+---- TRACE 2 info abort penalty pc errno=7 valpenalty=298 -- PC=0x7f10791ab78c [36]
+---- TRACE 2 abort file1.lua:335 -- NYI: bytecode 50
+
+---- TRACE 2 start file1.lua:134
+---- TRACE 2 info success trace compilation -- PC=0x7f10791dcf14 [6]
+---- TRACE 2 stop -> loop
+
+---- TRACE 3 start 2/1 file1.lua:135
+---- TRACE 3 info success trace compilation -- PC=0x7f10791dcef0
+---- TRACE 3 stop -> 2
+
+---- TRACE flush
+
+---- TRACE 1 start file2.lua:182
+---- TRACE 1 info success trace compilation -- PC=0x7f1079193c48 [19]
+---- TRACE 1 stop -> return
+
+---- TRACE 2 start file2.lua:2244
+---- TRACE 2 info success trace compilation -- PC=0x7f107908c3b0 [45]
+\end{lstlisting}
+
+\noindent
+The goal is to print in the file\texttt{output.txt} information of the traces created by the JIT compiler. The Dump mode is set to \texttt{jdump=t} which prints a line for each started, ended or aborted trace; the option \texttt{-o nil} avoids any print from the application in the \texttt{output.txt} file; \texttt{2<\&1} redirects all the output on the same standard.
+
+The output of the dump mode can be too large to be analysed (it can be gigabytes of data). Thus, we need to discriminate which part of this huge file should be inspected in more details. 
+
+
+Once the \texttt{output.txt} file is created we used a post-execution script \texttt{TraceAnalyzer.lua} in order to collect summary information about traces as described in Sec. \ref{Sec:post-execution-trace-analysis}. Data are filtered and reorganised from the file \texttt{output.txt} in a big table containing a row for each hotspot from where the JIT tried to create a trace. Here we can decide the columns we want to print. In the example below the output shows: (i) the memory address of the first instruction of the code fragment that was detected as hotspot; (ii) the nature of the trace, i.e. root, side or stitch; (iii) the link at the end of the trace, e.g. the trace number of its parent, \texttt{nil} means no connection because the trace is aborted, etc.; (iv) the number of aborts or if it was blacklisted; (v) the file name and the first line of the code fragment in the source code; (v) the error file name, the first line of the code fragment in its source code and the error number; (vi) the number of flushes that occurred before the creation of the trace.\\
+
+\noindent
+Input:
+\begin{lstlisting}[style=CommandsLuaJIT]
+  ./luajit TracesAnalyser.lua >Result.txt 
+\end{lstlisting}
+
+\noindent
+Output:
+\begin{lstlisting}[style=CommandsLuaJIT]
+**** TRACE ANALYSIS
+PC              What  Link Aborts Blacklist FileName Line Errfile  Errline Errno Flush 
+0x7f46176dbb5c  side  4    2      0         app1.lua 34   app9.lua 23      10    0     
+0x7f4617660b54  root  nil  11     1         app2.lua 70   app5.lua 90      8     0
+0x7f46175b2abc  side  12   0      0         app3.lua 55   app5.lua 57      10    1
+\end{lstlisting}
+
+\noindent
+Once the table is completed we can see which code fragment is more critical. A substantial number of aborts and blacklisting related to a single code fragment can be seen as a red flag, which can deteriorate the overall performance. This can be seen as a general indicator but, specially in large and complex applications, aborts and/or blacklisting will always occur. It should be noted that the fact of identifying blacklisted fragments of code is possible only thanks to our patch of the Dump mode since the standard version gives only information about aborts. 
+
+
+Once identified the traces that refers to critical code fragments, they should be analysed in details by printing the related bytecode, IR and machine code through the Dump mode (options \texttt{bim}). In order to do that we must activate the dump mode only in the fragments of code that we classified as "critical".
+
+The example below illustrates a practical case.
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+local dump = require "jit.dump"
+dump.on ( "bim", "outfile.txt")
+  -- code to analyse here
+dump.off( )
+\end{lstlisting}
+
+\noindent
+A explained in the previous chapter post-execution analysis on the generated traces can contribute to better understand which parts of the code are more critical for JIT compilation. This analysis can show that traces were or were not organised with an efficient structure. If not, the user should change its source code to make it more JIT-friendly.
+
+\section{Tuning LuaJIT parameters}
+Another key aspect which can improve the performances of LuaJIT consists of tuning the parameter of the JIT compiler. LuaJIT was originally designed by Mike Pall to be run in embedded applications with memory limitations, hence the default values of the JIT compiler parameters respect these memory constraints. 
+
+The table below shows the JIT compiler parameters with description and default values.
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|l|} 
+ \hline
+ \textbf{Parameter} & \textbf{Default}  & \textbf{Description} \\
+ \hline
+ maxtrace	& 1000	& Max. number of traces in the cache\\
+ maxrecord	& 4000	& Max. number of recorded IR instructions\\
+ maxirconst	& 500	& Max. number of IR constants of a trace\\
+ maxside	& 100	& Max. number of side traces of a root trace\\
+ maxsnap	& 500	& Max. number of snapshots for a trace\\
+ hotloop	& 56	& Number of iterations to detect a hot loop or hot call\\
+ hotexit	& 10	& Number of taken exits to start a side trace\\
+ tryside	& 4	& Number of attempts to compile a side trace\\
+ instunroll	& 4	& Max. unroll factor for instable loops\\
+ loopunroll	& 15	& Max. unroll factor for loop ops in side traces\\
+ callunroll	& 3	& Max. unroll factor for pseudo-recursive calls\\
+ recunroll	& 2	& Min. unroll factor for true recursion\\
+ sizemcode	& 32	& Size of each machine code area in KBytes (Windows:64K)\\
+ maxmcode	& 512	& Max. total size of all machine code areas in KBytes\\
+ \hline
+\end{tabular}
+\caption{JIT compiler parameters}
+\end{table}
+
+\noindent
+In chapter \ref{chapter:background} we mentioned OpenResty \cite{openresty}, a relevant software that integrates LuaJIT. In this application some of the default parameters were changed: \texttt{maxtrace=8000}, \texttt{maxrecord=16000, \texttt{minstitch=3}, \texttt{maxcode=40960}}.
+
+Also in our complex scientific application that involves loads of computations we observed a faster and more stable behaviour when changing some of the default parameters. In particular our final configuration includes: \texttt{maxtrace=8000}, \texttt{maxrecord=16000, \texttt{loopunroll=7}, \texttt{maxcode=65536}}.
+
+It is clear that in both these applications extending the limitations in terms of memory constraints leads to an improvement in the performance. 
+
+In order to change the default parameters, you must run LuaJIT with the option \texttt{-Oparam=value}. Once you find the most appropriate configuration of parameters for your specific application you can then recompile LuaJIT with the values of the new parameters.
+
+It should be noted that this is a very delicate task. The default values were defined based on heuristics by Mike Pall, who actually commented this subject in a post on the LuaJIT Github project saying: \textit{"The trace heuristics are a very, very delicate matter. They interact with each other in many ways and it will only show in very specific code. This is hard to tune unless one is willing to do lots of benchmarking and stare at generated code for hours. That's how the current heuristics have been derived. A major project for someone with enough time at their hands"}\footnote{\label{note1}Conversation on the LuaJIT Github project: \texttt{https://github.com/LuaJIT/LuaJIT/issues/11}}.
+
+Here we want to describe how we tuned the \texttt{loopunroll} parameter for our specific application so that we provide a concrete example for the reader. Thanks to the script \texttt{TraceAnalyser.lua}, which processes the output of the patched version of the Dump mode, we realised that an enormous number of trace aborts were caused by \texttt{loop unroll limit reached} (\texttt{errno=10}). The abort \texttt{loop unroll limit reached} means that the JIT compiler has applied the loop unrolling optimisations too many times in a given trace. A first solution would be to restructure the code into a few tight loops instead of one big loop (or vice-versa) or another option is to change to loopunroll limit.
+
+We realised that \texttt{15} (the default value of \texttt{loopunroll}) was not appropriate for our specific application. Incrementing this value (e.g. \texttt{loopunroll=30}) made the performance of the overall application worst. Thus, we decremented the default value trying different alternatives. Finally, we decided to go for \texttt{loopunroll=7} as our optimal value because we observed a faster and more stable behaviour of the overall application. 
+
+Citing again Mike Pall from a post on the LuaJIT Github project: 
+\textit{The loop unrolling heuristics are not ideal for all situations. Some dependent projects change the loop unrolling limits}\footnotemark[\ref{note1}].

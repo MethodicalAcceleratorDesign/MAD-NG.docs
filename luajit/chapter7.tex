@@ -1,0 +1,345 @@
+\chapter{Analysis tools}
+\label{Chapt:appendix-tools}
+
+This chapter presents some diagnostic tools for the analysis of LuaJIT. The compiler framework provides a set of tools that helps to investigate what happens under the hood while executing a program with LuaJIT. In particular we will illustrate: (i) the verbose mode, (ii) the profiler, and (iii) the dump mode.
+
+Over the years, the LuaJIT community realised that a key aspect to understand LuaJIT behaviour more in details and to facilitate its usage would be to improve the reported information provided by the LuaJIT "standard" tools. In these regards, we implemented a small extension of the dump mode in order to get more specific information on traces. The goal is to provide to the user some insights for writing JIT-friendly code, since in some specific circumstances certain patterns of code can be preferred to others.
+
+Another interesting tool for interactive software diagnostics, called Studio \cite{gorrie2017studio}, was born in the context of RaptorJIT \cite{gorrie2017raptorjit}, a fork of LuaJIT. It is an interactive tools for inspecting and cross-referencing trace and profiler data.
+
+
+% Verbose mode
+
+\section{Verbose mode}
+\label{Sec:Verbose}
+
+This module shows verbose information about the progress of the JIT compiler, printing a line for each generated trace. It is useful to inspect which code has been compiled or where the compiler stops and falls back to the interpreter.
+
+Some examples of its usage are shown below (note that when indicating the file name, the file is overwritten every time the module is started).
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+  luajit -jv -e "for i=1,1000 do for j=1,1000 do end end"
+  luajit -jv=myapp.out myapp.lua
+\end{lstlisting}
+
+\noindent
+The output of the second example could be like this:
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+  [TRACE   1 myapp.lua:1 loop]
+  [TRACE   2 (1/3) myapp.lua:1 -> 1]
+\end{lstlisting}
+
+\noindent
+The first number in each line indicates the internal trace number. Then, it prints  the file name "myapp.lua" and the line number ":1" where the trace started. Sidetraces also show in parentheses "(1/3)" the parent trace number and the exit number from where they are attached.
+An arrow at the end shows where the trace links to "$->$ 1" unless it loops to itself.
+
+When a trace aborts the output is the following:
+\begin{lstlisting}[style=CommandsLuaJIT]
+[TRACE --- foo.lua:44 -- leaving loop in root trace at foo:lua:50]
+\end{lstlisting}
+
+\noindent
+Trace aborts are quite common, even in programs which
+can be fully compiled. The compiler may retry several times until it finds a suitable trace.
+
+
+% PROFILER
+
+\section{Profiler}
+\label{Sec:Profiler}
+
+This module is a command line interface to the built-in
+low-overhead profiler of LuaJIT. The lower-level API of the profiler is accessible via the "jit.profile" module or the LuaJIT\_profile\_* C API.
+
+Some examples of using this mode are shown below.
+\begin{lstlisting}[style=CommandsLuaJIT]
+  luajit -jp myapp.lua
+  luajit -jp=s myapp.lua
+  luajit -jp=-s myapp.lua
+  luajit -jp=vl myapp.lua
+  luajit -jp=G,profile.txt myapp.lua
+\end{lstlisting}
+The following dump features are available. Many of these options can be activated at ones.
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ |c|c| } 
+ \hline
+ Option & Description \\
+ \hline
+ \texttt{f} & shows function name (default mode)\\
+ \texttt{F} & shows function name with prepend module \\
+ \texttt{l} & shows line granularity ('module':'line')\\
+ \texttt{\textless number\textgreater} & Stack dump depth (callee\textless caller - default: 1)\\
+ \texttt{-\textless number\textgreater} & inverse stack dump depth (callee\textgreater caller\\
+ \texttt{s} & split stack dump after first stack level. Implies $\mid depth\mid$ \textgreater= 2\\
+ \texttt{p} & show full path for module names\\
+ \texttt{v} & VM states (Compiled, Interpreted, C code, Garbage Collector, JIT)\\
+ \texttt{z} & show zones (statistics can be grouped in user defined zone)\\
+ \texttt{r} & show raw sample counts (Default: percentages)\\
+ \texttt{a} &  annotate excerpts from source code files\\
+ \texttt{A} & annotate complete source code files\\
+ \texttt{G} & gives raw output for graphics (time spent per function/VM state)\\
+ \texttt{m\textless number\textgreater} & Mminimum sample percentage to be shown (default: 3)\\
+ \texttt{i\textless number\textgreater} & sampling interval in milliseconds (default: 10)\\
+ \hline
+\end{tabular}
+\caption{Profiler features}
+\end{table}
+
+\noindent
+This module can be also used while programming. The \texttt{start} function can take 2 arguments, the list of options (describe above) and the output file.
+\begin{lstlisting}[style=CommandsLuaJIT]
+  local prof = require"jit.p"
+  prof.start("vf", "file.txt")
+    -- Code to analyze here
+  prof.stop()
+\end{lstlisting}
+
+\noindent
+Statistics can be grouped in user defined \textit{zone}. An exemple is shown  below.
+\begin{lstlisting}[style=CommandsLuaJIT]
+    local zone = require("jit.zone")
+    zone("MyZone")
+      -- Code to analyze here
+    zone()
+\end{lstlisting}
+
+% DUMP MODE
+
+\section{Dump mode}
+
+This module can be used to debug the JIT compiler itself or to analyse its behaviour when running specific parts of the code. It dumps the code representations and structures used in various compiler stages.
+
+Some examples of using this mode are shown below.
+\begin{lstlisting}[style=CommandsLuaJIT]
+  luajit -jdump -e "local x=0; for i=1,1e6 do x=x+i end; print(x)"
+  luajit -jdump=im -e "for i=1,1000 do for j=1,1000 do end end" | less -R
+  luajit -jdump=is myapp.lua | less -R
+  luajit -jdump=-bi myapp.lua
+  luajit -jdump=mbixT,myapp.dump myapp.lua
+\end{lstlisting}
+The first argument specifies the dump mode. The second argument gives the output file name (default output is to stdout). The file is overwritten every time the module is started. Different features can be turned on or off with the dump mode. If the mode starts with a '+', the following features are added to the default set of features; a '-' removes them. Otherwise, the features are replaced.
+The following dump features are available (* marks the default):
+\begin{table}[H]
+\centering
+\begin{tabular}{ |c|c| } 
+  \hline
+  Option & Description \\
+  \hline
+  \texttt{t*} & print a line for each started, ended or aborted trace (see also -jv)\\
+  \texttt{b*} & dump the traced bytecode\\
+  \texttt{i*} & dump the IR (intermediate representation)\\
+  \texttt{r} & augment the IR with register/stack slots\\
+  \texttt{s} & dump the snapshot map\\
+  \texttt{m*} & dump the generated machine code\\
+  \texttt{x} & print each taken trace exit\\
+  \texttt{X} & print each taken trace exit and the contents of all registers\\
+  \texttt{a} & print the IR of aborted traces, too\\
+  \texttt{T} & output format: plain text output\\
+  \texttt{A} & output format: ANSI-colored text output\\
+  \texttt{H} & output format: colorized HTML + CSS output\\
+  \hline
+\end{tabular}
+\caption{Dump features}
+\end{table}
+
+\noindent
+This module can be also used while programming. The \texttt{on} function can take 2 arguments, the list of options (describe above) and the output file.
+\begin{lstlisting}[style=CommandsLuaJIT]
+  local dump = require"jit.dump"
+  dump.on("tbimT", "outfile.txt")
+    -- Code to analyze here
+  dump.off()
+\end{lstlisting}
+This function can have an important role since it gives the opportunity to restrict dump size and locate analysis only on interesting parts of the code. 
+
+% Understanding BC dump
+
+\subsubsection{Bytecode dump}
+
+An example of bytecode instruction is shown in the dump below. The official LuaJIT website contains an extensive description of possible bytecode instructions \cite{luajit-bc}.
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+0007  . . CALL     0   0   0  ; comment
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ |c|c| } 
+ \hline
+ Column & Description \\
+ \hline
+ 1st column &  bytecode index, numbered by function\\
+ 2nd column & dots represent the depth (call hierarchy)\\
+ 3rd-5th columns& bytecode arguments\\
+ last column & comment to tie the instruction to the Lua code\\
+ \hline
+\end{tabular}
+\caption{Bytecode intructions}
+\end{table}
+
+% Understanding IR dump
+
+\subsubsection{IR dump}
+
+Some examples of IR instructions are shown in the dump below. The official LuaJIT website contains an extensive description of possible bytecode instructions \cite{luajit-ir}.
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+....              SNAP   #0   [ ---- ]
+0001 rbp      int SLOAD  #2    CI
+0002 xmm7  >  num SLOAD  #1    T
+....              SNAP   #2   [ ---- 0003 0004 ---- ---- 0004 ]
+0003 xmm7  +  num MUL    0002  -1
+0010       >  fun EQ     0158  app.lua:298
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ |p{2.8cm}|p{10.5cm}|} 
+ \hline
+ Column & Description \\
+ \hline
+ 1st column & IR instruction index (numbered per trace)\\
+ 2nd column & Show where the value is written to, when converted to machine code if the 'r' flags is included (e.g. CPU stack slot, physical CPU stack slot)\\
+ 3rd column & Instruction flags ("\texttt{\textgreater}" are locations of guards leading to possible side exits from the trace,  "\texttt{+}" indicates instruction is left or right PHI operand\\
+ 4th column & IR type\\
+ 5th column & IR opcode\\
+ 6th/7th column & IR operands (e.g. "\texttt{\%d+}" : reference to IR SSA instruction. "\texttt{\#}" : prefixes refer to slot numbers, used in SLOADS)\\
+ \hline
+\end{tabular}
+\caption{IR intructions}
+\end{table}
+
+\subsubsection{Snapshot}
+
+\noindent
+A snapshot (\texttt{SNAP}) stores a consistent view of all updates to the state before an exit. If an exit is taken, the snapshot is used to restore the VM to a consistent state when a trace exits. Each snapshot lists the modified stack slots and the corresponding values. The \textit{n-th} value in the snapshot list represents the index of the IR instruction that wrote in slot number \textit{n} ("\texttt{----}" indicates that the slot has not been modified). Function frames are separated by '$\vert$'.
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+....    SNAP   #1   [ ---- ---- ---- ---- 0009 0010 0011 ---- ]
+....    SNAP   #1   [ app.mad:120|---- ---- false ]
+\end{lstlisting}
+
+% Understanding mcode dump
+
+\subsubsection{Mcode dump}
+
+For the mcode dump each line is composed of two parts, the mcode instruction's address and the corresponding assembler instruction. Some examples of mcode instructions are shown in the dump below.
+
+\begin{multicols}{2}
+\begin{lstlisting}
+10020ff93  mov dword [0x00041410], 0x1
+10020ff9e  cvttsd2si ebp, [rdx+0x10]
+10020ffa3  xorps xmm7, xmm7
+10020ffa6  cvtsi2sd xmm7, ebp
+10020ffaa  cmp ebp, +0x5a
+10020ffad  jz 0x100200014 ->1
+10020ffb3  cmp dword[rdx+0x4],0xfffeffff
+10020ffba  jnb 0x100200018  ->2
+10020ffc0  addsd xmm7, [rdx]
+10020ffc4  add ebp, +0x01
+10020ffc7  cmp ebp, +0x64
+10020ffca  jg 0x10020001c ->3
+->LOOP:
+10020ffd0  xorps xmm6, xmm6
+10020ffd3  cvtsi2sd xmm6, ebp
+10020ffd7  cmp ebp, +0x5a
+10020ffda  jz 0x100200024 ->5
+10020ffe0  addsd xmm7, xmm6
+10020ffe4  add ebp, +0x01
+10020ffe7  cmp ebp, +0x64
+10020ffea  jle 0x10020ffd0  ->LOOP
+10020ffec  jmp 0x100200028  ->6
+\end{lstlisting}
+\end{multicols}
+
+% My patch
+
+\section{Dump mode extension}
+\label{sec:dump-extension}
+Apart from the detailed information of bytecode, IR and mcode instructions, the Dump mode of LuaJIT provides information about traces. In fact, it gives an output that is similar to the Verbose mode printing information for each start, end or abortion of a trace. 
+
+Our extension of the dump mode introduces more information about traces status (the second line "\texttt{TRACE \textit{N} info ...}"). The output below shows some examples.
+\begin{lstlisting}[style=CommandsLuaJIT]
+---- TRACE 1 start app.lua:5
+---- TRACE 1 info success trace compilation -- PC=0x7fafd0f79bf0 [61]
+---- TRACE 1 stop -> loop
+
+---- TRACE 2 start app.lua:25  
+---- TRACE 2 info abort penalty pc errno=5 valpenalty=72 -- PC=0x7fd7493e5704 [2]
+---- TRACE 2 abort app.lua:4 -- NYI: bytecode 51
+
+---- TRACE 2 start 1/4 app.lua:8
+---- TRACE 2 info success trace compilation -- PC=0x7fafd0f79be8
+---- TRACE 2 stop -> 1
+\end{lstlisting}
+
+\noindent
+Three lines are printed for each trace:
+
+\begin{enumerate}
+    \item The first line is emitted when recording starts. It shows the potential trace number, file name and line in the source file from where the trace starts. When the trace recorded is a sidetrace it also prints information on the parent trace and side exit. For instance, in the third example above \texttt{2} is the sidetrace number, \texttt{1} is the parent trace from which the sidetrace starts from and \texttt{4} is the side-exit number. When the trace is a stitch trace, it display the parent number and the keyword \textit{stitch} (i.e. \texttt{TRACE N start N\_parent/stitch app.lua:lineNo})
+    
+    \item The second line (our extension) indicates one of the following situation: (i) trace compilation success; (ii) simple trace abortion; (iii) trace abortion with blacklisting. It also prints the memory address of the code fragment associated to the trace (\texttt{PC=0x...}), the index hit in the Hotcount table (in square brackets \texttt{[idx]}) and in case of abort also the error number and the penalty value. 
+
+    \item The third line is emitted when a trace creation is concluded. If a trace was successfully generated it shows to what the trace is linked to, e.g. \texttt{loop}, \texttt{N} (number of another trace),\texttt{ tail-recursion}, \texttt{interpreter}, \texttt{stitch}, etc. Otherwise, in case of aborts it shows the file and the source line responsible for the aborts and it prints a message indicating the reason.
+\end{enumerate}
+
+\noindent
+The tool was also patched for the diagnosis of the current status of critical data structures used by the JIT for hotpaths detection and blacklisting. In particular, if a special variable is set, it is possible to print the Hotcout table. This is the table in which the counters associated to the hotspots in the code are stored. With this information the user is aware if some collisions occur and what is their impact on trace creation. An example of the output that includes the Hotcout table is shown below.
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+---- HOTCOUNT TABLE
+[ 0]=111   [ 1]=111   [ 2]=111   [ 3]=111   [ 4]=111   [ 5]=111   [ 6]=111   [ 7]=111
+[ 8]=111   [ 9]=111   [10]=111 	 [11]=111   [12]=111   [13]=111   [14]=111 	 [15]=111
+[16]=111   [17]=111   [18]=111 	 [19]=111   [20]=111   [21]=111   [22]=111 	 [23]=111
+[24]=111   [25]=40    [26]=111 	 [27]=111   [28]=111   [29]=111   [30]=52 	 [31]=111
+[32]=111   [33]=111   [34]=111 	 [35]=111   [36]=111   [37]=111   [38]=111 	 [39]=111
+[40]=111   [41]=111   [42]=111 	 [43]=111   [44]=111   [45]=111   [46]=111 	 [47]=111
+[48]=111   [49]=111   [50]=111 	 [51]=111   [52]=111   [53]=111   [54]=111 	 [55]=111
+[56]=111   [57]=111   [58]=111 	 [59]=111   [60]=111   [61]=0     [62]=111 	 [63]=111
+---- TRACE 1 start app.lua:5
+---- TRACE 1 info success trace compilation -- PC=0x7fafd0f79bf0 [61]
+---- TRACE 1 stop -> loop
+\end{lstlisting}
+
+\noindent
+On the other hand, when analysing abort and blacklisting it would be useful to print the Hotpenaly table. This table keeps information on the aborted trace, in order to blacklist fragments when trace creation aborts repeatedly. For each line it prints the memory address of the code fragment from where a trace aborted (\texttt{PC=\textit{address}}), the penalty value (\texttt{val=\textit{penalty value}}), the error number (\texttt{reason=\textit{err number}}). The table has 64 possible entries which are filled through a round-robin index.
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+---- TRACE 2 start app.lua:25
+**** HOTPENALTY TABLE penaltyslot=4 (round-robin index)
+  [0]:	PC = 7fd7493e56dc	 val = 39129	 reason =  7 
+  [1]:	PC = 7fd7493e4dc8	 val = 42135	 reason =  7 
+  [2]:	PC = 7fd7493e5198	 val = 41161	 reason =  7 
+  [3]:	PC = 7fd7493e5704	 val = 18943	 reason =  5 
+  [4]:	PC =            0	 val =     0	 reason =  0 
+  [5]:	... 	 	 	 ... 		 ...
+---- TRACE 2 info abort penalty pc errno=5 valpenalty=37891 -- PC=0x7fd7493e5704 [2]
+---- TRACE 2 abort app.lua:4 -- NYI: bytecode 51
+\end{lstlisting}
+
+\noindent
+In the example above the first 3 entries of the table have been blacklisted because their value (\texttt{valpenalty=val*2+small\_rand\_num}) exceeds the maximum penalty value of 60000 (default of LuaJIT). See \ref{subsec:luajit-black} for more details on blacklisting in LuaJIT. 
+
+\section{Post-execution Traces Analysis}
+\label{Sec:post-execution-trace-analysis}
+Along with diagnostic tools, a post-execution analysis on the generated traces can contribute to better understand which parts of the code are more critical for JIT compilation. This analysis can show that traces were or were not organised with an efficient structure. If not, the user should change its source code to make it more JIT-friendly. It is recommended to use programming patterns that can be efficiently compiled by the JIT, and avoid those that would slow down the program execution.
+
+In the context we implemented some scripts in order to collect summary information about traces generated after running an application. The Dump mode can still give useful information, but it prints messages for each potential trace created. In fact, the output of the dump mode can be too large to be analysed (it can be gigabytes of data). Thus, we need to discriminate which part of this huge file should be inspected in more details. 
+
+The implemented post-execution trace analysis scripts  take as input the output of the Dump mode. Data are filtered and reorganised in a big table containing a row for each hotspot from where the JIT tried to create a trace. The most relevant values stored are: (i) the memory address of the first instruction of the code fragment that was detected as hotspot; (ii) the number of traces that were successfully created from that code fragment (root trace and possible sidetraces attached to it); (iii) the number of aborts or if it was blacklisted; (iv) the list of its parents and the flush number; (v) the file name and the first line of the code fragment in the source code. An example of the output printed is the following:
+
+\begin{lstlisting}[style=CommandsLuaJIT]
+**** TRACE ANALYSIS
+PC               Success Aborts Blacklist ParentsList   FileName Line Flush
+0x7f46176dbb5c   11      2      0         {2,10,11,...} app1.lua 34   0 
+0x7f4617660b54   0       11     1         { }           app2.lua 70   0
+0x7f46175b2abc   69      0      0         {4,22,28,...} app3.lua 55   1
+\end{lstlisting}
+
+\noindent
+Once the table is completed we can see which code fragment is more critical. A substantial number of aborts and blacklisting related to a single code fragment can be seen as a red flag, which can deteriorate the overall performance. Also an excessive dimension of the trace tree (many sidetraces attached to a root trace) means that the fragment of code is critical. Once identified the traces that refers to critical code fragments, they should be analysed in details by printing the related bytecode, IR and machine code through the Dump mode. For instance, in the example above the second and third fragments of the table need more investigations. The second fragment aborted many times and it was eventually blacklisted. The third fragment has a high number of success, hence a long chain of sidetraces was attached to the root trace. 

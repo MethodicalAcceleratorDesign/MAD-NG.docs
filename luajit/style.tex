@@ -67,6 +67,7 @@
     showtabs          = false,
     tabsize           = 2,
     language          = C,
+    moredelim={[is][\underbar]{@@}{@@}},
 }
 
 \lstdefinestyle{DumpStyle}{
@@ -76,6 +77,21 @@
     breaklines=false,
     numbers=none,
     language = ir,
+}
+
+\lstdefinestyle{CommandsLuaJIT}{
+    commentstyle      = \color{black},
+    keywordstyle      = \color{black},
+    stringstyle       = \color{black},
+    basicstyle        = \scriptsize\ttfamily, 
+    numbers=none,
+   language=Pascal,
+}
+
+\lstdefinestyle{DynASMStyle}{
+    basicstyle        = \scriptsize\ttfamily\color{black},
+    breaklines=false,
+    numbers=none,
 }
 
 \lstdefinelanguage{ir}
@@ -101,6 +117,41 @@ morestring=[b]",
 \tikzstyle{frame_loop} = [line width=1pt, draw=gray, inner sep=5mm, minimum width=1mm,minimum height=1mm]
 \tikzset{font={\fontsize{9pt}{12}\ttfamily}}
 
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    nodeletter/.style={rectangle,
+           rounded corners,
+           draw=black,
+           text width=2em,
+           minimum height=2em,
+           text centered},
+    punkt/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           text width=6.5em,
+           minimum height=2em,
+           text centered},
+    punkt_empty/.style={
+           rectangle,
+           rounded corners,
+           draw=none, very thick,
+           text width=6.5em,
+           minimum height=2em,
+           text centered},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=2pt,
+           shorten >=2pt,}
+}
+
+%save tickz image as external pdf
+
+
 % Multicolumns
 \setlength{\columnsep}{1cm}
 
@@ -117,3 +168,6 @@ morestring=[b]",
 % Command to shift the label: \node[label={[shift={(-1.2,0)}]name},...]
 % Command to make a curve line without control: \draw[->] (node9.east) to[out=0,in=90, distance=5cm] (node0.north);
 % Command to make straight lines (see example tikz) \draw[|->] (node6.south) --++  (-3,-1) |- (node4.west) node[near start, above] {\tiny{T}};
+
+% Enumerate with Romans numbers
+\renewcommand{\theenumi}{(\roman{enumi})}
