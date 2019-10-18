@@ -1,19 +1,15 @@
-%===============================================================================
 % Possible values in dumps
-%===============================================================================
 
-\chapter{Possible values in dumps}
+\chapter{Values in dumps}
 \label{Apendix:dump-values}
 
-In this appendix, is presented possible values that can be shown in some dump
-and their corresponding meaning.
+In this appendix, we presents possible values that can be shown in dumps and their corresponding meaning.
 
 \begin{table}[H]
 \centering
 \caption{
-  Possible value for [link] (See jit\_trlinkname and TraceLink in lib\_jit.c
-  and lj\_jit.h)
-}
+  Possible values for \texttt{[link]} (see \textit{jit\_trlinkname} and \textit{TraceLink} in \texttt{lib\_jit.[c,h]}) }
+  
 \label{tab:dump-link}
 \begin{tabular}{|l|l|}
 \hline
@@ -33,9 +29,7 @@ stitch                      & trace stitching.\\\hline
 
 \begin{table}[H]
 \centering
-\caption{
-  Possible value for SLOAD argument (See lj\_ir.h)
-}
+\caption{ Possible value for SLOAD argument (see \texttt{lj\_ir.h}) }
 \label{tab:dump-sload}
 \begin{tabular}{|l|l|l|}
 \hline
@@ -52,7 +46,7 @@ I & IRSLOAD\_INHERIT   & Inherited by exits/side traces.\\
 \begin{table}[H]
 \centering
 \caption{
-  Possible value for XLOAD argument (See lj\_ir.h)
+  Possible value for XLOAD argument (see \texttt{lj\_ir.h})
 }
 \label{tab:dump-xload}
 \begin{tabular}{|l|l|l|}
@@ -67,8 +61,7 @@ U & IRXLOAD\_UNALIGNED & Unaligned load.\\
 \begin{table}[H]
 \centering
 \caption{
-  Possible value for FLOAD or FREF argument (See lj\_ir.h)
-}
+  Possible value for FLOAD or FREF argument (see \texttt{lj\_ir.h})}
 \label{tab:dump-fload-fref}
 \begin{tabular}{|l|l|l|}
 \hline
@@ -86,7 +79,7 @@ tab.hmask      & IRFL\_TAB\_HMASK      & Size of hash part - 1\\\hline
 & & metamethods bitmap, marking\\
 & & absent fields of the metatable\\\hline
 udata.meta     & IRFL\_UDATA\_META     & udata metatable\\
-udata.udtype   & IRFL\_UDATA\_UDTYPE   & See UDTYPE table\\
+udata.udtype   & IRFL\_UDATA\_UDTYPE   & see UDTYPE table\\
 udata.file     & IRFL\_UDATA\_FILE     & udata payload \\
 cdata.ctypeid  & IRFL\_CDATA\_CTYPEID  & cdata's ctypeid\\
 cdata.ptr      & IRFL\_CDATA\_PTR      & cdata payload \\
@@ -100,7 +93,7 @@ cdata.int64\_4 & IRFL\_CDATA\_INT64\_4 & cdata payload \\
 \begin{table}[H]
 \centering
 \caption{
-  Possible value for userdata types (See lj\_obj.h)
+  Possible value for userdata types (see \texttt{lj\_obj.h})
 }
 \label{tab:dump-udata}
 \begin{tabular}{|l|l|}
@@ -114,7 +107,7 @@ UDTYPE\_FFI\_CLIB & FFI C library namespace.\\\hline
 \begin{table}[H]
 \centering
 \caption{
-  Possible value for FPMATH argument (See lj\_ir.h)
+  Possible value for FPMATH argument (see \texttt{lj\_ir.h})
 }
 \label{tab:dump-fpmath}
 \begin{tabular}{|l|l|}
@@ -138,8 +131,7 @@ tan   & FPM\_TAN   \\
 \begin{table}[H]
 \centering
 \caption{
-  Possible value for BUFHDR argument (See lj\_ir.h)
-}
+  Possible value for BUFHDR argument (see \texttt{lj\_ir.h})}
 \label{tab:dump-bufhdr}
 \begin{tabular}{|l|l|}
 \hline
@@ -151,7 +143,9 @@ IRBUFHDR\_APPEND & Append to buffer \\
 
 \begin{table}[H]
 \centering
-\caption{Possible value for TOSTR argument (See lj\_ir.h)}
+\caption{
+  Possible value for TOSTR argument (see \texttt{lj\_ir.h})
+}
 \label{tab:dump-tostr}
 \begin{tabular}{|l|l|l|}
 \hline
@@ -162,88 +156,86 @@ CHAR & IRTOSTR\_CHAR & Convert char value to string.  \\\hline
 \end{table}
 
 
-%===============================================================================
-% Flame graphs
-%===============================================================================
 
-\chapter{Flame graphs}
-\label{Apendix:fl}
 
-First we need to get the FlameGraph \cite{flamegraph} tool.
-\begin{center}
-\begin{lstlisting}
-  git clone https://github.com/brendangregg/FlameGraph
-\end{lstlisting}
-\end{center}
-Then we need to, generate the raw dump from LuaJIT and use FlameGraph to generate
-the svg file. Assuming \emph{\$flamegraph} contains the path to the tool (/FlameGraph/flamegraph.pl)
 
-\begin{center}
-\begin{lstlisting}
-  export flamegraph=./FlameGraph/flamegraph.pl
-  mad -jp=G,myapp.out myapp.mad
-  \$flamegraph myapp.out > myapp.svg
-\end{lstlisting}
-\end{center}
-Then you can open myapp.svg with your favorite viewer.
 
-%===============================================================================
-% DynASM: Assembler
-%===============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% DynASM
 
 \chapter{DynASM: Assembler}
 \label{Apendix:DynASM}
 
-DynASM is a Dynamic Assembler for code generation engines, it has been developed
-primarily as a tool for LuaJIT and its source code can be found in the dynasm
+DynASM \cite{pall2012dynasm} is a Dynamic Assembler for code generation engines. It has been developed
+primarily as a tool for LuaJIT and its source code can be found in the \textit{dynasm}
 folder of the LuaJIT project \cite{luajit-src}. It is currently used in LuaJIT
-v2 has a tool to write the fast VM interpreting the bytecode. It supports the
-following platforms : x86, x64, ARM, PowerPC, and MIPS. An unofficial
-documentation with tutorials is available \cite{dynasm}. In the remaining part
-of this appendix, a minimum amount of information is presented to give the
-ability to read and understand a DynASM file (\emph{.dasc}).
+2 has a tool to write the fast VM interpreting the bytecode. It supports the
+following platforms: x86, x64, ARM, PowerPC, and MIPS. The official documentation for DynASM \cite{pall2012dynasm} is extremely spartan, but an unofficial
+documentation with tutorials by Peter Cawley is available at \cite{cawleydynasm}. In this appendix we present the minimum amount of information to be able to read and understand a DynASM file (\texttt{*.dasc}).
 
 
 \subsubsection{Main directives}
 
-\begin{itemize}
-    \item \keyword{.arch} : Specifies the architecture of the assembly code.
-    \item \keyword{.type} name, ctype [, default\_reg] : Makes easier to manipulate registers of type \emph{ctype*}. The provided syntactic sugar is depicted in
-Table~\ref{tab:type-sugar}.
-    \item \keyword{.macro} [...] \keyword{.endmacro} : Create a multi-lines
-macro instruction that can be invoked as a normal instruction and where arguments
-will be substituted.
-    \item \keyword{.define} : Defines a prepreprocessor substitution.
-    \item \keyword{.if} [...] \keyword{.elif} [...] \keyword{.else} [...] \keyword{.endif} : Preprocessor conditional construct similar as C preprocessor.
-\end{itemize}
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{8cm}|}
+    \hline
+    \multicolumn{1}{|c|}{\textbf{Directive}} & \multicolumn{1}{c|}{\textbf{Description}} \\
+    \hline
+    \texttt{.arch} & specifies the architecture of the assembly code\\
+    \hline
+    \texttt{.type name, ctype [, default\_reg]} & makes easier to manipulate registers of type \emph{ctype*}. The provided syntactic sugar is depicted in Table~\ref{tab:type-sugar}\\
+    \hline
+    \texttt{.macro [...] .endmacro} & create a multi-lines macro instruction that can be invoked as a normal instruction and where arguments will be substituted\\
+    \hline
+    \texttt{.define} & defines a prepreprocessor substitution\\
+    \hline
+    \texttt{.if [...] .elif [...] .else [...] .endif} & Preprocessor conditional construct similar as C preprocessor\\
+    \hline
+\end{tabular}
+\caption{Dynasm main directives}
+\label{tab:dynasm-main-directives}
+\end{table}
 
 \begin{table}
 \centering
 \begin{tabular}{|l|l|}
 \hline
-\multicolumn{1}{|c|}{Sugar} & \multicolumn{1}{c|}{Expansion} \\\hline
-\#name                      & sizeof(ctype)\\
-name:reg-\textgreater field & [reg + offsetof(ctype,field)]\\
-name:reg[imm32]             & [reg + sizeof(ctype)*imm32]\\
-name:reg[imm32].field       & [reg + sizeof(ctype)*imm32 + offsetof(ctype,field)]\\
-name:reg...                 & [reg + (int)(ptrdiff\_t)\&(((ctype*)0)...)]\\\hline
+\multicolumn{1}{|c|}{\textbf{Sugar}} & \multicolumn{1}{c|}{\textbf{Expansion}} \\\hline
+\texttt{\#name  }                    & sizeof(ctype)\\
+\texttt{name:reg-\textgreater field} & [reg + offsetof(ctype,field)]\\
+\texttt{name:reg[imm32]}             & [reg + sizeof(ctype)*imm32]\\
+\texttt{name:reg[imm32].field}       & [reg + sizeof(ctype)*imm32 + offsetof(ctype,field)]\\
+\texttt{name:reg... }                & [reg + (int)(ptrdiff\_t)\&(((ctype*)0)...)]\\\hline
 \end{tabular}
-\caption{Syntactic sugar provided by \keyword{.type} macro}
+\caption{Syntactic sugar provided by \texttt{.type} macro}
 \label{tab:type-sugar}
 \end{table}
 
 \subsubsection{Line markers}
-Typical DynASM lines that emit some assembler instructions has to start with a
-vertical bare ("$\vert$"). If we want to emit some lines of \emph{C} code but
-still want DynASM's preprocessor to do substitutions, they must start with a double vertical bar ("$\vert\vert$"). Finally lines with no starting markers are
-truly untouched and discarded by DynASM. To be noted that lines of \emph{C} code that
-has to be inlined with a macro must start with a double vertical bar. \\
+Typical DynASM lines that emit assembler instructions must start with a
+vertical bare ("\texttt{$\vert$}"). If you want to emit some lines of C code, but you still want DynASM's preprocessor to do substitutions, they must start with a double vertical bar ("\texttt{$\vert\vert$}"). Finally, lines with no starting markers are
+completely untouched and discarded by DynASM. It should be noted that lines of C code that
+has to be inlined with a macro must start with a double vertical bar.
 
 \subsubsection{Labels}
-They exist multiple types of labels to refer to. The first category is global
-labels that have two types, static label ($\vert-$\textgreater name:) and dynamic ones ($\vert$=\textgreater imm32:).
-Those labels have to be unique in a DynASM file. The second category is local
-labels that use a single digit from 1 to 9 ($\vert$i:). They can be defined
-multiple times inside a same DynASM file and are used by jump instructions by
-means of the syntax \textless i or \textgreater i. They respectively point to
-the most recent, the next definition of i as the jump target.
+There are different kind of labels. The first category is the "global
+labels" that have two categories, "static label" (\texttt{$\vert-$\textgreater name:}) and "dynamic labels" (\texttt{$\vert$=\textgreater imm32:}).
+These labels are uniques in a DynASM file. The second category is the "local
+labels" that use a single digit from 1 to 9 (\texttt{$\vert$i:}). They can be defined
+multiple times in the same DynASM file. They are used by jump instructions with of the syntax \textless \texttt{i} or \textgreater \texttt{i}. They respectively point to
+the most recent, the next definition of \texttt{i} as the jump target.

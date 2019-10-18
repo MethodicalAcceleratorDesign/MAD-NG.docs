@@ -1,34 +1,42 @@
 \documentclass[12pt,a4paper]{report}
 
+% include only a subset of chapters
+% \includeonly{luajit/chapter8}
+
 % packages
 \input{luajit/def.tex}
 
 % style and new commands
 \input{luajit/style.tex}
 
-% title
-\input{./luajit/title.tex}
+% bibliography
+\addbibresource{luajit/references.bib}
 
+% document
 \begin{document}
 
-\maketitle
+% title
+\input{luajit/title.tex}
+%\input{luajit/abstract.tex}
+\input{luajit/preface.tex}
+
 \tableofcontents
 
 % chapters
-%\input{luajit/chapter1.tex}
-%\input{luajit/chapter2.tex}
-%\input{luajit/chapter3.tex}
-%\input{luajit/chapter4.tex}
-\input{luajit/chapter5.tex}
-%\input{luajit/chapter6.tex}
+% \include{luajit/chapter1} % Introduction
+\include{luajit/chapter2} % LuaJIT overview
+\include{luajit/chapter3} % Background tracing JIT and Related works
+\include{luajit/chapter4} % Virtual Machine
+\include{luajit/chapter5} % JIT compiler
+\include{luajit/chapter6} % Side traces and Stitch traces
+\include{luajit/chapter7} % Analyis tools
+\include{luajit/chapter8} % Strategy
 
+\appendix
 % appendix
-%\appendix
-%\input{luajit/appendix.tex}
-
+\include{luajit/appendix} % Tool Analysis
 
 % bibliogrphy
-\bibliographystyle{IEEEtran}
-\bibliography{luajit/references}
-
+\printbibliography 
+ 
 \end{document}

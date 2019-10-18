@@ -1,6 +1,5 @@
 % packages
 \usepackage[utf8]{inputenc}
-\usepackage{cite}
 \usepackage{graphicx}
 \usepackage{appendix}
 \usepackage{tabularx}
@@ -12,13 +11,27 @@
 \usepackage{changepage}
 \usepackage{multicol}
 \usepackage{multirow}
+\usepackage{longtable}
+
 
 %graphs
 \usepackage{tikz}
 \usetikzlibrary{positioning}
 \usetikzlibrary{fit}
+\usetikzlibrary{arrows,automata}
 
 % pseudo code, algorithms and source codes
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{listings}
+
+% bibliography
+\usepackage[
+    backend=biber,
+    style=numeric,
+    natbib=true,
+    url=false, 
+    sorting=none,
+    doi=true,
+    eprint=false
+]{biblatex}

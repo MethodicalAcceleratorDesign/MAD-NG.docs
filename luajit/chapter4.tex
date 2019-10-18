@@ -1,453 +1,682 @@
-\chapter{Tool}
-\label{Chapt:Tool}
+\chapter{Virtual Machine}
+This chapter introduces a detailed description of the Virtual Machine (VM) presenting the working principles of its components.
+% **** Frontend ****
+\section{Frontend}
+The compiler frontend is composed by Lexer, Parser and BC Frontend.
+% Lexer
+\subsection{Lexer}
+\label{Subsec:Lexer}
 
-%===============================================================================
-% VERBOSE MODE
-%===============================================================================
+The lexer (implemented in \texttt{lj\_lex.[c,h]}) converts a sequence of Lua intructions into a sequence of tokens. Its input is a Lua program (\texttt{*.lua}). It uses \textit{LexState} as a principal data structure. The user-provided \textit{rfunc} function is used to read a chunk of data to process. It is accessed through the \textit{p} and \textit{pe} pointers. The main function is \textit{lex\_scan} that dispatches the work to other functions depending on the type of data to be processed (comment, string literal, long string, numbers etc...). TValues (\textit{tokval}, \textit{lookaheadval}) are used to store the token values were \textit{LexToken} (\textit{tok}, \textit{lookahead}) determine the type. The string buffer (\textit{sb}) is used to accumulate characters of a future string before internalizing it. All Lua keyword are internalized as a string at the very beginning, GCstr has the field \textit{reserved} for marking them.
 
-\section{Verbose mode}
-\label{Sec:Verbose}
+% Parser
+\subsection{Parser}
+\label{Subsec:Parser}
+The parser (implemented in \texttt{lj\_parse.[c,h]}) takes input in the form of a sequence of tokens produced by the lexer. LuaJIT does not build an abstract syntax tree representation of the parsed code (as a "standard" compiler would build), but it directly generates the bytecode on the fly using helpers from \textit{lj\_bc.h}. It also uses \textit{LexState} as the principal data-structure. The \textit{lj\_parse} function is the entry point and parses the main chunk as a vararg function. The unit of emission is the function \textit{GCproto} and the structure used for the construction is \textit{FuncState}. Parsing is a succession of chunks (\textit{parse\_chunk}) were \textit{parse\_stmt} is the principal function called for each line, dispatching the work depending on the current token type. \textit{FuncScope} is a linked-list of structure used for scope management.
 
-This module shows verbose information about the progress of the
-JIT compiler. It prints one line for each generated trace. This module
-is useful to see which code has been compiled or where the compiler
-stops and falls back to the interpreter.
+% Bytecode frontend
+\subsection{Bytecode frontend}
+\label{Subsec:bc-frontend}
 
-Example usage:
+Another feature of LuaJIT consists of saving and loading the bytecode directly (object files \texttt{*.o}), avoiding the chain lexer and parser.
 
-\begin{lstlisting}
-  mad -jv -e "for i=1,1000 do for j=1,1000 do end end"
-  mad -jv=myapp.out myapp.mad
-\end{lstlisting}
-To redirect the output to a file, pass a
-filename as an argument (use '-' for stdout) or set the environment
-variable LUAJIT\_VERBOSEFILE. The file is overwritten every time the
-module is started.
+The writing part is handled by the module \emph{bcsave.lua} that use the
+\emph{lj\_bcwrite} function from \emph{lj\_bcwrite.c} to generate the data to be written.
 
-The output from the second example could look like this:
+The reading part is done by the code in \emph{lj\_bcread.c} file. When it is
+detected that the input file is a bc dump instead of a plain Lua code,
+\emph{cpparser} from \emph{lj\_load.c} calls \emph{lj\_bcread} instead of
+\emph{lj\_parse} normally. This reader also use \emph{LexState} as the principal
+data-structure.
 
-\begin{center}
-[TRACE   1 myapp.mad:1 loop]
+% **** Internals ****
+\section{Internals}
 
-[TRACE   2 (1/3) myapp.mad:1 $->$ 1]
-\end{center}
+% Tagged value
+\subsection{Tagged value}
+\label{Subsec:tagged-value}
 
-The first number in each line is the internal trace number. Next is
-the file name ('myapp.mad') and the line number (':1') where the
-trace has started. Side traces also show the parent trace number and
-the exit number where they are attached to in parentheses ('(1/3)').
-An arrow at the end shows where the trace links to ('$->$ 1'), unless
-it loops to itself.
+LuaJIT represent all internal elements as 64-bits \emph{TValue} (tagged value).
+It uses the nan-tagging technique to differentiate between numbers and other
+types of element. In fact, \emph{lua\_number} are 64-bits floating-point numbers
+following the \emph{ieee} standard. In this way, numeric NaNs are canonised by the
+CPU (\texttt{0xfff8} in msb and zero otherwise), letting the possibility to use the
+lower bits to represent arbitrary data. Internally, LuaJIT has two different
+representations, one for 32-bits and another for 64-bits (\emph{LJ\_GC64}) mode
+(see Tables \ref{tab:tagged-gc32} and \ref{tab:tagged-gc64}). In those tables,
+\emph{itypes} are numbers identifying the type of the object.
+GC objects (Garbage-Collected Object) represent all allocated objects
+that are managed by the garbage collector. \emph{GCRef} are references to such
+object.
 
-In this case the inner loop gets hot and is traced first, generating
-a root trace. Then the last exit from the 1st trace gets hot too
-and triggers the generation of the 2nd trace. The side trace follows the
-path along the outer loop and \textit{around} the inner loop, back to its
-start, and then links to the 1st trace.
-
-Aborted traces are shown like this:
-\begin{center}
-[TRACE --- foo.mad:44 -- leaving loop in root trace at foo:mad:50]
-\end{center}
-
-Trace aborts are quite common, even in programs which
-can be fully compiled. The compiler may retry several times until it
-finds a suitable trace. This doesn't work with features that are
-not-yet-implemented (NYI error messages). LuaJIT simply falls back to the
-interpreter. This may not matter at all if the particular trace is not very high
-up in the CPU usage profile, plus the interpreter is quite fast, too.
-
-%===============================================================================
-% PROFILER
-%===============================================================================
-
-\section{Profiler}
-\label{Sec:Profiler}
-
-This module is a simple command line interface to the built-in
-low-overhead profiler of LuaJIT. The lower-level API of the profiler
-is accessible via the "jit.profile" module or the LuaJIT\_profile\_* C API.
-
-Example usage:
-\begin{lstlisting}
-  mad -jp myapp.mad
-  mad -jp=s myapp.mad
-  mad -jp=-s myapp.mad
-  mad -jp=vl myapp.mad
-  mad -jp=G,profile.txt myapp.mad
-\end{lstlisting}
-The following dump features are available:
- \begin{itemize}%[label={--}]
-  \item \textbf{f} - Shows function name (Default mode).
-  \item \textbf{F} - Shows function name with module prepend.
-  \item \textbf{l} - Shows line granularity ('module':'line').
-  \item \textbf{\textless number\textgreater} - Stack dump depth (callee\textless caller - Default: 1)
-  \item \textbf{-\textless number\textgreater} - Inverse stack dump depth (caller\textgreater callee).
-  \item \textbf{s} - Split stack dump after first stack level. Implies $\mid depth\mid$
-  \textgreater= 2.
-  \item \textbf{p} - Show full path for module names.
-  \item \textbf{v} - Show VM states (See bellow).
-  \item \textbf{z} - Show zones (See bellow).
-  \item \textbf{r} - Show raw sample counts (Default: percentages).
-  \item \textbf{a} - Annotate excerpts from source code files.
-  \item \textbf{A} - Annotate complete source code files.
-  \item \textbf{G} - Produce raw output suitable for graphical tools (See bellow).
-  \item \textbf{m\textless number\textgreater} - Minimum sample percentage to be shown (Default: 3).
-  \item \textbf{i\textless number\textgreater} - Sampling interval in milliseconds (Default: 10).
- \end{itemize}
-
- Many of those options can be activated at ones.\\
-
-We can also use this module programmatically like in the example below. The
-\emph{start} function can take 2 arguments, the list of options (describe above)
-and the output file.
-\begin{lstlisting}[style=LuaStyle]
-local prof = require"jit.p"
-prof.start("vf", "file.txt")
-  -- Code to analyze here
-prof.stop()
-\end{lstlisting}
-
-\subsubsection{VM states:}
-This option allows to shows the time spent in which state of the VM.
-States can be of the following types :
-
-\{Compiled - Interpreted - C code - Garbage Collector - JIT Compiler\} \\
-
-\subsubsection{Zone:}
-Statistics can be grouped in user defined zone. Below is an example a such a
-definition.
-\begin{lstlisting}
-    local zone = require("jit.zone")
-    zone("MyZone")
-      -- Lua code here
-    zone()
-\end{lstlisting}
-
-\subsubsection{Graphical tools:}
-This option can be used to graphically show the dump in a nice image format
-(see Appendix \ref{Apendix:fl})
-
-Figure \ref{fig:profiler} shows two different outputs of the run of the
-\emph{Sequence} tests presented in Part \ref{Part:mad}. On the left we can see
-the default mode of the profiler with the percentage of time spent per function.
-On the right we see the percentage of time spent per VM states (the \emph{v} mode).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[height=3.5cm]{luajit/images/chapter4/profiler-1.png}
-    \includegraphics[height=3.5cm]{luajit/images/chapter4/profiler-2.png}
-    \caption{Screenshots of the profiler outputs}
-    \label{fig:profiler}
-\end{figure}
-
-%===============================================================================
-% DUMP MODE
-%===============================================================================
-
-\section{Dump mode}
-\label{Sec:Dump-mode}
-
-%===============================================================================
-% How to use it
-%===============================================================================
-
-\subsection{How to use it}
-\label{Subsec:dump-usage}
-
-This module can be used to debug the JIT compiler itself or to analyze its
-behavior when running a particular code. It dumps the
-code representations and structures used in various compiler stages. Some
-concrete examples of its usage can be found in Chapter \ref{Chapt:MO}.
-
-Example usage:
-\begin{lstlisting}
-  mad -jdump -e "
-    local x=0
-    for i=1,1e6 do x=x+i end
-    print(x)
-  "
-  mad -jdump=im -e "
-    for i=1,1000 do
-      for j=1,1000 do end
-    end
-  " | less -R
-  mad -jdump=is myapp.mad | less -R
-  mad -jdump=-b myapp.mad
-  mad -jdump=+aH,myapp.html myapp.mad
-  mad -jdump=ixT,myapp.dump myapp.mad
-\end{lstlisting}
-The first argument specifies the dump mode. The second argument gives
-the output file name. Default output is to stdout, unless the environment
-variable LUAJIT\_DUMPFILE is set. The file is overwritten every time the
-module is started. Different features can be turned on or off with the dump mode.
-If the mode starts with a '+', the following features are added to the default
-set of features; a '-' removes them. Otherwise the features are replaced.\\
-The following dump features are available (* marks the default):
-
-\begin{itemize}
-  \item \textbf{t *} - Print a line for each started, ended or aborted trace (see also -jv).
-  \item \textbf{b *} - Dump the traced bytecode.
-  \item \textbf{i *} - Dump the IR (intermediate representation).
-  \item \textbf{r} - Augment the IR with register/stack slots.
-  \item \textbf{s} - Dump the snapshot map.
-  \item \textbf{m *} - Dump the generated machine code.
-  \item \textbf{x} - Print each taken trace exit.
-  \item \textbf{X} - Print each taken trace exit and the contents of all registers.
-  \item \textbf{a} - Print the IR of aborted traces, too.
-\end{itemize}
-The output format can be set with the following characters:
-\begin{itemize}
-   \item \textbf{T} - Plain text output.
-   \item \textbf{A} - ANSI-colored text output
-   \item \textbf{H} - Colorized HTML + CSS output.
-\end{itemize}
-The default output format is plain text. It's set to ANSI-colored text
-if the COLORTERM variable is set.
-
-We can also use this module programmatically like in the example below. The
-\emph{on} function can take 2 arguments, the list of options (describe above)
-and the output file.
-\begin{lstlisting}[style=LuaStyle]
-local dump = require"jit.dump"
-dump.on("tbimT", "outfile.txt")
-  -- Code to analyze here
-dump.off()
-\end{lstlisting}
-
-%===============================================================================
-% Understanding states dump
-%===============================================================================
-
-\subsection{Understanding states dump}
-\label{Subsec:dump-states}
-
-This command looks like the verbose mode (-jv) and print information for each start,
-end or abortion of a trace. The output can have one of those three shapes.
-\begin{verbatim}
----- TRACE 1 start foo.mad:125
----- TRACE 1 stop -> [link]
----- TRACE 1 abort foo.mad:142 -- [message]
-\end{verbatim}
-The first one is emitted when a recording starts. It shows the potential
-trace number, the file and the source line where that trace start.
-The second one is emitted when a trace has been successfully recorded. In
-addition to the trace number, it shows to what the trace link to (See Table
-\ref{tab:dump-link} for [link] possible values). Finally, the last one is emitted
-when the recording of a trace is aborted. It shows the file and the source line
-responsible for the abortion and print a [message] depicting the reason. For
-a list of possible messages see TraceError in lj\_trace.h and macro in
-lj\_traceerr.h.
-
-\subsubsection{Side trace}
-When instruction of a trace marked as guard fail, the normal execution of a
-trace is interrupted. We then call that spot a side exit of the trace. When a
-given side exit is taken enough time, it is said to be hot and generate a new
-trace starting from it. This new trace is called a side trace of the first one
-called the parent trace. Below is how the start of the recording of a side
-trace is shown in the dump.
-\begin{verbatim}
----- TRACE 30 start 21/0 foo.mad:103
-\end{verbatim}
-Here, 30 is the side trace number, 21 the parent trace from which the side trace
-start from and 0 is the side-exit number .
-
-\subsubsection{Stitching}
-Trace stitching is a feature which allows traces to stop at a classic C function
-or a not-compiled built-in, return to the interpreter, run the C function or
-built-in and then start a new trace after it returns. Below is an example of
-how trace stitching due to a not-compiled built-in can be shown in the dump.
-\begin{verbatim}
----- TRACE 1 start foo.mad:6
-  [...]
-  0000  . FUNCC               ; os.clock
----- TRACE 1 stop -> stitch
----- TRACE 2 start 1/stitch foo.mad:35
-\end{verbatim}
-As you can see the trace prior to the stitching has its link marked as
-\emph{stitch} and the one after is shown like a side trace but with
-\emph{stitch} instead of the number of the side exit.
-
-%===============================================================================
-% Understanding BC dump
-%===============================================================================
-
-\subsection{Understanding BC dump}
-\label{Subsec:dump-bc}
-
-Below is an example of how a BC instruction is shown in the dump. For a complete
-list of BC instruction and their corresponding arguments look at the wiki page
-\cite{luajit-bc}.
-\begin{verbatim}
-0007  . . CALL     2   2   2  ;comment
-\end{verbatim}
-\begin{itemize}
-  \item 1st column : bc number, numbered by function.
-  \item 2nd column : The dots represent the depth (call hierarchy).
-  \item 3rd column : bc instruction.
-  \item other-1... : bc arguments.
-  \item last       : comment helping to tie the instruction to the Lua code.
-\end{itemize}
-
-%===============================================================================
-% Understanding IR dump
-%===============================================================================
-
-\subsection{Understanding IR dump}
-\label{Subsec:dump-ir}
-
-Below are some example of dumps of IR instructions.
-\begin{verbatim}
-0001 rax   >  tab SLOAD  #46   T
-0014 rbp      int TOBIT  0005  bias
-0040 [1c]  >  tab HLOAD  0039
-0035  {sink}+ cdt CNEW   +16
-0023  {0021}  num XSTORE 0022  0018
-0155       >  p32 HREFK  0154  "assert" @131
-0159       >  fun EQ     0158  madl_gutil.mad:298
-\end{verbatim}
-
-\begin{itemize}
-  \item 1st column: IR instruction number (numbered per trace)
-  \item 2nd column: Show where the value is written to, when converted to machine
-    code. This column is only present if the 'r' flags is included in -jdump,
-    which augments the IR with register/stack slots. It is not part of the IR
-    itself.
-    \begin{itemize}
-      \item '\%w' : physical CPU register
-      \item '[\%d+]' : physical CPU stack slot (hexadecimal offset from stack pointer).
-      \item \{sink\} : Show when a \emph{sink} optimization occur.
-      \item \{\%d+\} : Refers to the IR instruction where a \emph{sink}
-        optimization occur.
-    \end{itemize}
-  \item 3nd column: Instruction flags (See lj\_ir.h)
-  \begin{itemize}
-    \item "\textgreater" (IRT\_GUARD) are locations of
-        guards (leading to possible side exits from the trace).
-    \item "+" (IRT\_ISPHI) indicates
-        instruction is left or right PHI operand. (i.e referred
-        to in some PHI instruction).
-  \end{itemize}
-  \item 4rd column: IR type.
-  \item 5th column: IR opcode.
-  \item 6th/7th column: IR operands
-    \begin{itemize}
-      \item '\%d+' : reference to IR instruction (SSA ref).
-      \item '\#' : prefixes refer to slot numbers, used in SLOADS.
-        \#0 is the base frame (modified only in tail calls).
-        \#1 is the first slot in the first frame (register 0 in
-        the bytecode).
-      \item '(+$\vert$-)\%d+' : prefixes indicate positive or negative numeric literals.
-      \item '[0x\%d+]$\vert$NULL' : memory addresses.
-      \item '"..."' : strings.
-      \item '@\%d+' : indicate slot where the value of a key is to be found (in a table).
-      \item 'bias' : Used by \emph{TOBIT} represent the constant
-        $2^{52}+2^{51}$ added to the FP number.
-      \item \{0x\%d+\} : Lua table.
-      \item 'userdata:\%p' : user data.
-      \item 'my\_func:ligne' : functions.
-      \item '(...)' : function arguments for call-type IR.
-    \end{itemize}
-    To see possible argument values for some specific instruction see Table
-    \ref{tab:dump-sload} to \ref{tab:dump-tostr}.
-\end{itemize}
+\begin{table}[H]
+\centering
+\caption{Internal object tagging for 32-bits mode}
+\label{tab:tagged-gc32}
+\begin{tabular}{l|c|c|c|}
+\cline{2-4}
+                                              & \multicolumn{2}{c|}{\textbf{MSW}}         & \textbf{LSW}         \\ \hline
+\multicolumn{1}{|l|}{\textbf{size}}                    & \multicolumn{2}{c|}{\textbf{32-bits}}     & \textbf{32-bits}     \\ \hline
+\multicolumn{1}{|l|}{primitive types}         & \multicolumn{2}{c|}{itypes}      &             \\ \hline
+\multicolumn{1}{|l|}{lightuserdata (32-bits)} & \multicolumn{2}{c|}{itypes}      & void *      \\ \hline
+\multicolumn{1}{|l|}{lightuserdata (64-bits)} & \multicolumn{2}{c|}{\texttt{0xffff}}           & void * \\ \hline
+\multicolumn{1}{|l|}{GC objects}              & \multicolumn{2}{c|}{itypes}      & GCRef       \\ \hline
+\multicolumn{1}{|l|}{int}                     & \multicolumn{2}{c|}{itypes}      & int         \\ \hline
+\multicolumn{1}{|l|}{number}                  & \multicolumn{3}{c|}{double}                    \\ \hline
+\end{tabular}
+\end{table}
 
 
-\subsubsection{Snapshot}
-Each snapshot (SNAP), lists the modified stack slots and the corresponding values.
-Below are two examples of how snapshots are shown in IR dump. For further
-comments on why snapshots are used, see Section \ref{Subsec:snap}. Below is an
-example of how snapshot can be shown in the dump.
-\begin{verbatim}
-....    SNAP   #1   [ ---- ---- ---- ---- 0069 0070 0071 ---- ]
-....    SNAP   #1   [ foo.mad:120|---- ---- false ]
-\end{verbatim}
-The i-th value in the snapshot list represents the IR instruction number of the
-instruction that wrote in slot number i. '- - - -' indicates that the slot
-has not been modified. Function frames are separated by '$\vert$'.
 
-%===============================================================================
-% Understanding mcode dump
-%===============================================================================
+\begin{table}[H]
+\centering
+\caption{Internal object tagging for 64-bits mode}
+\label{tab:tagged-gc64}
+\begin{tabular}{l|c|c|c|c|}
+\cline{2-5}
+                                      & \multicolumn{3}{c|}{\textbf{MSW}}         & \textbf{LSW}         \\ \hline
+\multicolumn{1}{|l|}{\textbf{size}}            & \textbf{13-bits} & \textbf{4-bits} & \textbf{15-bits}       & \textbf{32-bits}     \\ \hline
+\multicolumn{1}{|l|}{primitive types} & 1...1   & itype  & \multicolumn{2}{c|}{1...1}  \\ \hline
+\multicolumn{1}{|l|}{lightuserdata}   & 1...1   & itype  & \multicolumn{2}{c|}{void *} \\ \hline
+\multicolumn{1}{|l|}{GC objects}      & 1...1   & itype  & \multicolumn{2}{c|}{GCRef}  \\ \hline
+\multicolumn{1}{|l|}{int}             & 1...1   & itype  & 0...0         & int         \\ \hline
+\multicolumn{1}{|l|}{number}          & \multicolumn{4}{c|}{double}                    \\ \hline
+\end{tabular}
+\end{table}
 
-\subsection{Understanding mcode dump}
-\label{Subsec:dump-mcode}
+% String Internalization
+\subsection{String Internalization}
+\label{Subsec:string-inter}
 
-Below is an example of a small typical trace. It starts with some initialization
-followed most of the time by a loop part clearly indicated by the label.
-Each line is composed of two parts, the mcode instruction's address and the
-corresponding assembler instruction.
-\begin{verbatim}
-10020ff93  mov dword [0x00041410], 0x1
-10020ff9e  cvttsd2si ebp, [rdx+0x10]
-10020ffa3  xorps xmm7, xmm7
-10020ffa6  cvtsi2sd xmm7, ebp
-10020ffaa  cmp ebp, +0x5a
-10020ffad  jz 0x100200014 ->1
-10020ffb3  cmp dword [rdx+0x4], 0xfffeffff
-10020ffba  jnb 0x100200018  ->2
-10020ffc0  addsd xmm7, [rdx]
-10020ffc4  add ebp, +0x01
-10020ffc7  cmp ebp, +0x64
-10020ffca  jg 0x10020001c ->3
-->LOOP:
-10020ffd0  xorps xmm6, xmm6
-10020ffd3  cvtsi2sd xmm6, ebp
-10020ffd7  cmp ebp, +0x5a
-10020ffda  jz 0x100200024 ->5
-10020ffe0  addsd xmm7, xmm6
-10020ffe4  add ebp, +0x01
-10020ffe7  cmp ebp, +0x64
-10020ffea  jle 0x10020ffd0  ->LOOP
-10020ffec  jmp 0x100200028  ->6
-\end{verbatim}
+All strings manipulated by LuaJIT are internalized. This includes strings literals of the user-side Lua code, identifiers and tokens of the Lua language itself, and strings used internally by LuaJIT. With the internalisation mechanism, only one copy of a specific string is kept in memory. If multiple copies of the same string are requested, a pointer to the internalised version of the string is returned (instead of allocating a new string). Strings need to be immutable and are null-terminated. String's function are implemented in the \emph{lj\_str.c} file and internalisation is done by the \emph{lj\_str\_new} function.
 
-%===============================================================================
-% How does it works
-%===============================================================================
-
-\subsection{How does it works}
-\label{Subsec:dump-internals}
-
-This section briefly presents the parts of the code of LuaJIT involved in the process of
-emitting the dump. The dump module is responsible for the set up of the
-JIT to emit traces and also for printing the results in a human understandable
-format. Depending on the dump it has to print (with respect to the provided
-parameters, see Section \ref{Subsec:dump-usage}) it attaches some handler
-(callback Lua function) to specific VM events using jit\_attach (see lib\_jit.c).
-The predefined VM event used here are : BC, TRACE, RECORD, TEXIT
-(see VMEvent in lj\_vmevent.h). In the JIT, lj\_vmevent\_send (see lj\_vmevent.h)
-is used to send a VM event, lj\_vmevent\_prepare to find the handler attached to a
-specific event and lj\_vmevent\_call to call it (see lj\_vmevent.c).
-The Lua module uses more function from lib\_jit.c (all jutil.* function
-in dump.lua) to extract more information.
-
-%===============================================================================
-% VALGRIND
-%===============================================================================
-
-\section{Valgrind}
-\label{Sec:Valgrind}
-    
-Valgrind is an instrumentation framework for building dynamic analysis tools.
-There are Valgrind tools that can automatically detect many memory management
-and threading bugs, and profile programs in detail (cf \cite{valgrind}). To be
-able to debug your C code used through ffi with Valgrind, LuaJIT needs to be
-compiled with specific options. Some information on that can be found in the
-LuaJIT \emph{Makefile} but a summary of the way to proceed for linux is described
-here. First we need to uncomment in \emph{src/makefile}, \emph{CCDEBUG} to
-allow for debug information, \emph{LUAJIT\_USE\_SYSMALLOC} to use the system
-allocator (to get useful memcheck information), \emph{LUAJIT\_USE\_VALGRIND}
-and \emph{LUAJIT\_ENABLE\_GC64} if run on a x64 platform. After recompiling
-with those options, you will need the suppression file \emph{src/lj.supp}
-(containing known false positive for memcheck) to run the Valgrind command.
+LuaJIT implements a hash table and uses a very sparse hash function. Collisions are handled by the use of a singly-chained linked list. The table is resized and all string rehashed when a 100\% load is reached. The necessary states are saved in the \emph{global\_State} structure in the \emph{lj\_obj.h} file.
 
 \begin{lstlisting}[style=CStyle]
-valgrind
-		--tool=memcheck
-		--leak-check=full
-		--track-origins=yes
-		--log-file='log.txt'
-		--suppressions=lj.supp
-		./mad myprogram.mad
+typedef struct global_State {
+  GCRef *strhash; /* String hash table (hash chain anchors). */
+  MSize strmask;  /* String hash mask (size of hash table - 1). */
+  MSize strnum;   /* Number of strings in hash table. */
+  [...]
+}
+\end{lstlisting}
+
+% Lua table
+\subsection{Lua table}
+\label{Subsec:table}
+
+Tables are garbage-collected objects represented by the structure \emph{GCtab} in \texttt{lj\_obj.h}. The functions to manipulate them are defined in \texttt{lj\_tab.c} and \texttt{lj\_tab.h}. \emph{GCtab} is composed of an array part and a hash part. If the array part is small, it is allocated directly after the structure in memory (collocation functionality), otherwise, it is separated. The hash part is a hash table used to store all non-integer key (or integer too big to fit in the array part). It is implemented as an array using a singly-linked list for collision, where nodes of the linked list are within the array (not allocated) and a variation of \emph{Brent's hashing methods} is used. New integer keys that are bigger than the array part are always inserted in the hash part until this one is full. Then, it triggers the resizing of the table. The new \emph{asize} and \emph{hmask} are both power of 2. The new \emph{asize} value corresponds to the biggest power of 2 such that at least 50\% of the integers below it are used as keys. The new \emph{hmask} is picked such that all non-integer keys plus the integer keys that are bigger than the new \emph{asize} fit in it. When resizing occur the hash values are re-hashed and integer kes that does fit in the array part is reintroduced there.
+
+The \emph{nomm} field of GCtab is a negative cache for fast metamethods checks. It is a bitmap marking absent fields of the metatable.
+
+% Garbage collector
+\subsection{Garbage collector}
+\label{Subsec:gc}
+
+LuaJIT garbage collector (GC) has a tricolour, incremental mark and sweep type implementation. It is presented in the tricolour section of the wiki \cite{luajit-gc}. Its source code is implemented in \texttt{lj\_gc.h} and \texttt{lj\_gc.c}. It uses the \textit{GCState} has a principal structure. The \emph{gc\_onestep} function implements the states machine of the GC. The main states with their meaning are shown in the enum below.
+
+\begin{lstlisting}[style=CStyle]
+enum {
+  GCSpause,
+  GCSpropagate,   /* One gray object is processed. */
+  GCSatomic,      /* Atomic transition from mark to sweep phase. */
+  GCSsweepstring, /* Sweep one chain of strings from the table. */
+  GCSsweep,       /* Sweep a few object from root. */
+  GCSfinalize     /* Finalize one userdata or cdata object. */
+};
+\end{lstlisting}
+
+\begin{lstlisting}[style=CStyle]
+typedef struct GCState {
+  GCSize total;         /* Memory currently allocated. */
+  GCSize threshold;     /* Memory threshold. */
+  uint8_t currentwhite; /* Current white color. */
+  uint8_t state;        /* GC state. */
+  uint8_t nocdatafin;   /* No cdata finalizer called. */
+  uint8_t unused2;
+  MSize sweepstr;       /* Sweep position in string table. */
+  GCRef root;           /* List of all collectable objects. */
+  MRef sweep;           /* Sweep position in root list. */
+  GCRef gray;           /* List of gray objects. */
+  GCRef grayagain;      /* List of objects for atomic traversal. */
+  GCRef weak;           /* List of weak tables (to be cleared). */
+  GCRef mmudata;        /* List of userdata (to be finalized). */
+  GCSize debt;          /* Debt (how much GC is behind schedule). */
+  GCSize estimate;      /* Estimate of memory actually in use. */
+  MSize stepmul;        /* Incremental GC step granularity. */
+  MSize pause;          /* Pause between successive GC cycles. */
+} GCState;
+\end{lstlisting}
+
+% Allocator
+\subsection{Allocator}
+\label{Subsec:alloc}
+
+LuaJIT has its own embedded allocator which is a customized version of \emph{dlmalloc} (Doug Lea's Malloc). Information on the original implementation can be found on the web article \cite{dlmalloc-art} or in the comment of the code \cite{dlmalloc-impl}. The allocator is implemented in \texttt{lj\_alloc.c}. Its main structure is \emph{malloc\_state}. Memory on the heap is allocated in chunks. Free chunks are managed as double linked-list with the size of the chunk at the beginning and end of it. Unallocated memory is grouped in bins of the corresponding size. There are two types of bins. The smaller one contains chunks of the same size and the top is anchored in \emph{smallbins}. The bigger ones are stored as bitwise digital trees (aka tries) keyed by size where the top of a tree is anchored in \emph{treebins}. The allocator differentiates with two types of memory allocation, if it is higher than 128KB then it asks the operating system for a new memory segment using mmap, if it is lower than that it uses chunks from the current segment. All allocated segments are kept in a linked list anchored in \emph{seg}. For such smaller allocation, the allocator first tries to find an exact fit from the available
+chunks to optimize for internal fragmentation. If it cannot find one and that
+the requested size is smaller than \emph{dvsize} then it uses the \emph{dv}
+chunk (designated victim) which is the last chunk that has been split. This is done to optimise locality. Otherwise, it goes for a best-fit match. If no chunk
+big enough is available, it asks the system to extend the segment and use the
+boundary chunk \emph{top} (always kept free). When memory is freed, it does chunk
+coalescing to avoid memory fragmentation. If \emph{topsize} is bigger than
+\emph{trim\_check}, then the current segment is shrunk and the memory is given
+back to the OS. \emph{release\_checks} is a decreasing counter that when it
+riches zero triggers a check of all segments to release empty ones back to the OS.
+
+% Function
+\subsection{Function}
+\label{Subsec:func}
+
+There are two different representations of function, the function's prototype,
+and the function's closure. Lua function's prototypes are represented by \emph{GCproto} (\texttt{lj\_obj.h}), and are followed by the functions' bytecodes in memory.
+The closures are represented by the \textit{GCfuncL} for Lua function and \textit{GCfuncC} for
+C function (using Lua API). They contain the necessary information for
+upvalues. Upvalues are represented by the \emph{GCupval} which contains the corresponding value or a reference to the stack slot with the
+appropriate value. Closures can be managed by the functions present in
+\texttt{lj\_func.c} allowing to create them, destroy them and closing their
+upvalues.
+
+% Fast Function
+\subsection{Fast Function}
+\label{Subsec:ffunc}
+
+Fast functions are specially optimized standard library function. There are two
+parts for each function: implementation and fallback handler.
+The implementation part, called "the fast pass" handles the general cases. It is realised in assembly in the \texttt{vm\_*.dasc} files. If the fast pass fails, the VM
+calls the corresponding fallback handler (all \emph{LJLIB\_ASM} marked functions)
+that will try to recover from the failure, if possible. Examples of recoverable
+cases might be:  wrong argument type if coercion succeeds or stack overflow
+if stack reallocation succeeds (see comment in \texttt{lj\_lib.h}).
+
+% GC64 mode
+\subsection{GC64 mode}
+\label{Subsec:gc64}
+
+By default, LuaJIT use 32-bit pointers which limit its memory on x86 to 4 GB on a
+32-bit platform and even 2 GB on a 64-bit platform (due to constant pointers being
+embedded as offsets in x86 addressing modes, which are signed 32-bit integers).
+This limitation has recently been overcome with the \emph{GC64} mode (currently in beta version). It allows to fully use the well-known
+47-bit address space. To activate this mode you need to uncomment in
+\texttt{src/Makefile} the \textit{LUAJIT\_ENABLE\_GC64} variable and to perform a full
+recompilation of LuaJIT.
+
+% **** Bytecode interpreter ****
+\section{Bytecode interpreter}
+Most of the VM mechanism is written using the DynASM syntax. To get a better
+understanding of the underlining technology see Appendix \ref{Apendix:DynASM}.
+
+The low-level VM code written for each architecture using DynASM is implemented in \texttt{vm\_(target).dasc} files. It is mainly composed of a huge switch case that generates the assembly code for each bytecode. It also contains code for parts that require low-level implementation, e.g. the stack unwinding, the implementation of the fast path of ASM fast library functions, etc.
+
+% **** Library ****
+\section{Library}
+
+% Standard library
+\subsection{Standard library}
+\label{Subsec:std-lib}
+
+LuaJIT supports full compatibility with Lua 5.1, hence it
+implements the standard library. The code is copied and adapted from the
+\emph{PUC-RIO} Lua interpreter. A list of the corresponding files and
+descriptions is shown below.
+
+\begin{table}[H]
+\centering
+\caption{Files of the Lua standard library}
+\label{tab:library-std-files}
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{File name} & \multicolumn{1}{c|}{Description}                     \\ \hline
+lib\_base.c                     & Base and coroutine library.                          \\
+lib\_debug.c                    & Debug library.                                       \\
+lib\_init.c                     & Load and initialize standard libraries.              \\
+lib\_io.c                       & Files and I/O library.                               \\
+lib\_math.c                     & Math library (abs, sqrt, log, random, etc...).       \\
+lib\_os.c                       & OS library (date, time, execute, remove, etc...).    \\
+lib\_package.c                  & Package library (load, require, etc...).             \\
+lib\_string.c                   & String library (gsub, match, etc...).                \\
+lib\_table.c                    & Table library (new, clear, insert, foreach, etc...). \\ \hline
+\end{tabular}
+\end{table}
+
+
+% LuaJIT extensions
+\subsection{LuaJIT extensions}
+\label{Subsec:lj-extensions}
+
+In addition to the standard library, LuaJIT is equipped with some library extensions \cite{extensions}. Along with few improvements of existing modules, it provides three new extension modules: (i) \texttt{lib\_bit.c} for bitwise operations \cite{bitOp}, (ii) \texttt{lib\_ffi.c} which contains the implementation of the functions that interact with the FFI library (see Sec. \ref{sec:FFI} for details), (iii) \texttt{lib\_jit.c} which provides functions to control the behaviour of the JIT compiler engine (see Chapt. \ref{chapter:jit-compiler} for details).
+
+% The C API
+\subsection{The C API}
+\label{Subsec:c-api}
+
+All those libraries are implemented using the Lua C API that allows to create and manipulate Lua data, manage the Lua stack etc... These functions are implemented in \texttt{lj\_api.c}, \texttt{lj\_lib.c} and \texttt{lib\_aux.c}.
+
+% Build Library
+\subsection{Build Library}
+\label{Subsec:build-lib}
+
+LuaJIT uses a subtle technique to automatically generate files that are included during compilation in order to help building and loading the standard library
+without the need for manual maintenance. Here are described the different steps and what they are useful for.
+
+Firstly, if no Lua interpreter (either PUC-Lua or LuaJIT) is available on the machine, a simplified and reduced version of Lua interpreter is built from \texttt{minilua.c}. Then, the interpreter is used to run \texttt{genlibbc.lua} that will be responsible for parsing all LuaJIT's source files searching for the \emph{LJLIB\_LUA} macro that surrounds library
+functions names that are written in Lua. It then generates the \texttt{buildbm\_libbc.h} file that contains the Lua bytecodes for all those functions in the \emph{libbc\_code} array and a mapping of the function name and the bytecodes offset for that function in \emph{libbc\_map}.
+
+This newly generated file is built along with all \texttt{buildvm\_*} files to create the \emph{buildvm} program that is used to parse from the library source code all other
+\emph{LJLIB\_*} macro and generates some files (\texttt{lj\_bcdef.h, lj\_libdef.h, lj\_ffdef.h, lj\_recdef.h and vmdef.lua}) that will be added to LuaJIT compilation. In Table \ref{tab:library-macro} it is is shown the description of the macros and in Table \ref{tab:library-generated-files} the description of the corresponding generated file.
+
+\begin{center}
+\begin{longtable}[H]{|p{4cm}|p{9cm}|}
+\hline
+\textbf{Macro} & \textbf{Description} \\ \hline
+LJLIB\_MODULE\_*                     & register new module.                                 \\\hline
+LJLIB\_CF(name)                      & register C function.                                 \\\hline
+LJLIB\_ASM(name)                     & register fast function fallback handler.             \\\hline
+LJLIB\_ASM\_(name)                   &
+  \begin{tabular}[c]{@{}l@{}}
+  register fast function that uses previous\\
+  LJLIB\_ASM fallback handler.
+  \end{tabular}                                                                             \\\hline
+LJLIB\_LUA(name)                     & register Lua function.                               \\\hline
+\multirow{4}{*}{LJLIB\_SET(name)}    &
+  \begin{tabular}[c]{@{}l@{}}
+  register previous Lua stack value into the module\\
+  table with \emph{name} has key.
+  \end{tabular}
+  \begin{itemize}
+  \item '!' : last stack value became next function's env
+  \end{itemize}                                                                             \\\hline
+\multirow{7}{*}{LJLIB\_PUSH(val)}    & push \emph{val} on the Lua stask.
+  \begin{itemize}
+  \item 'lastcl'  : copy last stack value
+  \item 'top-x'   : copy last $x^{th}$ stack value
+  \item ' "..." ' : push internalized string
+  \end{itemize}                                                                             \\\hline
+\multirow{8}{*}{LJLIB\_REC(handler)} & register a handler to record a function.
+  \begin{itemize}
+  \item '.' : get the function's name
+  \item 'name data' :
+    \begin{itemize}
+      \item \emph{name} of recorder
+      \item auxiliary \emph{data} to put in \emph{recff\_idmap}
+    \end{itemize}
+  \end{itemize}                                                                             \\\hline
+LJLIB\_NOREGUV                       & to not register this function in module.             \\\hline
+LJLIB\_NOREG                         & to not register a function in lj\_lib\_cf\_*.        \\\hline
+\caption{ Macros used to build the library}
+\label{tab:library-macro}
+\end{longtable}
+\end{center}
+
+\begin{center}
+\begin{longtable}[H]{|p{4cm}|p{9cm}|}
+\hline
+\textbf{File}          & \textbf{Description}                     \\\hline
+\emph{lj\_bcdef.h}                  &
+  for each fast functions, \emph{lj\_bc\_ofs} contains the offset from
+  \emph{lj\_vm\_asm\_begin} (in \emph{lj\_vm.h}) to the mcode of the function
+  and \emph{lj\_bc\_mode} contains the byte code operande mode (all set to
+  \emph{BCMODE\_FF}) (see \emph{lj\_bc.h} and this \emph{Introduction} section
+  of the wiki \cite{luajit-bc}).                                                            \\\hline
+\emph{lj\_ffdef.h}                  & list of all library function name                     \\\hline
+\emph{lj\_libdef.h}                 &
+  \emph{lj\_lib\_cf\_*} arrays contains the list of function pointers for the
+  * library. \emph{lj\_lib\_init\_*} are arrays of packed data describing how
+  the corresponding library should be loaded (see \emph{lj\_lib\_register} in
+  \emph{lj\_lib.c} for the function that parse those data).                                 \\\hline
+\emph{lj\_recdef.h}                 &
+  for each library functions \emph{recff\_idmap} contains an optional auxiliary
+  data (opcode, literal) allowing to handle similar functionalities in a
+  common handler. \emph{recff\_func} contains the list of record handler.                   \\\hline
+\emph{vmdef.lua}                    &
+  contains all vm definition for use in Lua.
+  \begin{itemize}
+  \item bcnames  : bytecode names
+  \item irnames  : IR instructions names
+  \item irfpm    : floating point math function names
+  \item irfield  : maps field id to field name (specific field that the IR instruction is accessing)
+  \item ircall   : name of special function for calls instruction.
+  \item traceerr : maps error num to error message
+  \item ffnames  : maps library function id to function name
+  \end{itemize} \\ \hline
+  \caption{Generated files description}
+  \label{tab:library-generated-files}
+\end{longtable}
+\end{center}
+
+% **** Foreign function interface ****
+\section{Foreign function interface}
+\label{sec:FFI}
+The FFI (Foreign Function Interface) is one of LuaJIT extensions modules. It
+allows to call external C functions and use C data structures from pure Lua code.
+A very small (not representative) example is shown below.
+
+\begin{lstlisting}[style=LuaStyle]
+local ffi = require("ffi")
+ffi.cdef[[
+  typedef struct points { int x,y,z; } points;
+]]
+local p1 = ffi.new("points", { 1, 2, 3 })
+print(p1.x) --  1
+p1.x = 11
+print(p1.x) -- 11
+\end{lstlisting}
+There is some official documentation for FFI users on the official LuaJIT website
+where you can find the motivation for the FFI module \cite{ffi-motivation},
+a small tutorial \cite{ffi-tuto}, the API documentation \cite{ffi-api} and the
+FFI semantics \cite{ffi-semantics}. There is also a reflection
+library for FFI ctypes \cite{ffi-reflect} and its documentation
+\cite{ffi-reflect-doc} for anyone interested in exploring the ctype of a given cdata.
+
+This section will present the internal implementation of the FFI and not its use.
+The organisation of the information will follow the actual implementation files.
+
+\subsubsection{lib\_ffi.c}
+It is the top-level file of the FFI library. It contains the implementation of the FFI API, the function that makes the connection between Lua and C using the standard Lua \emph{C API}. It is also responsible for loading the FFI module (\emph{luaopen\_ffi}). This file mainly uses and connects together functionalities implemented in other files. For instance, it is responsible for the allocation and initialisation of the main state (\emph{CTState}) explained below.
+
+\subsubsection{lj\_obj.h}
+From this file, we are only interested in this section by the \emph{GCcdata}
+structure that is the garbage-collected object representing any C data use
+through and with the FFI. Its structure is shown below. The key point to highlight is the \emph{ctypeid} which is the index of the ctype describing the
+attached data (the payload follows the structure in memory).
+\begin{lstlisting}[style=CStyle]
+typedef struct GCcdata {
+  GCHeader;
+  uint16_t ctypeid;	/* C type ID. */
+} GCcdata;
+\end{lstlisting}
+
+\subsubsection{lj\_ctype.h}
+The \emph{CType} data structure responsible for describing to the FFI
+what kind of data the \emph{cdata} represents (e.g. variable, struct,
+function, etc.). A detailed schema in this regards is shown in Tab. \ref{tab:ffi-ctype}. The abbreviations used are explained in Tab. \ref{tab:ffi-ctype2}.
+\begin{lstlisting}[style=CStyle]
+typedef struct CType {
+  CTInfo info;   /* Type info. */
+  CTSize size;   /* Type size or other info. */
+  CTypeID1 sib;  /* Sibling element. */
+  CTypeID1 next; /* Next element in hash chain. */
+  GCRef name;    /* Element name (GCstr). */
+} CType;
+\end{lstlisting}
+
+%          +----------------------------+--------+-------+-------+-------+
+%          |            info            |        |       |       |       |
+%          +----------------------------+  size  |  sid  | next  | name  |
+%          |type|  flags | A  |   cid   |        |       |       |       |
+% +-------------------------------------+--------------------------------+
+% |size    | 4  |    8   | 4  |   16    |   32   |  16   |  16   | GCRef |
+% |--------+----------------------------+--------+-------+-------+-------+
+% |NUM     |0000|BFcvUL..| A  |    x    | size   |       | type  |       |
+% |STRUCT  |0001|..cvu..V| A  |    x    | size   | field | name? | name? |
+% |PTR     |0010|..cvR...| A  |   cid   | size   |       | type  |       |
+% |ARRAY   |0011|VCcv...V| A  |   cid   | size   |       | type  |       |
+% |VOID    |0100|..cv....| A  |    x    | size   |       | type  |       |
+% |ENUM    |0101|........| A  |   cid   | size   | const | name? | name? |
+% |FUNC    |0110|....VS..|..cc|   cid   | nargs  | field | name? | name? |
+% |TYPEDEF |0111|........|....|   cid   |   x    |       | name  | name  |
+% |ATTRIB  |1000|....|attrnum |   cid   | attr   | sib?  | type? |       |
+% |FIELD   |1001|........|....|   cid   | offset | field |       | name? |
+% |BITFIELD|1010|B.cvU| csz   |.bsz|.pos| offset | field |       | name? |
+% |CONSTVAL|1011|..c.....|....|   cid   | value  | const | name  | name  |
+% |EXTERN  |1100|........|....|   cid   |   x    | sib?  | name  | name  |
+% |KW      |1101|........|....|   tok   | size   |       | name  | name  |
+% +-------------------------------------+--------+-------+-------+-------+
+\begin{table}[p]
+\footnotesize
+\centering
+\caption{Summary of CType informations}
+\label{tab:ffi-ctype}
+\begin{tabular}{l|c|c|c|c|c|l|c|c|c|c|}
+\cline{2-11}
+                               & \multicolumn{6}{c|}{info}                                                         & \multirow{2}{*}{size} & \multirow{2}{*}{sid} & \multirow{2}{*}{next} & \multirow{2}{*}{name} \\ \cline{2-7}
+                               & type & \multicolumn{2}{c|}{flags}          & A         & \multicolumn{2}{c|}{cid} &                       &                      &                       &                       \\ \hline
+\multicolumn{1}{|l|}{size}     & 4    & \multicolumn{2}{c|}{8}              & 4         & \multicolumn{2}{c|}{16}  & 32                    & 16                   & 16                    & GCRef                 \\ \hline
+\multicolumn{1}{|l|}{NUM}      & 0000 & \multicolumn{2}{c|}{BFcvUL..}       & A         & \multicolumn{2}{c|}{}    & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{STRUCT}   & 0001 & \multicolumn{2}{c|}{..cvu..V}       & A         & \multicolumn{2}{c|}{}    & size                  & field                & name                  & name                  \\
+\multicolumn{1}{|l|}{PTR}      & 0010 & \multicolumn{2}{c|}{..cvR...}       & A         & \multicolumn{2}{c|}{cid} & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{ARRAY}    & 0011 & \multicolumn{2}{c|}{$V^2$Ccv...V}   & A         & \multicolumn{2}{c|}{cid} & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{VOID}     & 0100 & \multicolumn{2}{c|}{..cv....}       & A         & \multicolumn{2}{c|}{}    & size                  &                      & type                  &                       \\
+\multicolumn{1}{|l|}{ENUM}     & 0101 & \multicolumn{2}{c|}{........}       & A         & \multicolumn{2}{c|}{cid} & size                  & const                & name                  & name                  \\
+\multicolumn{1}{|l|}{FUNC}     & 0110 & \multicolumn{2}{c|}{....$V^3$S..}   & ..cc      & \multicolumn{2}{c|}{cid} & nargs                 & field                & name                  & name                  \\
+\multicolumn{1}{|l|}{TYPEDEF}  & 0111 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} &                       &                      & name                  & name                  \\
+\multicolumn{1}{|l|}{ATTRIB}   & 1000 & ....             & \multicolumn{2}{c|}{attrnum} & \multicolumn{2}{c|}{cid} & attr                  & sib                  & type                  &                       \\
+\multicolumn{1}{|l|}{FIELD}    & 1001 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} & offset                & field                &                       & name                  \\
+\multicolumn{1}{|l|}{BITFIELD} & 1010 & B.cvU            & \multicolumn{2}{c|}{csz}     & .bsz        & .pos       & offset                & field                &                       & name                  \\
+\multicolumn{1}{|l|}{CONSTVAL} & 1011 & \multicolumn{2}{c|}{..c.....}       & ....      & \multicolumn{2}{c|}{cid} & value                 & const                & name                  & name                  \\
+\multicolumn{1}{|l|}{EXTERN}   & 1100 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{cid} &                       & sib                  & name                  & name                  \\
+\multicolumn{1}{|l|}{KW}       & 1101 & \multicolumn{2}{c|}{........}       & ....      & \multicolumn{2}{c|}{tok} & size                  &                      & name                  & name                  \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\footnotesize
+\centering
+\caption{Definition of CType fields}
+\label{tab:ffi-ctype2}
+\begin{tabular}{ll|l|l|}
+\hline
+\multicolumn{2}{|c|}{\textit{\textbf{flags}}} & \multicolumn{2}{c|}{\textit{\textbf{A}}}                                    \\ \hline
+\multicolumn{1}{|l|}{B}      & Boolean        & A                      & allignement of $2^A$ bytes                         \\
+\multicolumn{1}{|l|}{F}      & Float          & cc                     & calling convention                                 \\
+\multicolumn{1}{|l|}{c}      & const          & attrnum                & Attributes number (see CTA\_* in lj\_ctype.h)      \\
+\multicolumn{1}{|l|}{v}      & volatile       & csz                    & size of the memory slot                            \\ \cline{3-4}
+\multicolumn{1}{|l|}{U}      & Unsigned       & \multicolumn{2}{c|}{\textit{\textbf{cid}}}                                  \\ \cline{3-4}
+\multicolumn{1}{|l|}{L}      & Long           & cid                    & child id                                           \\
+\multicolumn{1}{|l|}{u}      & union          & bsz                    & number of bits of the bit-field                    \\
+\multicolumn{1}{|l|}{V}      & VLA            & pos                    & starting position in bit inside the memory slot    \\
+\multicolumn{1}{|l|}{R}      & reference      & tok                    & token id                                           \\ \cline{3-4}
+\multicolumn{1}{|l|}{$V^2$}  & Vector         & \multicolumn{2}{c|}{\textit{\textbf{size}}}                                 \\ \cline{3-4}
+\multicolumn{1}{|l|}{C}      & Complex        & size                   & size in bytes                                      \\
+\multicolumn{1}{|l|}{$V^3$}  & Vararg         & nargs                  & number of fixed arguments of a function            \\
+\multicolumn{1}{|l|}{S}      & SSE arguments  & offset                 & offset in bytes from the start of the struct       \\ \cline{1-2}
+                             &                & value                  & the actual constant value                          \\
+                             &                & attr                   & value of the attribute                             \\ \cline{3-4}
+                             &                & \multicolumn{2}{c|}{\textit{\textbf{sib}}}                                  \\ \cline{3-4}
+                             &                & field                  & function args or struc/union field                 \\
+                             &                & const                  & constant value                                     \\
+                             &                & sib                    & chain of attribute or object of the attribute      \\ \cline{3-4}
+                             &                & \textit{\textbf{name}} & GCRef to a string containing the identifier.       \\ \cline{3-4}
+                             &                & \textit{\textbf{next}} & chain for hash collisions in cts-\textgreater hash \\ \cline{3-4}
+\end{tabular}
+\end{table}
+
+\noindent
+The most important struct of the FFI is \emph{CTState}. It contains
+all the internalize ctype in the \emph{tab} table. \emph{finalizer} is a weak
+keyed Lua table (values can be garbage collected if the key is not referenced
+elsewhere) containing all finalizer registered with the \emph{ffi.gc} method.
+\emph{miscmap} is a Lua table mapping all metatable of ctypes registered using
+the \emph{ffi.metatype} method in the negative CTypeID range and all callback
+functions in the positive callback slot range. Any metatable added to miscmap is
+definitive and never collected. \emph{hash} is an array used as a hash table
+for quick CTypeID checks. It maps both, the hashed name of named elements and the
+hashed type (info and size) for unnamed elements to the corresponding CTypeID.
+Collisions are handled in a linked list using the \emph{next} field of the
+\emph{CType} struct.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CTState {
+  CType *tab;        /* C type table. */
+  CTypeID top;       /* Current top of C type table. */
+  MSize sizetab;     /* Size of C type table. */
+  lua_State *L;      /* Lua state (for errors and allocations). */
+  global_State *g;   /* Global state. */
+  GCtab *finalizer;  /* Map of cdata to finalizer. */
+  GCtab *miscmap;    /* Map -CTypeID->metatable and cb slot->func. */
+  CCallback cb;      /* Temporary callback state. */
+  CTypeID1 hash[...];/* Hash anchors for C type table. */
+} CTState;
+\end{lstlisting}
+
+\subsubsection{lj\_ctype.c}
+This file contains functions to manage \emph{CType}. It is divided into three
+parts. The first one for the allocation, creation and internalization of
+\emph{CType}. The second one provides getters to retrieve C type information.
+The last one is  type representation, providing the necessary functions to
+convert a \emph{CType} to a human-readable string representation.
+\emph{lj\_ctype\_repr} is the entry function that returns the internalize string
+representation. It uses the struct \emph{CTRepr} to create the
+representation by appending/prepending characters through the pb/pe pointers
+into the buffer. The main function is the \emph{ctype\_repr} that contains a
+switch on the \emph{CType} info.
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CTRepr {
+  char *pb, *pe; /* Points to begining/end inside the buffer*/
+  CTState *cts;  /* C type state. */
+  lua_State *L;
+  int needsp;    /* Next append needs an extra space character */
+  int ok;        /* Indicate if buf is currently a valid type */
+  char buf[...]; /* String buffer of the ctype being constructed */
+} CTRepr;
+\end{lstlisting}
+
+\subsubsection{lj\_cparse.h}
+The \textit{cparser} is responsible for parsing the string of the C declarations identifying types or external symbols. Its code structure is quite close to the
+Lua lexer/parser. Its principal struct is the \emph{CPState} which is
+similar to \emph{LexState}. In this struct, \emph{tmask} is a mask constraining
+the possible ctype of the next identifier. The \emph{mode} defines the behaviour
+of the parser with respect to the input. It has a different behaviour according to the type: accepting multiple declarations, skipping errors, accept/reject abstract
+declarators, accept/reject implicit declarators etc... (see CPARSE\_MODE\_* for a
+full definition).
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CPState {
+  CPChar c;               /* Current character. */
+  CPToken tok;            /* Current token. */
+  CPValue val;            /* Token value. */
+  GCstr *str;             /* Interned string of identifier/keyword. */
+  CType *ct;              /* C type table entry. */
+  const char *p;          /* Current position in input buffer. */
+  SBuf sb;                /* String buffer for tokens. */
+  lua_State *L;           /* Lua state. */
+  CTState *cts;           /* C type state. */
+  TValue *param;          /* C type parameters. ($xyz)*/
+  const char *srcname;    /* Current source name. */
+  BCLine linenumber;      /* Input line counter. */
+  int depth;              /* Recursive declaration depth. */
+  uint32_t tmask;         /* Type mask for next identifier. */
+  uint32_t mode;          /* C parser mode. */
+  uint8_t packstack[...]; /* Stack for pack pragmas. */
+  uint8_t curpack;        /* Current position in pack pragma stack. */
+} CPState;
+\end{lstlisting}
+
+\subsubsection{lj\_cparse.c}
+This file contains the code of a simple lexer and a simplified, not valid C parser. It uses the \emph{CPState} for the parsing of the input
+string and the \emph{CPDecl} structure for the construction of the
+corresponding CType. During parsing the chain of typdef is unrolled (typdef are
+still internalized for future reference but are not chained to the created
+ctype).
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CPDecl {
+  CPDeclIdx top;     /* Top of declaration stack. */
+  CPDeclIdx pos;     /* Insertion position in declaration chain. */
+  CPDeclIdx specpos; /* Saved position for declaration specifier. */
+  uint32_t mode;     /* Declarator mode (same as CPState) */
+  CPState *cp;       /* C parser state. */
+  GCstr *name;       /* Name of declared identifier (if direct). */
+  GCstr *redir;      /* Redirected symbol name. */
+  CTypeID nameid;    /* Existing typedef for declared identifier. */
+  CTInfo attr;       /* Attributes. */
+  CTInfo fattr;      /* Function attributes. */
+  CTInfo specattr;   /* Saved attributes. */
+  CTInfo specfattr;  /* Saved function attributes. */
+  CTSize bits;       /* Field size in bits (see Ctype bsz). */
+  CType stack[...];  /* Type declaration stack. */
+} CPDecl;
+\end{lstlisting}
+
+\subsubsection{lj\_cdata.c}
+This file contains the functions responsible for cdata management, such as
+allocations, free, finaliser, getter, setter and indexing.
+
+\subsubsection{lj\_cconv.c}
+This file is responsible for ctype conversion. It is divided in 5 parts: (i) C type
+compatibility checks, (ii) C type to C type conversion, (iii) C type to TValue conversion
+(from C to Lua : i.e returned values), (iv) TValue to C type conversion (from Lua to
+c: i.e passed arguments), and (v) initializing C type with TValues (Initialization
+of struct/union/array with Lua object).
+
+\subsubsection{lj\_carith.c}
+This file contains the implementation for all built-in cdata arithmetic, such
+as pointers arithmetic and integer arithmetic. It mainly manipulates some
+\emph{CDArith} structure shown below.
+\begin{lstlisting}[style=CStyle]
+typedef struct CDArith {
+  uint8_t *p[2]; /* data  of the two operands */
+  CType  *ct[2]; /* ctype of the two operands */
+} CDArith;
+\end{lstlisting}
+
+\subsubsection{lj\_ccall.c}
+This file contains the code handling calls to C function. It realises struct/array
+register classification (see CCALL\_RCL\_*) computing how it can be passed
+as argument/return values (in GP register, SSE register or memory). It handles
+then the decomposition/packing depending on the calling convention picked.
+
+\subsubsection{lj\_ccall.h}
+This file contains the main structure used for C function call.
+\begin{lstlisting}[style=CStyle]
+typedef struct CCallState {
+  void (*func)(void); /* Pointer to called function. */
+  uint32_t spadj;     /* Stack pointer adjustment. */
+  uint8_t nsp;        /* Number of stack slots. */
+  uint8_t retref;     /* Return value by reference. */
+  uint8_t ngpr;       /* Number of arguments in GPRs. */
+  uint8_t nfpr;       /* Number of arguments in FPRs. */
+  [...]
+  FPRArg fpr[...];    /* Arguments/results in FPRs. (SSE) */
+  GPRArg gpr[...];    /* Arguments/results in GPRs. */
+  GPRArg stack[...];  /* Stack slots. */
+} CCallState;
+\end{lstlisting}
+
+\subsubsection{lj\_ccallback.c}
+This file provides the FFI C callback handling. The principal structure is the
+\emph{CCallback} (see \texttt{lj\_ctype.h}) that mainly use through the \textit{cb} field
+of the \emph{CTState}
+structure. Each callback is associated with a unique \textit{cb slot} and
+\emph{cts-$>$miscmap} contains the mapping between \textit{cb slot} and function
+pointers. The \emph{cts.cb.cbid} is a table mapping \textit{cb slot} to the corresponding
+\textit{CTypeID}. \emph{cts.cb.mcode} is an mapped executable page that contains a push
+of slot id and a jump to \emph{lj\_vm\_ffi\_callback} (the entry in this page
+corresponds to the \textit{cb} address provided to the C code). The order of call when a callback occurs is the following:
+
+\begin{itemize}
+	\item C calls a callback address
+	\item It arrives in the callback mcode page (push the appropriate slot id and call \textit{lj\_vm\_ffi\_callback})
+	\item It arrives in \textit{lj\_vm\_ffi\_callback} that charge in registers the callback.fpr/gpr + stack in registers
+	\item It arrives in \textit{lj\_ccallback\_enter} that prepare the Lua state and do conversion of argument from C to Lua type.
+	\item It arrives in \textit{lj\_vm\_ffi\_callback}: execute the callback with this Lua state
+	\item Lua callback
+	\item It arrives in\textit{ $|->$cont\_ffi\_callback}: call lj\_ccallback\_leave
+	\item It arrives in \textit{lj\_ccallback\_leave} convert return value from Lua to C.
+	\item It arrives in\textit{ $|->$cont\_ffi\_callback}: return to C code with the return value in register/stack.
+	\item It arrives in C code.
+\end{itemize}
+
+\begin{lstlisting}[style=CStyle]
+typedef struct CCallback {
+  FPRCBArg fpr[...]; /* Arguments/results in FPRs. */
+  intptr_t gpr[...]; /* Arguments/results in GPRs. */
+  intptr_t *stack;   /* Pointer to arguments on stack. */
+  void *mcode;       /* Machine code for callback func. pointers. */
+  CTypeID1 *cbid;    /* Callback type table. */
+  MSize sizeid;      /* Size of callback type table. */
+  MSize topid;       /* Highest unused callback type table slot. */
+  MSize slot;        /* Current callback slot. */
+} CCallback;
+\end{lstlisting}
+
+\subsubsection{lj\_clib.[c,h]}
+This file contains the necessary code to load/unload ffi library. It also handles
+the indexing of the external library using named symbol. It uses platform-specific tools to explore the exposed symbols. Every symbol is resolved only once
+and cached in the \emph{CLibrary} cache table.
+\begin{lstlisting}[style=CStyle]
+typedef struct CLibrary {
+  void *handle; /* Opaque handle for dynamic library loader. */
+  GCtab *cache; /* Cache resolved symbols. Anchored in ud->env. */
+} CLibrary;
 \end{lstlisting}
