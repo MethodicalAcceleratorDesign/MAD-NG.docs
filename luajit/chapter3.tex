@@ -1,0 +1,359 @@
+\chapter{Background}
+\label{chapter:background}
+
+\section{Just-in-time compilation}
+Over the years the research community in computer science has tackled the problem of improving dynamic languages performances using different approaches, which can be classified in two major categories \cite{arnold2005survey, cuni2010high}: (i) writing fast interpreters; (ii) integrating interpreters with just-in-time compilers (JIT).
+
+Differently from static compilers, interpreters inevitably introduce overhead caused by running the interpreter itself. Thus, when writing fast interpreters the goal is to reduce at minimum the cost of interpretation overhead. In fact, implementing fast interpreters is proved to be effective only for languages where the cost of interpretation dominates the total execution time. 
+
+On the other hand, JIT compilers try to optimise different kinds of overhead introduced by dynamic languages. In contrast to ahead-of-time compilation, where a program is statically compiled upfront and then run, just-in-time compilation is a technique where the machine code is emitted at run-time according to the observed program's execution. As a result of delaying compilation at run-time, the JIT can take into account specific features of the program's execution when generating the machine code. In this way, it can perform more aggressive optimisations. 
+
+JIT compilers are usually applied in the context of interpreted-based system where a program is represented in the form of bytecode executed by a virtual machine (VM). In this case a program is interpreted at first by the VM, then the JIT compiles only frequently executed parts of the code defined as \textit{hotspots}. These are the parts where the program spends most of its time, hence emitting efficient machine code should naturally lead to improving the overall performance.
+
+\citeauthor{cuni2010high} in \cite{cuni2010high} illustrates two general rules to consider when tackling the problem of compiler optimisation: (i) the \textit{Pareto principle} (or \textit{80/20 rule}) \cite{wiki:pareto} states that the 80\% of the execution time of a program is related only to 20\% of the code. Thus, small parts of the code can make the difference in the performance of the whole program; (ii) the \textit{Fast Path principle} \cite{hoschka1993control} explains that the most frequently used operations should be handled by \textit{fast paths} in order to speed up the execution, while the remaining cases are not required to be particularly efficient. 
+
+\section{Compilation units}
+A key designing decision for JITs is to define what constitutes the basic compilation unit, which in a classical compilers approach is represented by a whole file or module. In the contest of just-in-time compilation, considering such a large component would not give the advantages expected because it can cause a substantial delay in programs execution. In this case, smaller compilation units, which refers only to most frequently executed parts of the code (\textit{hotspots}), are more adequates. This choice will also decrease memory usage minimising the total amount of compiled code.
+
+\citeauthor{schilling2013trace} in \cite{schilling2013trace} illustrates common choices of compilation units used over the years in the context of dynamic optimisation systems:
+
+\begin{enumerate}
+  
+    \item \textit{Dynamic Basic Block}. As defined by \citeauthor{smith2005virtual} \cite{smith2005virtual} a dynamic basic block is determined by the actual flow of a program when it is executed. It always begins at the instruction executed immediately after a branch and it continues until the first next conditional branch is encountered. Dynamic basic blocks are usually larger than static basic blocks and the same static instruction may belong to more than one dynamic basic block. This approach is typically used in binary translators.
+  
+    \item \textit{Function} (\textit{Method}). It is the most intuitive compilation unit for a JIT compiler. In this case, the whole function with all the possible branches and control flow paths is compiled. A function is generally marked as hot and compiled when it is frequently called at run-time. Then, any subsequent calls of the same function will lead to the already compiled machine code, instead of using the interpreter. Afterwards, the system generally reverts to interpretation when the compiled function ends. Also static compilers usually compile a function all at once, hence the same optimisation techniques can be used for function-based just-in-time compilers.
+   
+    \item \textit{Loop}. The analogous approach used for functions can be applied for loops. In this context the entire loop body is compiled, including all possible control-flow paths. Loops are generally good candidates to be considered as hotspots since the same set of instructions will be executed repeatedly many times. 
+    
+    \item \textit{Region}. Firstly introduced in \cite{hank1995region}, this approach uses regions as more general compilation units. A region is the result of collecting code from several functions, but it excludes all rarely executed portions of these functions. To create a region the process begins by the most executed block not yet in the region, so-called \textit{seed block}. Then, the scope of the region is expanded by selecting a path of successors based solely on the execution frequency. This process continues until no more desirable successors are found.
+    
+    \item \textit{Trace}. A trace is a linear sequence of instruction that does not contain any control-flow joint points. The execution either continues on the trace, which consists of a unique path of instructions (\textit{hotpath}), or it exits the trace. A trace can have a single entry point and one or more exit points. According to the logic used in designing the JIT, traces can be generated from loops or functions. The last instruction of the trace may jump to the beginning of the trace (e.g. loops) or to another trace or to the interpreter. Trace exits can either lead to another trace (\textit{sidetrace}) or back to the interpreter. If there are multiple frequently executed control flow paths related to the same set of instructions, the JIT will generate multiple traces (including sidetraces). This can lead to duplication because a block of instruction can be repeated in different traces, but this replication can provide more opportunities for specialisation and aggressive optimisation.
+    
+\end{enumerate}
+
+\noindent
+An interesting study by \citeauthor{bruening2000exploring} \cite{bruening2000exploring} investigates strategies for finding the optimal compilation unit shapes. They show that the hybrid combination of functions with traces or loops significantly outperforms the solely function-based strategy.
+
+In the following section, we will go through an extensive explanation of trace-based just-in-time compilers.
+
+\section{Trace-based Just-in-time Compilation}
+A JIT compiler that considers \textit{traces} as compilation unit is called \textit{trace-based just-in-time compiler} or \textit{tracing JIT}. Frequently executed fragment of code (either loops or functions) are good candidates to produce hotpaths that will be compiled into traces.
+
+This family of just-in-time compilers is built on the assumptions that: (i) programs spend most of their execution time in loops; (ii) several iterations of the same loop are likely to take similar code paths.
+
+\begin{figure}[H]
+    \hspace*{2cm}
+    \vspace*{0cm}
+    \begin{tikzpicture}[node distance=1cm]
+        %nodes
+        \node[punkt_empty] (start) {start execution};
+        \node[punkt, below= of start] (interpret) {Interpretation with Hotpath Monitoring};
+        \node[punkt, below=of interpret] (recording) {Interpretation and Recording};
+        \node[punkt, below=of recording] (compile) {Compilation and Optimisation};
+        \node[punkt, below=of compile] (mcode) {Executing Machine Code};
+        \node[punkt_empty, left=0.5cm of recording] (dummy) {\tiny{entering code fragment with existing trace}};
+        % edges
+        \draw[->] (start.south) -- (interpret.north);
+        \draw[->] (interpret.south) -- (recording.north) node[near start, right] {\tiny{hotpath detected}};
+        \draw[->] (recording.south) -- (compile.north) node[near start, right] {\tiny{end recording}};
+        \draw[->] (compile.south) -- (mcode.north);
+        \draw[->] (interpret.200) .. controls +(left:10mm) and +(left:10mm) .. (mcode.west);
+        \draw[->] (recording.east) .. controls +(right:10mm) and +(right:10mm) .. (interpret.-10) node[near start , shift={(-0.15,-0.6)}] {\tiny{abort}};
+        \draw[->] (compile.east) .. controls +(right:20mm) and +(right:20mm) .. (interpret.east) node[near start , shift={(-0.7,-1)}] {\tiny{abort}};
+        \draw[->] (mcode.east) .. controls +(right:30mm) and +(right:30mm) .. (interpret.10) node[near start , shift={(-0.8,-1.3)}] {\tiny{guard failure}};
+    \end{tikzpicture}
+    \caption{Stages of execution for a VM with tracing JIT}
+    \label{fig:diagram-vm-tracingjit}
+\end{figure}
+
+\noindent
+A system made by a virtual machine (VM) equipped with a tracing JIT can go through various stages when executing a program. These are summarised in Fig. \ref{fig:diagram-vm-tracingjit}:
+
+\begin{enumerate}
+    
+    \item \textit{Interpretation}. At first the program is run by the interpreter, which executes bytecode instructions while performing some light profiling in order to identify hotpaths of the program. In particular, it monitors the bytecode instructions that may be potential \textit{trace headers}, which are the instructions from where a trace can start. The techniques used to monitor potential trace header and to identify hotpaths can vary for different implementations of tracing JITs (see Sections \ref{subsec:identiy-trace-headers}, \ref{subsec:hotpath-detection}). Most of them use a counter that is incremented every time a potential trace header instruction is executed. When the counter exceeds a certain threshold the VM switches to recording mode. 
+    
+    On the other hand, if the interpreter hits a fragment of code that has already been compiled into an existing trace, the execution goes to the already compiled machine code. In this case the VM switches to executing machine code. 
+    
+    \item \textit{Recording}. When a hotpath is found the interpreter continues to run bytecode instructions, but all the executed bytecode instructions are also recorded. These recorded instructions are stored into a linear list that we previously called \textit{trace}. Generally, from the bytecode instructions it is emitted an intermediate representation (IR) that will be used for optimisation and compilation.
+    
+    Recording continues until the interpreter finishes to execute all the instructions of the detected hotpath (e.g. one iteration of a loop or an entire function). The decision to stop recording is crucial for the efficacy and performance of a tracing JIT. It will be further discussed in Section \ref{sec:recording}.
+    
+    At any moment of the recording phase, an abort can occur. It means that recording failed because the execution flow took a path in the code that cannot produce a suitable trace. This can be caused by an exception or any kind of error while recording. If this happens the partial trace that was generated is discarded and the VM switches back in the previous stage that consists of sole interpretation. 
+    
+    
+    \item \textit{Optimisation and Compilation}. Once recording is successfully completed the system switches to compilation. In this case the IR produced is aggressively optimised and the trace is compiled to machine code. The JIT compiler produces very efficient machine code that is immediately executable, e.g. it can be used for the next iteration of a loop or for the next time a function will be called.
+    
+    During this phase an abort can also occur. If so, the partial trace is discarded and the system switches back to interpretation. 
+    
+    \item \textit{Executing Machine Code}. In this phase the machine code previously generated by the tracing JIT is executed. This machine code is cached so that if the interpreter encounters a code fragment that previously produced a trace, it will switch to executing the already compiled machine code. Generally, there is a limited cash memory where compiled traces are stores; if this memory is full the oldest trace is discarded to give place for the new one.
+    
+    The end of a trace can either be connected: (1) to itself (i.e. loop or recursive function), thus the machine code of the trace runs repeatedly until some exit condition is triggered; (ii) to another trace; (iii) to the interpreter. This link is created according to the specific hotpath previously recorded and executed by the interpreter.
+    
+    Since a trace is a linear sequence of instructions, it contains \textit{guards} that ensure the correctness of the machine code executed. Guards check that the assumptions in the trace are fulfilled (e.g. the execution flow follows a specific path of a branch, the hypothesis on variables types are verified, etc). If one of the assumptions is not respected the associated guard fails and the trace exits. When the trace exits because of a guard failure the system generally switches to interpretation, but if particular conditions are met (see Section \ref{sec:sidetrace}) a trace exit can lead to another trace, so-called \textit{sidetrace}.
+    
+\end{enumerate}
+
+\noindent
+In the next sections, we will describe the phases just mentioned more in details.
+
+\subsection{Identifying trace headers}
+\label{subsec:identiy-trace-headers}
+Identifying bytecode instructions that are potential trace headers is a key and delicate aspect for trace-based just-in-time compilation. This task must be very effective because we want to select only code paths where the program actually spends a lot of time. On the other hand, it is desirable to reduce at minimum the activity of monitoring during interpretation because it may impact the performances.
+
+\citeauthor{schilling2013trace} in \cite{schilling2013trace} discusses different methods adopted in literature for identifying potential trace headers:
+
+\begin{enumerate}
+    \item \textit{Next executed tail (NET)}. This is the first and most intuitive method used to identify hotpaths in programs. Introduced by \citeauthor{bala1999transparent} in \cite{bala1999transparent, duesterwald2000software}, it is based on the assumption that every loop must contain at least one backward branch, which is a jump to a lower address in memory with respect to the current program counter. The target of the backward branch is considered as a potential trace header because it is the first instruction of the loop. With this rationale, the target instruction of function calls could also be considered as a potential trace header when there is a backward branch. Many tracing JITs adopt this heuristic e.g. HotpathVM \cite{gal2006hotpathvm} and PyPy’s Tracing JIT Compiler \cite{bolz2009tracing}.
+    
+    \item \textit{Last Executed Iteration (LEI)}. This method, introduced by \citeauthor{hiniker2005improving} in \cite{hiniker2005improving}, is a specialisation of NET. It also considers only the targets of backward branches as potential trace headers, but it keeps track of the last \textit{n} branch targets in a history cache. Only branch targets in this cache will be considered as potential trace header. Even if this method implies an overhead caused by the cache, it needs fewer counters because there will be fewer branch targets. \citeauthor{hiniker2005improving} proved that using LEI (instead of NET) there is an improvement in locality of execution while reducing the size of the code cache.
+    
+    \item \textit{Natural loop first (NLF)}. This approach consists in considering some bytecode instructions as "special" because they are the only ones that can be potential trace headers (e.g. bytecode instructions at the beginning of a loop, or function call). A special treatment should also be performed for recursive functions and gotos that can rise with high probability frequently executed paths in the code. To use this technique we must be able to access the information on the higher-level structure of the program. The advantage of this method is that fewer points of the program are considered as potential trace headers and fewer counters are needed. It is also more predictable to know where traces can start.
+    
+    LuaJIT \cite{pall2012luajit} by \citeauthor{pall2012luajit} uses in fact this heuristic to identify hotpaths, e.g. a \texttt{for} is translated to a special bytecode instruction that is considered as potential trace header.
+    
+\end{enumerate}
+
+\noindent
+It should be noted that side exits of a trace can also be considered as potential trace headers because a trace, that we previously called sidetrace, can start from that point (paragraph \ref{sec:sidetrace} describe this technique in details).
+
+\subsection{Hotpath detection}
+\label{subsec:hotpath-detection}
+Once the interpreter identifies a bytecode instruction that is a potential trace header (using whatever techniques previously described), a counter associated to that fragment of code is incremented. Finally, the tracing JIT detects a hotpath when the counter exceeds a certain threshold (\textit{hotness threshold}). Fig. \ref{fig:diagram-hotpath-detection} shows a diagram that explain this mechanism.
+
+The value of hotness threshold is a critical aspect that can indeed affect the performances of a tracing JIT. Having a low hotness threshold implies that fragments of code that are not actually "hot" can be compiled. In this case compiling that fragments was not worth it because it only brought compilation overhead. On the other hand, a high hotness threshold can imply that the execution flow stays too much time in the interpreter and the system does not exploit the advantages of compiling frequently executed fragments of the code. Finding a suitable trade-off depends on many aspects including the specific application, programming language, architecture, etc.
+
+In many tracing JIT, the hotness threshold is a parameter that the user can set according to its needs. In this way it is possible to change it based on the performances obtained.
+
+
+
+\begin{figure}[H]
+    \hspace*{2.2cm}
+    \vspace*{0cm}
+    \begin{tikzpicture}[node distance=1cm]
+        %nodes
+        \node[punkt_empty] (start) {start execution};
+        \node[punkt, below= of start] (interpret) {Interpret bytecode instructions};
+        \node[punkt_empty, below=of interpret] (header) {potential trace header is executed?};
+        \node[punkt, below=of header] (counter) {Increment its counter};
+        \node[punkt_empty, below=of counter] (threshold) {counter exceeds threshold?};
+        \node[punkt, below=of threshold] (detection) {Hotpath detected};
+
+        % edges
+        \draw[->] (start.south) -- (interpret.north);
+        \draw[->] (interpret.south) -- (header.north);
+        \draw[->] (header.south) -- (counter.north) node[near start, right] {\tiny{YES}};
+        \draw[->] (counter.south) -- (threshold.north);
+        \draw[->] (threshold.south) -- (detection.north) node[near start, right] {\tiny{YES}};
+        \draw[->] (threshold.west) .. controls +(left:30mm) and +(left:30mm) .. (interpret.west) node[near start , shift={(1.5,-1.2)}] {\tiny{NO}};
+        \draw[->] (header.east) .. controls +(right:15mm) and +(right:15mm) .. (interpret.east) node[near start , shift={(-0.5,-0.6)}] {\tiny{NO}};
+    \end{tikzpicture}
+    \caption{Hotpath detection}
+    \label{fig:diagram-hotpath-detection}
+\end{figure}
+
+\subsection{Trace recording}
+\label{sec:recording}
+As described before, recording starts when a hotpath is detected. The interpreter switches to "recording mode" so it will interpret and record into a trace the executed instructions. A trace is entirely specialised on the path that the execution flow takes when recording instructions. Specialisation is a key aspect for tracing JITs because the final goal is to create very efficient and specialised machine code. However, the recording technique is very speculative because there are no guarantees on which path the execution flow will take when recording instructions. Ideally, we should record the path that has the highest probability to be taken, but this is not ensured in any way. 
+
+Analysing the example of the loop in Fig. \ref{fig:recording-speculative} clarifies this concept. The two possible paths taken by the execution flow are either \texttt{A-B-D} (path 1) or \texttt{A-C-D} (path 2) since there is a branch after the block \texttt{A}. Let's suppose that, in a random iteration of the loop, the probability of executing path 1 is 80\% and the remaining 20\% for path 2. In this situation the best would be to record the trace considering path 1, but there is no guarantee of that. In fact, the behaviour of a tracing JIT is the following. As usual the program is run by in the interpreter at first, then VM starts recording when the counter exceeds the hotness threshold (assuming that the loop iterates enough time to become hot). The path that will be recorded is the path taken by the execution flow in the next iteration of the loop when the system switches to mode "interpretation and recording" (it can be either path 1 or path 2). Assuming that we are not unlucky path 1 will be recorded, but there is no guarantee of that.
+
+\begin{figure}[H]
+    \hspace*{3cm}
+    \vspace*{0cm}
+    \begin{tikzpicture}[node distance=1cm]
+        %nodes
+        \node[nodeletter, below= of start] (A) {A};
+        \node[nodeletter, below left=of A] (B) {B};
+        \node[nodeletter, below right=of A] (C) {C};
+        \node[nodeletter, below left=of C] (D) {D};
+        % edges
+        \draw[->] (A.south) -- (B.north);
+        \draw[->] (A.south) -- (C.north);
+        \draw[->] (B.south) -- (D.north);
+        \draw[->] (C.south) -- (D.north);
+        \draw[->] (D.west) .. controls +(left:40mm) and +(left:40mm) .. (A.west);
+    \end{tikzpicture}
+    \caption{Example of loop}
+    \label{fig:recording-speculative}
+\end{figure}
+
+\noindent
+The phase of interpretation and recording may continue until either there is an abort or an end-of-trace condition is met, which means that the recording is successfully completed (abort will be discussed in the next paragraph). In a successful scenario, a tracing JIT stops recording because one of the following end-conditions has been encountered \cite{schilling2013trace}: (i) \textit{Loop back to entry}. It is the most simple case when a loop goes back to the point where recording started. It means that a cycle has been found, thus recording can stop because a loop has been correctly recorded; (ii) \textit{Loop back to parent}. It is the case when a sidetrace loops back to its parent trace. Thus, a cycle has been detected and the sidetrace was successfully recorded; (iii) \textit{Start of existing trace}. This happens when an already existing trace is encountered while recording. In this situation the behaviour of a tracing JIT can vary for different implementations: either it stops recording and the trace jumps to the existing trace or recording will continue independently. In the latter situation there will be longer traces and duplication increases, but there are more opportunities for specialisation and aggressive optimisations. 
+
+\subsection{Abort and blacklisting}
+\label{subsec:abort-blacklisting}
+Trace abort can happen for multiple reasons at any stage of trace creation (i.e. recording, optimisation or compiling). If an exception is thrown while recording, the trace is aborted because this represents an exceptional (and usually rare) program state. Similarly, certain very expensive instructions cause trace abort because their cost exceeds the potential run-time saving that can be realised through compiling that code fragment to machine code (e.g. memory allocation instructions). Another possible cause of abort is an overlong trace which means that recording is aborted when the trace becomes too long. Hypothetically, the entire program could be covered by a single trace, at the expenses of having an inevitably huge trace. This is clearly not our goal because it will not lead to any benefits. Finally, another common situation that causes trace abort is when we try to record a bytecode instruction that cannot be translated into machine code because the tracing JIT does not support this feature. This can happen either because the feature was not yet implemented or because who designed the tracing JIT voluntarily decided not to support it for any reason (e.g. there was no advantage in compiling traces that contains this instruction).
+
+There could be a scenario where a tracing JIT repeatedly tries to create a trace from a fragment of code (either a loop or function), but trace creation always aborts. In this case the interpreter spends times trying to record traces, but it will never be able to create any. Thus, a simple technique to adopt in this situation is to blacklist traces that failed to compile many times. Through a counter, so-called \textit{backoff} counter by Gal et al. \cite{gal2009trace}, the number of recording attempts is bounded to a certain limit. If the number of failed attempts of recording a trace from a code fragment exceeds this limit, the fragment is blacklisted and the interpreter will never retry to start recording at that point again. Fig. \ref{fig:abort-blacklisting} describes this mechanism.
+
+Some tracing JITs (e.g. LuaJIT \cite{pall2012luajit}) adopt the policy that a blacklisted fragment of code cannot be whitelisted ever again. While other implementations (e.g. RaptorJIT \cite{gorrie2017raptorjit}) give another chance to a blacklisted fragment because sometimes code fails to compile in isolation, but the same code can be compiled in a different context.
+
+\begin{figure}[H]
+    \hspace*{1cm}
+    \vspace*{0cm}
+    \begin{tikzpicture}[node distance=1cm]
+        %nodes
+        \node[punkt_empty] (start) {Fragment n-th becomes hot};
+        \node[punkt, below= of start] (creation) {Try to create a trace};
+        \node[punkt, text width=7em, right=1.8cm of creation] (success) {Trace for fragment n-th created};
+        \node[punkt, below=of creation] (abort) {abort trace};
+        \node[punkt, below=of abort] (counter) {Increment its backoff counter};
+        \node[punkt_empty, below=of counter] (threshold) {counter exceeds blacklisting threshold?};
+        \node[punkt, below=of threshold] (detection) {Blacklist fragment n-th};
+        \node[punkt_empty, below left=2cm of creation] (retry) {Retry to create a trace if the same fragment becomes hot again};
+
+        % edges
+        \draw[->] (start.south) -- (creation.north);
+        \draw[->] (creation.south) -- (abort.north) node[near start, right] {\tiny{fail}};
+        \draw[->] (creation.east) -- (success.west) node[near start, above] {\tiny{success}};
+        \draw[->] (abort.south) -- (counter.north);
+        \draw[->] (counter.south) -- (threshold.north);
+        \draw[->] (threshold.south) -- (detection.north) node[near start, right] {\tiny{YES}};
+        \draw[->] (threshold.west) .. controls +(left:10mm) and +(down:20mm) .. (retry.south) node[near start , shift={(0.5,-0.3)}] {\tiny{NO}};
+        \draw[->] (retry.north) .. controls +(up:20mm) and +(left:15mm) .. (creation.west);
+    \end{tikzpicture}
+    \caption{Blacklisting}
+    \label{fig:abort-blacklisting}
+\end{figure}
+
+\subsection{Compiling traces}
+As explained previously, in "interpreting and recording" mode the interpreter executes bytecode instructions and records them into a trace.  In that phase it is usually also emitted an intermediate representation (IR), which is in Static Single Assignment (SSA) form \cite{cytron1991efficiently}. Each variable is assigned exactly once, and every variable is defined before it is used. Gal et al. introduced in \cite{gal2006hotpathvm} a novel form of SSA, so-called Trace Static Single Assignment (TSSA) which exploit the fact that traces only follow exactly one path.
+
+Before producing the actual machine code, a trace is optimised. In fact, since traces do not contain multiple control flows, it is simple to apply optimisations on a linear set of instructions. Tracing JITs use most of the well-known compiler techniques, e.g. constant propagation, constant folding, redundant guard removal, store/load propagation, allocation removal, common sub-expression elimination, dead code elimination, loop invariant code motion, loop unrolling, code sinking. 
+
+After optimisations, a trace is compiled to very efficient and specialised machine code where every guard is turned into a quick check to verify whether the assumption still holds. At this point, the trace consists of a linear sequence of optimised instructions in SSA form, hence the translation to machine code is also facilitated.
+
+\subsection{Trace exit}
+\label{subsec:trace-exit}
+A trace is executed linearly from its first instruction to the last assuming that all the assumptions are respected by success of all guards. As mentioned previously, the end of the trace can either be connected: (1) to itself (i.e. loop or recursive function), thus the machine code of the trace runs repeatedly until some exit condition is triggered; (ii) to another trace; (iii) to the interpreter. If the assumptions checked by the guards are not verified the trace exits. 
+
+When the execution leaves a trace because of a guard failure the system switches back to interpretation. The VM should be left in a consistent state for the interpreter to continue. In particular, the values held in registers throughout the trace must be written back to their respective stack locations. Once the stack is in a suitable state, the interpreter can continue.
+
+A naive solution to this problem could be to force a full update of the state to memory before every exit. However, this solution seriously decrements code performance.
+
+A better approach introduced in \cite{bala1999transparent} accomplish this task with the so-called \textit{exit stubs}. They consist of small pieces of code that execute the necessary writes. With this approach a guard is implemented as a conditional branch to the exit stub when it fails. At the end of an exit stub, there is a jump to a routine that transfers control to the interpreter. Since for some architectures conditional branches have a limited jump distance, the code responsible for exits stub is often located just after the trace. Many tracing JITs use exit stubs to keep the VM state consistent because they proved to be very efficient. However, they imply some drawbacks: (i) there is an overhead because we need to produce extra code (ii) they may cause fragmentation of the machine code area. If a sidetrace is attached to an exit, the exit stub is no longer needed and its memory can be used for other purposes \cite{schilling2013trace}.
+
+An alternative technique is to save the contents of all registers on trace exits and use meta-data stored with the trace to recover a consistent state. This approach is used in LuaJIT \cite{pall2012luajit} with \textit{snapshots} that store a consistent view of all updates to the state before an exit. This data-driven approach is slower if compared to exit stubs, but it avoids the need of generating extra code. This slowness does not have a serious impact on the performances because repeatedly taken exits generate sidetraces. Trace exits that go back to interpretation should be relatively rare events.
+
+\subsection{Sidetraces}
+\label{sec:sidetrace}
+As previously mentioned, a trace can be created from an exit of a root trace. The trace generated will be called \textit{sidetrace} because it starts from the exit of another trace. The trace to which the sidetrace is attached is called \textit{parent trace}. Sidetraces are needed because a single trace only covers one path of the entire control flow graph. If multiple paths become hot (in the sense of being frequently executed) it is appropriate to compile them in multiple traces. 
+
+\begin{figure}[H]
+    \hspace*{2.2cm}
+    \vspace*{0cm}
+    \begin{tikzpicture}[node distance=1cm]
+        %nodes
+        \node[punkt] (mcode) {Executing machine code in a trace};
+        \node[punkt_empty, below=of mcode] (guard) {sidetrace already exists?};
+        \node[punkt, below=of guard] (counter) {Increment counter of guard n-th}; 
+        \node[punkt_empty, below=of counter] (threshold) {counter exceeds sidetrace threshold?};
+        \node[punkt, below=of threshold] (hotguard) {Guard becomes hot};
+        \node[punkt, below=of hotguard] (compilesidetrace) {Record and compile sidetrace};
+        \node[punkt, right=of guard] (sidetracemcode) {Execute sidetrace machine code};
+        \node[punkt, left=of threshold] (interpret) {Go back to interpretation};
+
+
+        
+        % edges
+        \draw[->] (mcode.south) -- (guard.north) node[near start, right] {\tiny{guard n-th fails}};
+        \draw[->] (guard.south) -- (counter.north) node[near start, right] {\tiny{NO}};
+        \draw[->] (counter.south) -- (threshold.north);
+        \draw[->] (threshold.south) -- (hotguard.north) node[near start, right] {\tiny{YES}};
+        \draw[->] (hotguard.south) -- (compilesidetrace.north);
+        \draw[->] (guard) -- (sidetracemcode) node[near start, below] {\tiny{YES}};
+        \draw[->] (threshold) -- (interpret) node[near start, below] {\tiny{NO}};
+        \draw[->] (compilesidetrace.east) .. controls +(right:25mm) and +(down:15mm) .. (sidetracemcode.south);
+        
+    \end{tikzpicture}
+    \caption{Sidetrace creation}
+    \label{fig:diagram-hotsidetrace}
+\end{figure}
+
+\noindent
+A sidetrace is created when the same guard fails repeatedly (the guard becomes hot). At that point, it is too expensive to restore the VM and to resume interpretation. Thus, it is more profitable to attach a sidetrace to the hot exit. The diagram in Fig. \ref{fig:diagram-hotsidetrace} describe this mechanism.
+
+In a situation where two paths are frequently executed, the first path that becomes hot will be handled by the parent trace, then the second one will be handled in part by the parent trace and finally by the sidetrace. The example of the loop in Fig. \ref{fig:recording-loop} describes this situation. If the path \texttt{A-B-D} becomes hot first a root trace (trace with no parent) will be created. Then a sidetrace that executes \texttt{C-D} is created when the guard also becomes hot. 
+
+\begin{multicols}{2}
+
+\begin{figure}[H]
+    \hspace*{-1cm}
+    \vspace*{0cm}
+    \begin{tikzpicture}[node distance=1cm]
+        
+        %nodes
+        \node[nodeletter, below= of start] (A) {A};
+        \node[nodeletter, below left=of A] (B) {B};
+        \node[nodeletter, below right=of A] (C) {C};
+        \node[nodeletter, below left=of C] (D) {D};
+        % edges
+        \draw[->] (A.south) -- (B.north);
+        \draw[->] (A.south) -- (C.north);
+        \draw[->] (B.south) -- (D.north);
+        \draw[->] (C.south) -- (D.north);
+        \draw[->] (D.west) .. controls +(left:40mm) and +(left:40mm) .. (A.west);
+        % frames
+        \node[label=LOOP, frame,  draw=none, fit=(A) (B) (C) (D)]{};
+    \end{tikzpicture}
+    \caption{Loop}
+    \label{fig:recording-loop}
+\end{figure}
+
+\begin{figure}[H]
+    \hspace*{0cm}
+    \vspace*{0cm}
+    \begin{tikzpicture}[node distance=1cm]
+        %nodes
+        \node[nodeletter, below= of start] (A) {A};
+        \node[nodeletter, below =of A] (B) {B};
+        \node[nodeletter, below right=3cm of A] (C) {C};
+        \node[nodeletter, below =of B] (D1) {D};
+        \node[nodeletter, below =of C] (D2) {D};
+        % edges
+        \draw[->] (A.south) -- (B.north);
+        \draw[->] (A.south) -- (C.north);
+        \draw[->] (B.south) -- (D1.north);
+        \draw[->] (C.south) -- (D2.north);
+        %frames
+        \node[label=PARENT TRACE, frame,fit=(A) (B) (D1)]{};
+        \node[label=SIDETRACE, frame,fit=(C) (D2)]{};
+    \end{tikzpicture}
+    \caption{Traces generated}
+    \label{fig:recording-sidetrace}
+\end{figure}
+
+\end{multicols}
+
+\noindent
+The creation of a sidetrace must be efficient to not deteriorate the overall performances. When creating a sidetrace there is a drawback if the values of the registers in the parent trace are first written back to the stack in order to be read back in the new sidetrace. The best would be to transfer directly the values from parent trace to sidetrace. 
+
+A possible solution consists in \textit{trace trees}, introduced by \citeauthor{gal2006incremental} \cite{gal2006incremental}, where the unit of compilation is a root trace with all its attached sidetraces. This technique can profit from more aggressive optimisations on the entire trace tree, but it needs to recompile the whole tree when a new trace is attached. 
+
+Another approach, which is used in LuaJIT \cite{pall2012luajit}, is called \textit{trace coalescing}. The trace compiler maintains a mapping between register and stack slots that is used in the compiler for the sidetrace. The tracing JIT does not emit a load from the stack slot, but it emits a read from the registers that have the contents of the stack slot in the parent trace.
+
+
+\section{Related works}
+\label{history-tracing-jits}
+Before to go more in the details of LuaJIT we present an historical overview of other projects related to trace-based just-in-time compilation.
+
+\subsection{Early Tracing JITs}
+The idea of tracing just-in-time compilation was first introduced in 1970 by \citeauthor{mitchell1970design} \cite{mitchell1970design}. He observed that programs can be compiled at run-time by simply storing the actions performed during interpretation. The compiled code can be derived by executed program actions since it is likely to remain valid and usable for a reasonable time. If that code ever become invalid due to a change in any of its assumptions, the system should be able to revert to interpretation.
+
+While Mitchell was the first to introduce the concept of tracing just-in-time compilation, the first widely known system using this approach was Dynamo by Bala et. al \cite{bala2000dynamo} in 2000. It is a framework for dynamic routine optimisation of binary code that records frequently executed traces and optimises instruction in that trace. They pioneered the technique of compiling only partial parts of the code classified as "hot".
+
+As described by Aycock \cite{aycock2003brief}, other projects were developed along with Dynamo. They were focused on CPU emulation, which is a dynamic binary translation of paths, or traces, that involves translating machine codes from one architecture to another at run time. The most dominants in literature refers to Deaver et al. \cite{deaver1999wiggins} in 1999, Gschwind et al. \cite{gschwind2000dynamic} in 2000, Zheng et al. \cite{zheng2000pa} in 2000. These early compilers differ from later tracing JITs which usually work on a higher level (either on bytecode or intermediate representation level). However, they introduced the key concept of tracing just-in-time compilation: the compilation unit consists of "hot" program paths, or traces, rather than methods, as it was usually done by previous JIT compilers. A path reflects the control flow exhibited by the source program at run-time, a dynamic instead of a static unit of translation.
+
+Further work was done in 2003 by Sullivan et al. \cite{sullivan2003dynamic}. They implemented from Dynamo a new tracing JIT compiler called DynamoRIO. It introduced the concept of \textit{meta-tracing} where the JIT compiler does not trace the user program being run, but it traces the execution of the interpreter while it runs this program.
+
+\subsection{Recents Tracing JITs}
+In more recent years, several tracing just-in-time compilers have been proposed as an efficient solution for dynamic languages. HotpathVM by Gal et al. \cite{gal2006hotpathvm} is a tracing JIT for Java VM released in 2006. It is small enough to fit on resource-constrained embedded devices. It dynamically builds traces from the bytecode and it limits its effort to frequently executed loops that are identified through backward branches. The key of their success consists in an innovative use of the SSA \cite{cytron1991efficiently} transformation, which Gal et al. called TSSA (Trace Static Single Assignment). In classical SSA a control-flow graph is entirely transformed into SSA form, and $\phi$ nodes are placed in control-flow merge points. TSSA consists in transforming into SSA form only variables that are actually used in a recorded trace. In this way it is possible to perform more aggressive optimisations on the trace including LICM (loop invariant code motion) and moving operations on SSA values across side exit points.
+
+Later on, in 2009, Gal et al. applied their trace-based approach to JIT compilation of dynamically-typed languages. They developed a tracing JIT compiler for JavaScript, so-called TraceMonkey \cite{gal2009trace}. It was implemented for an existing JavaScript interpreter called SpiderMonkey \cite{spidermonkey} and it was used in Mozilla's Firefox Browser up to version 11 of Firefox. TraceMonkey proposed a novel approach including trace trees. It considers side-exits as potential locations for trace header when the execution of a trace is repetitively aborted due to a guard failure. In this case the VM starts recording a new trace from the point where the trace is aborted. Moreover, it generates special nested trace trees for nested loops. On the same path, Chang et. al \cite{chang2009tracing} released a tracing JIT called Tamarin-Tracing in 2009. Tamarin is the Adobe's VM that implements ActionScript 3 \cite{adobeactionscript3}, a flavour of ECMAScript \cite{ecmascript}. JavaScript is the most known flavour of ECMAScript, but most of JavaScript can be executed without modification on Tamarin. Tamarin-Tracing is a branch of Tamarin with a trace-based just-in-time compiler that uses run-time profiling to identify frequently executed code paths. Both TraceMonkey and Tamarin-Tracing were developed with the support of a joint collaboration of Mozilla and Adobe. Others relevant works related to the ones just mentioned are: Gal's PhD thesis \cite{gal2006efficient} in 2006; Gal et al. \cite{gal2006incremental, gal2007making} respectively in 2006, 2007; Chang et.al \cite{chang2007efficient, chang2012impact} respectively in 2007, 2011.
+
+A further project has been realised in the context of \textit{meta-tracing} where the JIT compiler does not trace the user program being run, but it traces the execution of the interpreter while it runs this program. In 2009, Bolz et al. \cite{bolz2009tracing} applied this technique for PyPy's tracing JIT compiler to programs that are interpreted for dynamic languages, including Python. Many studies had been conducted on the same direction including  Bolz et. al \cite{bolz2010allocation, bolz2013impact, bolz2014meta} respectively in 2010, 2013, 2014;  Bolz's PhD thesis \cite{bolz2012meta} in 2012 ; Cuni's PhD thesis \cite{cuni2010high} in 2010; Ard{\"o} et al. \cite{ardo2012loop} in 2012; Vandercammen's MSc thesis \cite{vandercammen2015essence} in 2015. On the same path Bauman et al. \cite{bauman2015pycket} created Pycket, a tracing JIT for Racket that is a dynamically typed functional programming language descended from Scheme. Pycket is implemented using the RPython meta-tracing framework, which automatically generates a tracing JIT compiler from an interpreter written in RPython (a subset of Python "Restricted Python").
+
+Another important contribution for trace-based just-in-time compilation has been done by Bebenita et al. \cite{bebenita2010spur} in 2010. They designed and implemented SPUR, a tracing JIT for Microsoft's CIL (the target language of C\#, VisualBasic, F\#, and many other languages).
+
+A very successful tracing just-in-time compiler for the Lua programming language is LuaJIT by Mike Pall \cite{pall2012luajit}. Its first version, LuaJIT 1, was released in 2005 provided with a JIT implemented in the assembly language DynASM \cite{pall2012dynasm, cawleydynasm}. In LuaJIT 2, published in 2012, the whole VM has been rewritten from scratch in DynASM realising a fast interpreter and the JIT was reimplemented in C. There is no documentation of the LuaJIT internals, but a short summary of techniques used is given by Pall in a public statement about the intellectual property contained in LuaJIT \cite{pall2009luajit}. In the following years many JITs have been implemented from LuaJIT, because of its outstanding performance as just-in-time compiler. Schilling developed a trace compiler for Haskell based on LuaJIT called Lambdamachine \cite{schilling2013trace} for his PhD thesis in 2013. Another just-in-time compiler that is born from LuaJIT is RaptorJIT \cite{gorrie2017raptorjit} by Gorrie. It is a fork of LuaJIT  suitable for high-performance low-level system programming. It aims to ubiquitous tracing and profiling to make application performance and compiler behaviour transparent to programmers. It is provided with an interactive tool for inspecting and cross-referencing trace and profiler data called Studio \cite{gorrie2017studio}. Finally, another relevant software that should be mentioned in this context is OpenResty \cite{openresty}. It is a full-fledged web platform that integrates a modified version of LuaJIT.
