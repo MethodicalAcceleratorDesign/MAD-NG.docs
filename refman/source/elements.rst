@@ -12,7 +12,7 @@ Taxonomy
 The classes defined by the ``element`` module are organized according to the kinds and the roles of their instances. The classes defining the kinds are:
 
 **thin**
-	  The *thin* elements have zero-length and their physics does not depend on it, i.e. the attribute ``l`` is discarded or forced to zero in the physics.
+	 The *thin* elements have zero-length and their physics does not depend on it, i.e. the attribute ``l`` is discarded or forced to zero in the physics.
 
 **thick**
 	 The *thick* elements have a length and their physics depends on it. Elements like ``sbend``, ``rbend``, ``quadrupole``, ``solenoid``, and ``elseparator`` trigger a runtime error if they have zero-length. Other thick elements will accept to have zero-length for compatibility with MAD-X [#f1]_ , but their physics will have to be adjusted. [#f2]_ 

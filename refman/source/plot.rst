@@ -2,7 +2,7 @@ Plot
 ====
 .. _ch.cmd.plot:
 
-The ``plot`` command provides a simple interface to the `Gnuplot <http://www.gnuplot.info>`_ application. The Gnuplot release 5.2 or higher must be installed and visible in the user  by MAD to be able to run this command.
+The ``plot`` command provides a simple interface to the `Gnuplot <http://www.gnuplot.info>`_ application. The Gnuplot release 5.2 or higher must be installed and visible in the user ``PATH`` by MAD to be able to run this command.
 
 Command synopsis
 ----------------

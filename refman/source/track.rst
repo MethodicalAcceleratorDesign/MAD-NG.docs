@@ -338,7 +338,7 @@ Examples
 .. [#f1] MAD-NG implements only two tracking codes denominated the *geometric* and the *dynamic* tracking.
 .. [#f2] Initial coordinates ``X0`` may override it by providing per particle or damap beam.
 .. [#f3] The ``TKT`` scheme (Yoshida) is automatically converted to the ``MKM`` scheme (Boole) when approriate.
-.. [#f4] In all cases, MAD-NG uses PTC setup ``time=true, exact=true``.
+.. [#f7] In all cases, MAD-NG uses PTC setup ``time=true, exact=true``.
 .. [#f4] The output of mtable in TFS files can be fully customized by the user.
 .. [#f5] This field is not saved in the TFS table by default.
 .. [#f6] Fields and columns starting with two underscores are protected data and never saved to TFS files.

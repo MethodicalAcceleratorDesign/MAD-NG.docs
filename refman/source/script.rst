@@ -140,7 +140,7 @@ The lambda function syntax is pure syntactic sugar for function definition and t
 	local f = \(x) x^2                    -- uncommon valid form
 	local f = \(x) (x^2)                  -- uncommon valid form
 
-The important point is that no space must be present between the *lambda*  operator :literal:`\\` and the first formal parameter or the first parenthesis; the former will be considered as an empty list of parameters and the latter as an expressions list returning multiple values, and both will trigger a syntax error. For the sake of readability, it is possible without changing the semantic to add extra spaces anywhere in the definition, add an arrow operator :literal:`->`, or add parentheses around the formal parameter list, whether the list is empty or not.
+The important point is that no space must be present between the *lambda* operator :literal:`\\` and the first formal parameter or the first parenthesis; the former will be considered as an empty list of parameters and the latter as an expressions list returning multiple values, and both will trigger a syntax error. For the sake of readability, it is possible without changing the semantic to add extra spaces anywhere in the definition, add an arrow operator :literal:`->`, or add parentheses around the formal parameter list, whether the list is empty or not.
 
 The following examples show *lambda* functions with multiple formal parameters:
 
@@ -181,7 +181,7 @@ It is worth understanding the error message that invalid syntaxes above would re
 
 as it is a bit subtle and needs some explanations: the *lambda* is syntactically closed at the end of the returned expression :literal:`(x+y)`, and the following operations :literal:`/` or :literal:`*` are considered as being outside the *lambda* definition, that is applied to the freshly created function itself...
 
-Finally, the *lambda* function syntax supports full function syntax (for consistency) using the *fat* arrow operator  :literal:`=>` in place of the arrow operator:
+Finally, the *lambda* function syntax supports full function syntax (for consistency) using the *fat* arrow operator :literal:`=>` in place of the arrow operator:
 
 .. code-block::
 	
@@ -189,14 +189,14 @@ Finally, the *lambda* function syntax supports full function syntax (for consist
 	local f = function(x) c=c+1 return x^2 end   -- Lua syntax
 	local f = \x => c=c+1 return x^2 end         -- most compact form
 
-The fat arrow operator requires the  :literal:`end` keyword to close syntactically the *lambda* function, and the  :literal:`return` keyword to return values (if any), as in Lua functions definitions.
+The fat arrow operator requires the :literal:`end` keyword to close syntactically the *lambda* function, and the :literal:`return` keyword to return values (if any), as in Lua functions definitions.
 
 .. _ssec.defexpr:
 
 Deferred expression
 """""""""""""""""""
 
-The deferred expression operator :literal:`:=` is semantically equivalent to a *lambda* function without argument. It is syntactically valid only inside *table* constructors (see `Lua 5.2 <http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf>`_  §3.4.8): [#f5]_
+The deferred expression operator :literal:`:=` is semantically equivalent to a *lambda* function without argument. It is syntactically valid only inside *table* constructors (see `Lua 5.2 <http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf>`_ §3.4.8): [#f5]_
 
 .. code-block::
 	
@@ -249,7 +249,7 @@ More details on ranges can be found in the :doc:`Range <numrange>` module, espec
 Lua syntax and extensions
 """""""""""""""""""""""""
 
-The operator precedence (see `Lua 5.2`_ §3.4.7) is recapped and extended in Table  with their precedence level (on the left) from lower to higher priority and their associativity (on the right).
+The operator precedence (see `Lua 5.2`_ §3.4.7) is recapped and extended in :numref:`tbl-opprec` with their precedence level (on the left) from lower to higher priority and their associativity (on the right).
 
 
 .. table:: Operators precedence with priority and associativity.
