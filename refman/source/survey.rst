@@ -2,12 +2,12 @@ Survey
 ======
 .. _ch.cmd.survey:
 
-The ``survey`` command provides a simple interface to the *geometric* tracking code. [#f1]_ The geometric tracking can be used to place the elements of a sequence in the global reference system in :numref:`fig-phy-grs`.
+The :literal:`survey` command provides a simple interface to the *geometric* tracking code. [#f1]_ The geometric tracking can be used to place the elements of a sequence in the global reference system in :numref:`fig-phy-grs`.
 
 .. _fig.survey.synop:
 
 .. code-block:: lua
-	:caption: Synopsis of the ``survey`` command with default setup.
+	:caption: Synopsis of the :literal:`survey` command with default setup.
 
 	mtbl, mflw [, eidx] = survey { 
 		sequence=sequ,  -- sequence (required) 
@@ -42,157 +42,157 @@ Command synopsis
 .. _sec.survey.synop:
 
 
-The ``survey`` command format is summarized in :numref:`fig.survey.synop`, including the default setup of the attributes. The ``survey`` command supports the following attributes:
+The :literal:`survey` command format is summarized in :numref:`fig.survey.synop`, including the default setup of the attributes. The :literal:`survey` command supports the following attributes:
 
 .. _survey.attr:
 
 **sequence**
 	 The *sequence* to survey. (no default, required). 
- 	 Example: ``sequence = lhcb1``.
+ 	 Example: :literal:`sequence = lhcb1`.
 
 **range** 
-	 A *range* specifying the span of the sequence survey. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute . (default: ``nil``). 
-	 Example: ``range = "S.DS.L8.B1/E.DS.R8.B1"``.
+	 A *range* specifying the span of the sequence survey. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute . (default: :literal:`nil`). 
+	 Example: :literal:`range = "S.DS.L8.B1/E.DS.R8.B1"`.
 
 **dir** 
-	 The :math:`s`-direction of the tracking: ``1`` forward, ``-1`` backward. (default: ``1``). 
-	 Example: ``dir = - 1``.
+	 The :math:`s`-direction of the tracking: :literal:`1` forward, :literal:`-1` backward. (default: :literal:`1`). 
+	 Example: :literal:`dir = - 1`.
 
 **s0** 
-	 A *number* specifying the initial :math:`s`-position offset. (default: ``0`` [m]). 
-	 Example: ``s0 = 5000``.
+	 A *number* specifying the initial :math:`s`-position offset. (default: :literal:`0` [m]). 
+	 Example: :literal:`s0 = 5000`.
 
 **X0** 
-	 A *mappable* specifying the initial coordinates ``{x,y,z}``. (default: ``0`` [m]). 
-	 Example: ``X0 = { x=100, y=- 50 }``
+	 A *mappable* specifying the initial coordinates :literal:`{x,y,z}`. (default: :literal:`0` [m]). 
+	 Example: :literal:`X0 = { x=100, y=- 50 }`
 
 **A0** 
-	 A *mappable* specifying the initial angles ``theta``, ``phi`` and ``psi`` or an orientation *matrix* ``W0``. [#f2]_ ``W=matrix(3):rotzxy(- phi,theta,psi)}.`` (default: ``0`` [rad]). 
-	 Example: ``A0 = { theta=deg2rad(30) }``
+	 A *mappable* specifying the initial angles :literal:`theta`, :literal:`phi` and :literal:`psi` or an orientation *matrix* :literal:`W0`. [#f2]_ :literal:`W=matrix(3):rotzxy(- phi,theta,psi)}.` (default: :literal:`0` [rad]). 
+	 Example: :literal:`A0 = { theta=deg2rad(30) }`
 
 **nturn** 
-	 A *number* specifying the number of turn to track. (default: ``2``). 
-	 Example: ``nturn = 2``.
+	 A *number* specifying the number of turn to track. (default: :literal:`2`). 
+	 Example: :literal:`nturn = 2`.
 
 **nstep** 
-	 A *number* specifying the number of element to track. A negative value will track all elements. (default: ``-1``). 
-	 Example: ``nstep = 1``.
+	 A *number* specifying the number of element to track. A negative value will track all elements. (default: :literal:`-1`). 
+	 Example: :literal:`nstep = 1`.
 
 **nslice** 
-	 A *number* specifying the number of slices or an *iterable* of increasing relative positions or a *callable* ``(elm, mflw, lw)`` returning one of the two previous kind of positions to track in the elements. The arguments of the callable are in order, the current element, the tracked map flow, and the length weight of the step. This attribute can be locally overridden by the element. (default: ``1``). 
-	 Example: ``nslice = 5``.
+	 A *number* specifying the number of slices or an *iterable* of increasing relative positions or a *callable* :literal:`(elm, mflw, lw)` returning one of the two previous kind of positions to track in the elements. The arguments of the callable are in order, the current element, the tracked map flow, and the length weight of the step. This attribute can be locally overridden by the element. (default: :literal:`1`). 
+	 Example: :literal:`nslice = 5`.
 
 **implicit** 
-	 A *log* indicating that implicit elements must be sliced too, e.g. for smooth plotting. (default: ``false``). 
-	 Example: ``implicit = true``.
+	 A *log* indicating that implicit elements must be sliced too, e.g. for smooth plotting. (default: :literal:`false`). 
+	 Example: :literal:`implicit = true`.
 
 **misalign** 
-	 A *log* indicating that misalignment must be considered. (default: ``true``). 
-	 Example: ``implicit = true``.
+	 A *log* indicating that misalignment must be considered. (default: :literal:`true`). 
+	 Example: :literal:`implicit = true`.
 
 **save** 
-	 A *log* specifying to create a *mtable* and record tracking information at the observation points. The ``save`` attribute can also be a *string* specifying saving positions in the observed elements: ``"atentry"``, ``"atslice"``, ``"atexit"`` (i.e. ``true``), ``"atbound"`` (i.e. entry and exit), ``"atbody"`` (i.e. slices and exit) and ``"atall"``. (default: ``true``). 
-	 Example: ``save = false``.
+	 A *log* specifying to create a *mtable* and record tracking information at the observation points. The :literal:`save` attribute can also be a *string* specifying saving positions in the observed elements: :literal:`"atentry"`, :literal:`"atslice"`, :literal:`"atexit"` (i.e. :literal:`true`), :literal:`"atbound"` (i.e. entry and exit), :literal:`"atbody"` (i.e. slices and exit) and :literal:`"atall"`. (default: :literal:`true`). 
+	 Example: :literal:`save = false`.
 
 **title** 
-	 A *string* specifying the title of the *mtable*. If no title is provided, the command looks for the name of the sequence, i.e. the attribute ``seq.name``. (default: ``nil``). 
-	 Example: ``title = "Survey around IP5"``.
+	 A *string* specifying the title of the *mtable*. If no title is provided, the command looks for the name of the sequence, i.e. the attribute :literal:`seq.name`. (default: :literal:`nil`). 
+	 Example: :literal:`title = "Survey around IP5"`.
 
 **observe** 
-	 A *number* specifying the observation points to consider for recording the tracking information. A zero value will consider all elements, while a positive value will consider selected elements only, checked with method ``:is_observed``, every ``observe`` :math:`>0` turns. (default: ``0``). 
-	 Example: ``observe = 1``.
+	 A *number* specifying the observation points to consider for recording the tracking information. A zero value will consider all elements, while a positive value will consider selected elements only, checked with method :literal:`:is_observed`, every :literal:`observe` :math:`>0` turns. (default: :literal:`0`). 
+	 Example: :literal:`observe = 1`.
 
 **savesel** 
-	 A *callable* ``(elm, mflw, lw, islc)`` acting as a predicate on selected elements for observation, i.e. the element is discarded if the predicate returns ``false``. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: ``fnil``) 
-	 Example: ``savesel = \LMB e -> mylist[e.name] ~= nil``.
+	 A *callable* :literal:`(elm, mflw, lw, islc)` acting as a predicate on selected elements for observation, i.e. the element is discarded if the predicate returns :literal:`false`. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`) 
+	 Example: :literal:`savesel = \LMB e -> mylist[e.name] ~= nil`.
 
 **savemap** 
-	 A *log* indicating to save the orientation matrix ``W`` in the column ``__map`` of the *mtable*. (default: ``false``). 
-	 Example: ``savemap = true``.
+	 A *log* indicating to save the orientation matrix :literal:`W` in the column :literal:`__map` of the *mtable*. (default: :literal:`false`). 
+	 Example: :literal:`savemap = true`.
 
 **atentry** 
-	 A *callable* ``(elm, mflw, 0, - 1)`` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index . (default: ``fnil``). 
-	 Example: ``atentry = myaction``.
+	 A *callable* :literal:`(elm, mflw, 0, - 1)` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index . (default: :literal:`fnil`). 
+	 Example: :literal:`atentry = myaction`.
 
 **atslice** 
-	 A *callable* ``(elm, mflw, lw, islc)`` invoked at element slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: ``fnil``). 
-	 Example: ``atslice = myaction``.
+	 A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`). 
+	 Example: :literal:`atslice = myaction`.
 
 **atexit** 
-	 A *callable* ``(elm, mflw, 0, - 2)`` invoked at element exit. The arguments are in order, the current element, the tracked map flow, zero length and the slice index . (default: ``fnil``). 
-	 Example: ``atexit = myaction``.
+	 A *callable* :literal:`(elm, mflw, 0, - 2)` invoked at element exit. The arguments are in order, the current element, the tracked map flow, zero length and the slice index . (default: :literal:`fnil`). 
+	 Example: :literal:`atexit = myaction`.
 
 **atsave** 
-	 A *callable* ``(elm, mflw, lw, islc)`` invoked at element saving steps, by default at exit. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: ``fnil``). 
-	 Example: ``atsave = myaction``.
+	 A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element saving steps, by default at exit. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`). 
+	 Example: :literal:`atsave = myaction`.
 
 **atdebug** 
-	 A *callable* ``(elm, mflw, lw, [msg], [...])`` invoked at the entry and exit of element maps during the integration steps, i.e. within the slices. The arguments are in order, the current element, the tracked map flow, the length weight of the integration step and a *string* specifying a debugging message, e.g. ``"map_name:0"`` for entry and ``":1"`` for exit. If the level ``debug`` :math:`\geq 4` and ``atdebug`` is not specified, the default *function* ``mdump`` is used. In some cases, extra arguments could be passed to the method. (default: ``fnil`` ). 
-	 Example: ``atdebug = myaction`` .
+	 A *callable* :literal:`(elm, mflw, lw, [msg], [...])` invoked at the entry and exit of element maps during the integration steps, i.e. within the slices. The arguments are in order, the current element, the tracked map flow, the length weight of the integration step and a *string* specifying a debugging message, e.g. :literal:`"map_name:0"` for entry and :literal:`":1"` for exit. If the level :literal:`debug` :math:`\geq 4` and :literal:`atdebug` is not specified, the default *function* :literal:`mdump` is used. In some cases, extra arguments could be passed to the method. (default: :literal:`fnil` ). 
+	 Example: :literal:`atdebug = myaction` .
 	 
 **info**
-	 A *number* specifying the information level to control the verbosity of the output on the console. (default: ``nil``). 
-	 Example: ``info = 2``.
+	 A *number* specifying the information level to control the verbosity of the output on the console. (default: :literal:`nil`). 
+	 Example: :literal:`info = 2`.
 
 **debug**
-	 A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: ``nil``). 
-	 Example: ``debug = 2``.
+	 A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :literal:`nil`). 
+	 Example: :literal:`debug = 2`.
 
 **usrdef** 
-	 Any user defined data that will be attached to the tracked map flow, which is internally passed to the elements method :meth:`:survey` and to their underlying maps. (default: ``nil``). 
-	 Example: ``usrdef = { myvar=somevalue }``.
+	 Any user defined data that will be attached to the tracked map flow, which is internally passed to the elements method :meth:`:survey` and to their underlying maps. (default: :literal:`nil`). 
+	 Example: :literal:`usrdef = { myvar=somevalue }`.
 
 **mflow** 
-	 A *mflow* containing the current state of a ``survey`` command. If a map flow is provided, all attributes are discarded except ``nstep``, ``info`` and ``debug``, as the command was already set up upon its creation. (default: ``nil``). 
-	 Example: ``mflow = mflow0``.
+	 A *mflow* containing the current state of a :literal:`survey` command. If a map flow is provided, all attributes are discarded except :literal:`nstep`, :literal:`info` and :literal:`debug`, as the command was already set up upon its creation. (default: :literal:`nil`). 
+	 Example: :literal:`mflow = mflow0`.
 
 
-The ``survey`` command returns the following objects in this order:
+The :literal:`survey` command returns the following objects in this order:
 
 **mtbl** 
-	A *mtable* corresponding to the TFS table of the ``survey`` command.
+	A *mtable* corresponding to the TFS table of the :literal:`survey` command.
 
 **mflw** 
-	A *mflow* corresponding to the map flow of the ``survey`` command.
+	A *mflow* corresponding to the map flow of the :literal:`survey` command.
 
 **eidx**
-	 An optional *number* corresponding to the last surveyed element index in the sequence when ``nstep`` was specified and stopped the command before the end of the ``range``.
+	 An optional *number* corresponding to the last surveyed element index in the sequence when :literal:`nstep` was specified and stopped the command before the end of the :literal:`range`.
 
 
 Survey mtable
 -------------
 .. _sec.survey.mtable:
 
-The ``survey`` command returns a *mtable* where the information described hereafter is the default list of fields written to the TFS files. [#f3]_ 
+The :literal:`survey` command returns a *mtable* where the information described hereafter is the default list of fields written to the TFS files. [#f3]_ 
 
 
 
 **name**
-	 The name of the command that created the ``"survey"``.
+	 The name of the command that created the :literal:`"survey"`.
 **type**
-	 The type of the ``"survey"``.
+	 The type of the :literal:`"survey"`.
 **title**
-	 The value of the command attribute ``title``.
+	 The value of the command attribute :literal:`title`.
 **origin**
-	 The origin of the application that created the ``"MAD 1.0.0 OSX 64"``.
+	 The origin of the application that created the :literal:`"MAD 1.0.0 OSX 64"`.
 **date**
-	 The date of the creation of the ``"27/05/20"``.
+	 The date of the creation of the :literal:`"27/05/20"`.
 **time**
-	 The time of the creation of the ``"19:18:36"``.
+	 The time of the creation of the :literal:`"19:18:36"`.
 **refcol**
-	 The reference *column* for the *mtable* dictionnary, e.g. ``"name"``.
+	 The reference *column* for the *mtable* dictionnary, e.g. :literal:`"name"`.
 **direction**
-	 The value of the command attribute ``dir``.
+	 The value of the command attribute :literal:`dir`.
 **observe**
-	 The value of the command attribute ``observe``.
+	 The value of the command attribute :literal:`observe`.
 **implicit**
-	 The value of the command attribute ``implicit``.
+	 The value of the command attribute :literal:`implicit`.
 **misalign**
-	 The value of the command attribute ``misalign``.
+	 The value of the command attribute :literal:`misalign`.
 **range**
-	 The value of the command attribute ``range``. [#f4]_ 
+	 The value of the command attribute :literal:`range`. [#f4]_ 
 **__seq**
-	 The *sequence* from the command attribute ``sequence``. [#f5]_
+	 The *sequence* from the command attribute :literal:`sequence`. [#f5]_
 
 
 
@@ -221,7 +221,7 @@ The ``survey`` command returns a *mtable* where the information described hereaf
 **psi**
 	 The global angle :math:`\psi` at the :math:`s`-position.
 **slc**
-	 The slice number ranging from ``- 2`` to ``nslice``.
+	 The slice number ranging from :literal:`- 2` to :literal:`nslice`.
 **turn**
 	 The turn number.
 **tdir**
@@ -235,7 +235,7 @@ The ``survey`` command returns a *mtable* where the information described hereaf
 Geometrical tracking
 --------------------
 
-:numref:`fig.survey.trkslc` presents the scheme of the geometrical tracking through an element sliced with ``nslice=3``. The actions ``atentry`` (index ``- 1``), ``atslice`` (indexes ``0..3``), and ``atexit`` (index ``- 2``) are reversed between the forward tracking (``dir=1`` with increasing :math:`s`-position) and the backward tracking (``dir=- 1`` with decreasing :math:`s`-position). By default, the action ``atsave`` is attached to the exit slice, and hence it is also reversed in the backward tracking.
+:numref:`fig.survey.trkslc` presents the scheme of the geometrical tracking through an element sliced with :literal:`nslice=3`. The actions :literal:`atentry` (index :literal:`- 1`), :literal:`atslice` (indexes :literal:`0..3`), and :literal:`atexit` (index :literal:`- 2`) are reversed between the forward tracking (:literal:`dir=1` with increasing :math:`s`-position) and the backward tracking (:literal:`dir=- 1` with decreasing :math:`s`-position). By default, the action :literal:`atsave` is attached to the exit slice, and hence it is also reversed in the backward tracking.
 
 
 .. _fig.survey.trkslc:
@@ -248,25 +248,25 @@ Slicing
 
 
 
-	#.	 A *number* of the form ``nslice=``:math:`N` that specifies the number of slices with indexes ``0..N``. This defines a uniform slicing with slice length :math:`l_{\text{slice}} = l_{\text{elem}}/N`.
+	#.	 A *number* of the form :literal:`nslice=`:math:`N` that specifies the number of slices with indexes :literal:`0..N`. This defines a uniform slicing with slice length :math:`l_{\text{slice}} = l_{\text{elem}}/N`.
 
-	#.	 An *iterable* of the form ``nslice={lw_1,lw_2,..lw_N}`` with :math:`\sum_i lw_i=1` that specifies the fraction of length of each slice with indexes ``0..N`` where :math:`N`=\ ``#nslice``. This defines a non-uniform slicing with a slice length of :math:`l_i = lw_i\times l_{\text{elem}}`.
+	#.	 An *iterable* of the form :literal:`nslice={lw_1,lw_2,..lw_N}` with :math:`\sum_i lw_i=1` that specifies the fraction of length of each slice with indexes :literal:`0..N` where :math:`N`=\ :literal:`#nslice`. This defines a non-uniform slicing with a slice length of :math:`l_i = lw_i\times l_{\text{elem}}`.
 
-	#.	 A *callable* ``(elm, mflw, lw)`` returning one of the two previous forms of slicing. The arguments are in order, the current element, the tracked map flow, and the length weight of the step, which should allow to return a user-defined element-specific slicing. 
+	#.	 A *callable* :literal:`(elm, mflw, lw)` returning one of the two previous forms of slicing. The arguments are in order, the current element, the tracked map flow, and the length weight of the step, which should allow to return a user-defined element-specific slicing. 
 
 
-The surrounding ``P`` and ``P``\ :math:`^{-1}` maps represent the patches applied around the body of the element to change the frames, after the ``atentry`` and before the ``atexit`` actions:
+The surrounding :literal:`P` and :literal:`P`\ :math:`^{-1}` maps represent the patches applied around the body of the element to change the frames, after the :literal:`atentry` and before the :literal:`atexit` actions:
 
-	#.	 The misalignment of the element to move from the *global frame* to the *element frame* if the command attribute ``misalign`` is set to ``true``.
+	#.	 The misalignment of the element to move from the *global frame* to the *element frame* if the command attribute :literal:`misalign` is set to :literal:`true`.
 
-	#.	 The tilt of the element to move from the element frame to the *titled frame* if the element attribute ``tilt`` is non-zero. The ``atslice`` actions take place in this frame.
+	#.	 The tilt of the element to move from the element frame to the *titled frame* if the element attribute :literal:`tilt` is non-zero. The :literal:`atslice` actions take place in this frame.
 
 
 
 Sub-elements
 """"""""""""
 
-The ``survey`` command takes sub-elements into account, mainly for compatibility with the ``track`` command. In this case, the slicing specification is taken between sub-elements, e.g. 3 slices with 2 sub-elements gives a final count of 9 slices. It is possible to adjust the number of slices between sub-elements with the third form of slicing specifier, i.e. by using a callable where the length weight argument is between the current (or the end of the element) and the last sub-elements (or the start of the element).
+The :literal:`survey` command takes sub-elements into account, mainly for compatibility with the :literal:`track` command. In this case, the slicing specification is taken between sub-elements, e.g. 3 slices with 2 sub-elements gives a final count of 9 slices. It is possible to adjust the number of slices between sub-elements with the third form of slicing specifier, i.e. by using a callable where the length weight argument is between the current (or the end of the element) and the last sub-elements (or the start of the element).
 
 Examples
 --------
@@ -276,7 +276,7 @@ Examples
 .. rubric:: Footnotes
 
 .. [#f1] MAD-NG implements only two tracking codes denominated the *geometric* and *dynamic* tracking
-.. [#f2] An orientation matrix can be obtained from the 3 angles with ``W=matrix(3):rotzxy(- phi,theta,psi)``
+.. [#f2] An orientation matrix can be obtained from the 3 angles with :literal:`W=matrix(3):rotzxy(- phi,theta,psi)`
 .. [#f3] The output of mtable in TFS files can be fully customized by the user.
 .. [#f4] This field is not saved in the TFS table by default.
 .. [#f5] Fields and columns starting with two underscores are protected data and never saved to TFS files.

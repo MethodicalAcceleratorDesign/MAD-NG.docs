@@ -12,7 +12,7 @@ MAD-NG is free open-source software, distributed under the GNU General Public Li
 Installation
 ------------
 
-Download the binary corresponding to your platform from the `releases repository`_ and install it in a local directory. Update (or check) that the ``PATH`` environment variable contains the path to your local directory or prefix ``mad`` with this path to run it. Rename the application from ``mad-arch-v.m.n`` to ``mad`` and make it executable with the command '``chmod u+x mad``' on Unix systems or add the ``.exe`` extension on Windows.
+Download the binary corresponding to your platform from the `releases repository`_ and install it in a local directory. Update (or check) that the :literal:`PATH` environment variable contains the path to your local directory or prefix :literal:`mad` with this path to run it. Rename the application from :literal:`mad-arch-v.m.n` to :literal:`mad` and make it executable with the command ':literal:`chmod u+x mad`' on Unix systems or add the :literal:`.exe` extension on Windows.
 
 .. code-block:: console
 	
@@ -36,12 +36,12 @@ Download the binary corresponding to your platform from the `releases repository
 Releases version
 """"""""""""""""
 
-MAD-NG releases are tagged on the Github repository and use mangled binary names on the releases repository, i.e. ``mad-arch-v.m.n`` where:
+MAD-NG releases are tagged on the Github repository and use mangled binary names on the releases repository, i.e. :literal:`mad-arch-v.m.n` where:
 
 **arch**
-	 is the platform architecture for binaries among ``linux``, ``macos`` and ``windows``.
+	 is the platform architecture for binaries among :literal:`linux`, :literal:`macos` and :literal:`windows`.
 **v**
-	 is the **v**\ ersion number, ``0`` meaning beta-version under active development.
+	 is the **v**\ ersion number, :literal:`0` meaning beta-version under active development.
 **m**
 	 is the **m**\ ajor release number corresponding to features completeness.
 **n**
@@ -51,7 +51,7 @@ MAD-NG releases are tagged on the Github repository and use mangled binary names
 Interactive Mode
 ----------------
 
-To run MAD-NG in interactive mode, just typewrite its name on the Shell invite like any command-line tool. It is recommended to wrap MAD-NG with the `readline wrapper <http://github.com/hanslub42/rlwrap>`_ ``rlwrap`` in interactive mode for easier use and commands history:
+To run MAD-NG in interactive mode, just typewrite its name on the Shell invite like any command-line tool. It is recommended to wrap MAD-NG with the `readline wrapper <http://github.com/hanslub42/rlwrap>`_ :literal:`rlwrap` in interactive mode for easier use and commands history:
 
 .. code-block:: console
 
@@ -68,7 +68,7 @@ To run MAD-NG in interactive mode, just typewrite its name on the Shell invite l
 	> print "hello world!"
 	"hello world!"
 
-Here the application is assumed to be installed in the current directory '``.``' and the character '``>``' is the prompt waiting for user input in interactive mode. If you write an incomplete statement, the interpreter waits for its completion by issuing a different prompt:
+Here the application is assumed to be installed in the current directory '`.`' and the character ':literal:`>`' is the prompt waiting for user input in interactive mode. If you write an incomplete statement, the interpreter waits for its completion by issuing a different prompt:
 
 .. code-block::
 	
@@ -76,7 +76,7 @@ Here the application is assumed to be installed in the current directory '``.``'
 	>> "hello world!"      -- 2nd level prompt, complete the statement
 	hello world!           -- execute
 
-Typing the character '``=``' right after the 1st level prompt is equivalent to call the :literal:`print` function:
+Typing the character ':literal:`=`' right after the 1st level prompt is equivalent to call the :literal:`print` function:
 
 .. code-block::
 	
@@ -86,7 +86,7 @@ Typing the character '``=``' right after the 1st level prompt is equivalent to c
 	% -.10g
 
 
-To quit the application typewrite ``Crtl+D`` to send ``EOF`` (end-of-file) on the input, [#f2]_ ``Crtl+\`` to send the ``SIGQUIT`` (quit) signal, or ``Crtl+C`` to send the stronger ``SIGINT`` (interrupt) signal. If the application is stalled or looping for ever, typewriting a single ``Crtl+\`` or ``Crtl+C`` twice will stop it:
+To quit the application typewrite :literal:`Crtl+D` to send :literal:`EOF` (end-of-file) on the input, [#f2]_ :literal:`Crtl+\` to send the :literal:`SIGQUIT` (quit) signal, or :literal:`Crtl+C` to send the stronger :literal:`SIGINT` (interrupt) signal. If the application is stalled or looping for ever, typewriting a single :literal:`Crtl+\` or :literal:`Crtl+C` twice will stop it:
 
 .. code-block::
 	
@@ -98,7 +98,7 @@ To quit the application typewrite ``Crtl+D`` to send ``EOF`` (end-of-file) on th
 	Quit: 3                -- Signal 3 caught, application stopped
 
 
-In interactive mode, each line input is run in its own *chunk* [#f3]_, which also rules variables scopes. Hence ``local``, variables are not visible between chunks, i.e. input lines. The simple solutions are either to use global variables or to enclose local statements into the same chunk delimited by the ``do ... end`` keywords:
+In interactive mode, each line input is run in its own *chunk* [#f3]_, which also rules variables scopes. Hence :literal:`local`, variables are not visible between chunks, i.e. input lines. The simple solutions are either to use global variables or to enclose local statements into the same chunk delimited by the :literal:`do ... end` keywords:
 
 .. code-block::
 	
@@ -136,7 +136,7 @@ where the scripts contains programs written in the MAD-NG programming language (
 Online Help
 -----------
 
-MAD-NG is equipped with an online help system [#f4]_ useful in interactive mode to quickly search for information displayed in the ``man``-like Unix format :
+MAD-NG is equipped with an online help system [#f4]_ useful in interactive mode to quickly search for information displayed in the :literal:`man`-like Unix format :
 
 .. code-block:: console
 
@@ -175,7 +175,7 @@ MAD-NG is equipped with an online help system [#f4]_ useful in interactive mode 
     element, object.
 
 
-Complementary to the ``help`` function, the function ``show`` displays the type and value of variables, and if they have attributes, the list of their names in the lexicographic order:
+Complementary to the :literal:`help` function, the function :literal:`show` displays the type and value of variables, and if they have attributes, the list of their names in the lexicographic order:
 
 .. code-block:: console
 	
@@ -197,6 +197,6 @@ Complementary to the ``help`` function, the function ``show`` displays the type 
 
 .. [#f1] MAD-NG embeds the libraries `FFTW <http://github.com/FFTW>`_ `NFFT <http://github.com/NFFT>`_ and `NLopt <http://github.com/stevengj/nlopt>`_ released under GNU (L)GPL too.
 .. [#f5] MAD-NG has few thousands unit tests that do few millions checks, and it is constantly growing.
-.. [#f2] Note that sending ``Crtl+D`` twice from MAD-NG invite will quit both MAD-NG and its parent Shell...
+.. [#f2] Note that sending :literal:`Crtl+D` twice from MAD-NG invite will quit both MAD-NG and its parent Shell...
 .. [#f3] A chunk is the unit of execution in Lua (see `Lua 5.2 <http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf>`_ §3.3.2).
 .. [#f4] The online help is far incomplete and will be completed, updated and revised as the application evolves.

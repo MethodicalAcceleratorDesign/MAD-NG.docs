@@ -2,7 +2,7 @@ Objects
 =======
 .. _ch.gen.obj:
 
-The object model is of key importance as it implements many features used extensively by objects like ``beam``, ``sequence``, ``mtable``, all the commands, all the elements, and the ``MADX`` environment. The aim of the object model is to extend the scripting language with concepts like objects, inheritance, methods, metamethods, deferred expressions, commands and more.
+The object model is of key importance as it implements many features used extensively by objects like :literal:`beam`, :literal:`sequence`, :literal:`mtable`, all the commands, all the elements, and the :literal:`MADX` environment. The aim of the object model is to extend the scripting language with concepts like objects, inheritance, methods, metamethods, deferred expressions, commands and more.
 
 	*	 A *prototypical object* is an object created from a prototype, [#f1]_ named its parent.
 	*	 *Single inheritance* specifies that an object has only one direct parent.
@@ -20,7 +20,7 @@ The creation of a new object requires to hold a reference to its parent, i.e. th
 	local object in MAD
 	local obj = object { }
 
-The special *root object* ``object`` from the ``MAD`` environment is the parent of *all* objects, including elements, sequences, TFS tables and commands. It provides by inheritance the methods needed to handle objects, environments, and more. In this minimalist example, the created object has ``object`` as parent, so it is the simplest object that can be created.
+The special *root object* :literal:`object` from the :literal:`MAD` environment is the parent of *all* objects, including elements, sequences, TFS tables and commands. It provides by inheritance the methods needed to handle objects, environments, and more. In this minimalist example, the created object has :literal:`object` as parent, so it is the simplest object that can be created.
 
 It is possible to name immutably an object during its creation:
 
@@ -30,7 +30,7 @@ It is possible to name immutably an object during its creation:
 	print(obj.name) -- display: myobj
 
 
-Here, [#f2]_ ``obj`` is the variable holding the object while the *string* :var:`'myobj'` is the name of the object. It is important to distinguish well the variable that holds the *object* from the object's name that holds the *string*, because they are very often named the same.
+Here, [#f2]_ :literal:`obj` is the variable holding the object while the *string* :var:`'myobj'` is the name of the object. It is important to distinguish well the variable that holds the *object* from the object's name that holds the *string*, because they are very often named the same.
 
 It is possible to define attributes during object creation or afterward:
 
@@ -112,7 +112,7 @@ An object used as a prototype to create new objects becomes a *class*, and a cla
 Identification
 """"""""""""""
 
-The ``object`` module extends the :doc:`typeid <types>` module with the ``is_object(a)`` *function*, which returns ``true`` if its argument ``a`` is an object, ``false`` otherwise:
+The :literal:`object` module extends the :doc:`typeid <types>` module with the :literal:`is_object(a)` *function*, which returns :literal:`true` if its argument :literal:`a` is an object, :literal:`false` otherwise:
 
 .. code-block::
 	
@@ -130,7 +130,7 @@ It is possible to know the objects qualifiers using the appropriate methods:
 Customizing creation
 """"""""""""""""""""
 
-During the creation process of objects, the metamethod ``__init(self)`` is invoked if it exists, with the newly created object as its sole argument to let the parent finalize or customize its initialization *before* it is returned. This mechanism is used by commands to run their :meth:`:exec()` *method* during their creation.
+During the creation process of objects, the metamethod :literal:`__init(self)` is invoked if it exists, with the newly created object as its sole argument to let the parent finalize or customize its initialization *before* it is returned. This mechanism is used by commands to run their :meth:`:exec()` *method* during their creation.
 
 Inheritance
 -----------
@@ -158,9 +158,9 @@ The object model allows to build tree-like inheritance hierarchy by creating obj
 Reading attributes
 """"""""""""""""""
 
-Reading an attribute not defined in an object triggers a recursive dynamic lookup along the chain of its parents until it is found or the root ``object`` is reached. Reading an object attribute defined as a *function* automatically evaluates it with the object passed as the sole argument and the returned value is forwarded to the reader as if it were the attribute's value. When the argument is not used by the function, it becomes a *deferred expression* that can be defined directly with the operator :literal:`:=` as explained in section :ref:`ssec.defexpr`. This feature allows to use attributes holding values and functions the same way and postpone design decisions, e.g. switching from simple value to complex calculations without impacting the users side with calling parentheses at every use.
+Reading an attribute not defined in an object triggers a recursive dynamic lookup along the chain of its parents until it is found or the root :literal:`object` is reached. Reading an object attribute defined as a *function* automatically evaluates it with the object passed as the sole argument and the returned value is forwarded to the reader as if it were the attribute's value. When the argument is not used by the function, it becomes a *deferred expression* that can be defined directly with the operator :literal:`:=` as explained in section :ref:`ssec.defexpr`. This feature allows to use attributes holding values and functions the same way and postpone design decisions, e.g. switching from simple value to complex calculations without impacting the users side with calling parentheses at every use.
 
-The following example is similar to the second example of the section :ref:`ssec.defexpr`, and it must be clear that ``fun`` must be explicitly called to retrieve the value despite that its definition is the same as the attribute ``v2``.
+The following example is similar to the second example of the section :ref:`ssec.defexpr`, and it must be clear that :literal:`fun` must be explicitly called to retrieve the value despite that its definition is the same as the attribute :literal:`v2`.
 
 .. code-block::
 	
@@ -175,7 +175,7 @@ The following example is similar to the second example of the section :ref:`ssec
 Writing attributes
 """"""""""""""""""
 
-Writing to an object uses direct access and does not involve any lookup. Hence setting an attribute with a non-\ ``nil`` value in an object hides his definition inherited from the parents, while setting an attribute with ``nil`` in an object restores the inheritance lookup:
+Writing to an object uses direct access and does not involve any lookup. Hence setting an attribute with a non-\ :literal:`nil` value in an object hides his definition inherited from the parents, while setting an attribute with :literal:`nil` in an object restores the inheritance lookup:
 
 .. code-block::
 	
@@ -210,10 +210,10 @@ To get the list of *public* attributes of an instance, use the :meth:`:get_varke
 
 
 
-	*	 the object ``hmonitor`` (only).
-	*	 the objects in the hierachy from ``hmonitor`` to ``object`` included.
-	*	 the objects in the hierachy from ``hmonitor`` to ``instrument`` included.
-	*	 the object ``element`` (only), the root of all elements.
+	*	 the object :literal:`hmonitor` (only).
+	*	 the objects in the hierachy from :literal:`hmonitor` to :literal:`object` included.
+	*	 the objects in the hierachy from :literal:`hmonitor` to :literal:`instrument` included.
+	*	 the object :literal:`element` (only), the root of all elements.
 
 
 Examples
@@ -244,7 +244,7 @@ Examples
 	print(qf1.k1, qf1.l)             -- display: 0.06 2.1 (lookup)
 	print(#element:get_varkeys())    -- display: 33 (may vary)
 
-The element ``quadrupole`` provided by the :doc:`element <elements>` module is the father of the objects created on its left. The *black arrows* show the user defined hierarchy of object created from and linked to the ``quadrupole``. The main quadrupole ``mq`` is a user class representing the physical element, e.g. defining a length, and used to create two new classes, a focusing quadrupole ``qf`` and a defocusing quadrupole ``qd`` to model the circuits, e.g. hold the strength of elements connected in series, and finally the real individual elements ``qf1``, ``qd1``, ``qf2`` and ``qd2`` that will populate the sequence. A tracking command will request various attributes when crossing an element, like its length or its strength, leading to lookup of different depths in the hierarchy along the *red arrow*. A user may also write or overwrite an attribute at different level in the hierarchy by accessing directly to an element, as shown by the *purple arrows*, and mask an attribute of the parent with the new definitions in the children. The construction shown in this example follows the *separation of concern* principle and it is still highly reconfigurable despite that is does not contain any deferred expression or lambda function.
+The element :literal:`quadrupole` provided by the :doc:`element <elements>` module is the father of the objects created on its left. The *black arrows* show the user defined hierarchy of object created from and linked to the :literal:`quadrupole`. The main quadrupole :literal:`mq` is a user class representing the physical element, e.g. defining a length, and used to create two new classes, a focusing quadrupole :literal:`qf` and a defocusing quadrupole :literal:`qd` to model the circuits, e.g. hold the strength of elements connected in series, and finally the real individual elements :literal:`qf1`, :literal:`qd1`, :literal:`qf2` and :literal:`qd2` that will populate the sequence. A tracking command will request various attributes when crossing an element, like its length or its strength, leading to lookup of different depths in the hierarchy along the *red arrow*. A user may also write or overwrite an attribute at different level in the hierarchy by accessing directly to an element, as shown by the *purple arrows*, and mask an attribute of the parent with the new definitions in the children. The construction shown in this example follows the *separation of concern* principle and it is still highly reconfigurable despite that is does not contain any deferred expression or lambda function.
 
 Attributes
 ----------
@@ -260,10 +260,10 @@ New attributes can be added to objects using the dot operator :literal:`.` or th
 
 
 
-The root ``object`` provides the following attributes:
+The root :literal:`object` provides the following attributes:
 
 **name**
-	 A *lambda* returning the *string* ``__id``.
+	 A *lambda* returning the *string* :literal:`__id`.
 
 **parent**
 	 A *lambda* returning a *reference* to the parent *object*.
@@ -293,7 +293,7 @@ The root ``object`` provides the following attributes:
 Methods
 -------
 
-New methods can be added to objects but not classes, using the :literal:`:set_methods(set)` ``set`` being the *set* of methods to add as in the following example:
+New methods can be added to objects but not classes, using the :literal:`:set_methods(set)` :literal:`set` being the *set* of methods to add as in the following example:
 
 .. code-block::
 	
@@ -305,51 +305,51 @@ New methods can be added to objects but not classes, using the :literal:`:set_me
 	  ...
 	}
 
-where the keys are the names of the added methods and their values must be a *callable* accepting the object itself, i.e. ``self``, as their first argument. Classes cannot set new methods.
+where the keys are the names of the added methods and their values must be a *callable* accepting the object itself, i.e. :literal:`self`, as their first argument. Classes cannot set new methods.
 
 
-The root ``object`` provides the following methods:
+The root :literal:`object` provides the following methods:
 
 **is_final**
-	 A *method*	``()`` returning a *boolean* telling if the object is final, i.e. cannot have instance.
+	 A *method*	:literal:`()` returning a *boolean* telling if the object is final, i.e. cannot have instance.
 
 **is_class**
-	 A *method*	``()`` returning a *boolean* telling if the object is a *class*, i.e. had/has an instance.
+	 A *method*	:literal:`()` returning a *boolean* telling if the object is a *class*, i.e. had/has an instance.
 
 **is_readonly**
-	 A *method*	``()`` returning a *boolean* telling if the object is read-only, i.e. attributes cannot be changed.
+	 A *method*	:literal:`()` returning a *boolean* telling if the object is read-only, i.e. attributes cannot be changed.
 
 **is_instanceOf**
-	 A *method*	``(cls)`` returning a *boolean* telling if ``self`` is an instance of ``cls``.
+	 A *method*	:literal:`(cls)` returning a *boolean* telling if :literal:`self` is an instance of :literal:`cls`.
 
 **set_final**
-	 A *method*	``([a])`` returning ``self`` set as final if ``a ~= false`` or non-final.
+	 A *method*	:literal:`([a])` returning :literal:`self` set as final if :literal:`a ~= false` or non-final.
 
 **set_readonly**
-	 A *method*	``([a])`` returning ``self`` set as read-only if ``a ~= false`` or read-write.
+	 A *method*	:literal:`([a])` returning :literal:`self` set as read-only if :literal:`a ~= false` or read-write.
 
 **same**
-	 A *method*	``([name])`` returning an empty clone of ``self`` and named after the *string* ``name`` (default: ``nil``).
+	 A *method*	:literal:`([name])` returning an empty clone of :literal:`self` and named after the *string* :literal:`name` (default: :literal:`nil`).
 
 **copy**
-	 A *method*	``([name])`` returning a copy of ``self`` and named after the *string* ``name`` (default: ``nil``). The private attributes are not copied, e.g. the final, class or read-only qualifiers are not copied.
+	 A *method*	:literal:`([name])` returning a copy of :literal:`self` and named after the *string* :literal:`name` (default: :literal:`nil`). The private attributes are not copied, e.g. the final, class or read-only qualifiers are not copied.
 
 **get_varkeys**
-	 A *method*	``([cls])`` returning both, the *list* of the non-private attributes of ``self`` down to ``cls`` (default: ``self``) included, and the *set* of their keys in the form of pairs (*key*, *key*).
+	 A *method*	:literal:`([cls])` returning both, the *list* of the non-private attributes of :literal:`self` down to :literal:`cls` (default: :literal:`self`) included, and the *set* of their keys in the form of pairs (*key*, *key*).
 
 **get_variables**
-	 A *method*	``(lst, [set], [noeval])`` returning a *set* containing the pairs (*key*, *value*) of the attributes listed in ``lst``. If ``set`` is provided, it will be used to store the pairs. If ``noveval == true``, the functions are not evaluated. The full *list* of attributes can be retrieved from ``get_varkeys``. Shortcut ``getvar``.
+	 A *method*	:literal:`(lst, [set], [noeval])` returning a *set* containing the pairs (*key*, *value*) of the attributes listed in :literal:`lst`. If :literal:`set` is provided, it will be used to store the pairs. If :literal:`noveval == true`, the functions are not evaluated. The full *list* of attributes can be retrieved from :literal:`get_varkeys`. Shortcut :literal:`getvar`.
 
 **set_variables**
-	 A *method*	``(set, [override])`` returning ``self`` with the attributes set to the pairs (*key*, *value*) contained in ``set``. If ``override ~= true``, the read-only attributes (with *key* starting by ``"__"``) cannot be updated.
+	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes set to the pairs (*key*, *value*) contained in :literal:`set`. If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated.
 
 **copy_variables**
-	 A *method*	``(set, [lst], [override])`` returning ``self`` with the attributes listed in ``lst`` set to the pairs (*key*, *value*) contained in ``set``. If ``lst`` is not provided, it is replaced by ``self.__attr``. If ``set`` is an *object* and ``lst.noeval`` exists, it is used as the list of attributes to copy without function evaluation. [#f3] If ``override ~= true``, the read-only attributes (with *key* starting by ``"__"``) cannot be updated. Shortcut ``cpyvar``.
+	 A *method*	:literal:`(set, [lst], [override])` returning :literal:`self` with the attributes listed in :literal:`lst` set to the pairs (*key*, *value*) contained in :literal:`set`. If :literal:`lst` is not provided, it is replaced by :literal:`self.__attr`. If :literal:`set` is an *object* and :literal:`lst.noeval` exists, it is used as the list of attributes to copy without function evaluation. [#f3] If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated. Shortcut :literal:`cpyvar`.
 
 **wrap_variables**
-	 A *method*	``(set, [override])`` returning ``self`` with the attributes wrapped by the pairs (*key*, *value*) contained in ``set``, where the *value* must be a *callable* ``(a)`` that takes the attribute (as a callable) and returns the wrapped *value*. If ``override ~= true``, the read-only attributes (with *key* starting by ``"__"``) cannot be updated.
+	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes wrapped by the pairs (*key*, *value*) contained in :literal:`set`, where the *value* must be a *callable* :literal:`(a)` that takes the attribute (as a callable) and returns the wrapped *value*. If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated.
 
-The following example shows how to convert the length ``l`` of an RBEND from cord to arc, [#f4]_ keeping its strength ``k0`` to be computed on the fly:
+The following example shows how to convert the length :literal:`l` of an RBEND from cord to arc, [#f4]_ keeping its strength :literal:`k0` to be computed on the fly:
 
 .. code-block::
 	
@@ -363,91 +363,91 @@ The following example shows how to convert the length ``l`` of an RBEND from cor
 	rb.angle = pi/20 -- update angle
 	printf("l=%.5f, k0=%.5f\n", rb.l, rb.k0) -- l=2.00206, k0=0.07846
 
-The method converts non-\ *callable* attributes into callables automatically to simplify the user-side, i.e. ``l()`` can always be used as a *callable* whatever its original form was. At the end, ``k0`` and ``l`` are computed values and updating ``angle`` affects both as expected.
+The method converts non-\ *callable* attributes into callables automatically to simplify the user-side, i.e. :literal:`l()` can always be used as a *callable* whatever its original form was. At the end, :literal:`k0` and :literal:`l` are computed values and updating :literal:`angle` affects both as expected.
 
 **clear_variables**
-	 A *method*	``()`` returning ``self`` after setting all non-private attributes to ``nil``.
+	 A *method*	:literal:`()` returning :literal:`self` after setting all non-private attributes to :literal:`nil`.
 
 **clear_array**
-	 A *method*	``()`` returning ``self`` after setting the array slots to ``nil``, i.e. clear the *list* part.
+	 A *method*	:literal:`()` returning :literal:`self` after setting the array slots to :literal:`nil`, i.e. clear the *list* part.
 
 **clear_all**
-	 A *method*	``()`` returning ``self`` after clearing the object except its private attributes.
+	 A *method*	:literal:`()` returning :literal:`self` after clearing the object except its private attributes.
 
 **set_methods**
-	 A *method*	``(set, [override])`` returning ``self`` with the methods set to the pairs (*key*, *value*) contained in ``set``, where *key* must be a *string* (the method's name) and *value* must be a *callable*(the method itself). If ``override ~= true``, the read-only methods (with *key* starting by ``"__"``) cannot be updated. Classes cannot update their methods.
+	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the methods set to the pairs (*key*, *value*) contained in :literal:`set`, where *key* must be a *string* (the method's name) and *value* must be a *callable*(the method itself). If :literal:`override ~= true`, the read-only methods (with *key* starting by :literal:`"__"`) cannot be updated. Classes cannot update their methods.
 
 **set_metamethods**
-	 A *method*	``(set, [override])`` returning ``self`` with the attributes set to the pairs (*key*, *value*) contained in ``set``, where *key* must be a *string* (the metamethod's name) and *value* must be a *callable*\ (the metamethod itself). If ``override == false``, the metamethods cannot be updated. Classes cannot update their metamethods.
+	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes set to the pairs (*key*, *value*) contained in :literal:`set`, where *key* must be a *string* (the metamethod's name) and *value* must be a *callable*\ (the metamethod itself). If :literal:`override == false`, the metamethods cannot be updated. Classes cannot update their metamethods.
 
 **insert**
-	 A *method*	``([idx], a)`` returning ``self`` after inserting ``a`` at the position ``idx`` (default: ``#self+1``) and shifting up the items at positions ``idx..``.
+	 A *method*	:literal:`([idx], a)` returning :literal:`self` after inserting :literal:`a` at the position :literal:`idx` (default: :literal:`#self+1`) and shifting up the items at positions :literal:`idx..`.
 
 **remove**
-	 A *method*	``([idx])`` returning the *value* removed at the position ``idx`` (default: ``#self``) and shifting down the items at positions ``idx..``.
+	 A *method*	:literal:`([idx])` returning the *value* removed at the position :literal:`idx` (default: :literal:`#self`) and shifting down the items at positions :literal:`idx..`.
 
 **move**
-	 A *method*	``(idx1, idx2, idxto, [dst])`` returning the destination object ``dst`` (default: ``self``) after moving the items from ``self`` at positions ``idx1..idx2`` to ``dst`` at positions ``idxto..``. The destination range can overlap with the source range.
+	 A *method*	:literal:`(idx1, idx2, idxto, [dst])` returning the destination object :literal:`dst` (default: :literal:`self`) after moving the items from :literal:`self` at positions :literal:`idx1..idx2` to :literal:`dst` at positions :literal:`idxto..`. The destination range can overlap with the source range.
 
 **sort**
-	 A *method*	``([cmp])`` returning ``self`` after sorting in-place its *list* part using the ordering *callable* (``cmp(ai, aj)``) (default: ``"<"``), which must define a partial order over the items. The sorting algorithm is not stable.
+	 A *method*	:literal:`([cmp])` returning :literal:`self` after sorting in-place its *list* part using the ordering *callable* (:literal:`cmp(ai, aj)`) (default: :literal:`"<"`), which must define a partial order over the items. The sorting algorithm is not stable.
 
 **bsearch**
-	 A *method*	``(a, [cmp], [low], [high])`` returning the lowest index ``idx`` in the range specified by ``low..high`` (default: ``1..#self``) from the **ordered** *list* of ``self`` that compares ``true`` with item ``a`` using the *callable* (``cmp(a, self[idx])``) (default: ``"<="`` for ascending, ``">="`` for descending), or ``high+1``. In the presence of multiple equal items, ``"<="`` (resp. ``">="``) will return the index of the first equal item while ``"<"`` (resp. ``">"``) the index next to the last equal item for ascending (resp. descending) order. [#f5]_ 
+	 A *method*	:literal:`(a, [cmp], [low], [high])` returning the lowest index :literal:`idx` in the range specified by :literal:`low..high` (default: :literal:`1..#self`) from the **ordered** *list* of :literal:`self` that compares :literal:`true` with item :literal:`a` using the *callable* (:literal:`cmp(a, self[idx])`) (default: :literal:`"<="` for ascending, :literal:`">="` for descending), or :literal:`high+1`. In the presence of multiple equal items, :literal:`"<="` (resp. :literal:`">="`) will return the index of the first equal item while :literal:`"<"` (resp. :literal:`">"`) the index next to the last equal item for ascending (resp. descending) order. [#f5]_ 
 
 **lsearch**
-	 A *method*	``(a, [cmp], [low], [high])`` returning the lowest index ``idx`` in the range specified by ``low..high`` (default: ``1..#self``) from the *list* of ``self`` that compares ``true`` with item ``a`` using the *callable* (``cmp(a, self[idx])``) (default: ``"=="``), or ``high+1``. In the presence of multiple equal items in an ordered *list*, ``"<="`` (resp. ``">="``) will return the index of the first equal item while ``"<"`` (resp. ``">"``) the index next to the last equal item for ascending (resp. descending) order. [#f5]_
+	 A *method*	:literal:`(a, [cmp], [low], [high])` returning the lowest index :literal:`idx` in the range specified by :literal:`low..high` (default: :literal:`1..#self`) from the *list* of :literal:`self` that compares :literal:`true` with item :literal:`a` using the *callable* (:literal:`cmp(a, self[idx])`) (default: :literal:`"=="`), or :literal:`high+1`. In the presence of multiple equal items in an ordered *list*, :literal:`"<="` (resp. :literal:`">="`) will return the index of the first equal item while :literal:`"<"` (resp. :literal:`">"`) the index next to the last equal item for ascending (resp. descending) order. [#f5]_
 
 **get_flags**
-	 A *method*	``()`` returning the flags of ``self``. The flags are not inherited nor copied.
+	 A *method*	:literal:`()` returning the flags of :literal:`self`. The flags are not inherited nor copied.
 
 **set_flags**
-	 A *method*	``(flgs)`` returning ``self`` after setting the flags determined by ``flgs``.
+	 A *method*	:literal:`(flgs)` returning :literal:`self` after setting the flags determined by :literal:`flgs`.
 
 **clear_flags**
-	 A *method*	``(flgs)`` returning ``self`` after clearing the flags determined by ``flgs``.
+	 A *method*	:literal:`(flgs)` returning :literal:`self` after clearing the flags determined by :literal:`flgs`.
 
 **test_flags**
-	 A *method*	``(flgs)`` returning a *boolean* telling if all the flags determined by ``flgs`` are set.
+	 A *method*	:literal:`(flgs)` returning a *boolean* telling if all the flags determined by :literal:`flgs` are set.
 
 **open_env**
-	 A *method*	``([ctx])`` returning ``self`` after opening an environment, i.e. a global scope, using ``self`` as the context for ``ctx`` (default: 1). The argument ``ctx`` must be either a *function* or a *number* defining a call level :math:`\geq 1`.
+	 A *method*	:literal:`([ctx])` returning :literal:`self` after opening an environment, i.e. a global scope, using :literal:`self` as the context for :literal:`ctx` (default: 1). The argument :literal:`ctx` must be either a *function* or a *number* defining a call level :math:`\geq 1`.
 
 **close_env**
-	 A *method*	``()`` returning ``self`` after closing the environment linked to it. Closing an environment twice is safe.
+	 A *method*	:literal:`()` returning :literal:`self` after closing the environment linked to it. Closing an environment twice is safe.
 
 **load_env**
-	 A *method*	``(loader)`` returning ``self`` after calling the ``loader``, i.e. a compiled chunk, using ``self`` as its environment. If the loader is a *string*, it is interpreted as the filename of a script to load, see functions ``load`` and ``loadfile`` in `Lua 5.2 <http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf>`_ §6.1 for details.
+	 A *method*	:literal:`(loader)` returning :literal:`self` after calling the :literal:`loader`, i.e. a compiled chunk, using :literal:`self` as its environment. If the loader is a *string*, it is interpreted as the filename of a script to load, see functions :literal:`load` and :literal:`loadfile` in `Lua 5.2 <http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf>`_ §6.1 for details.
 
 **dump_env**
-	 A *method*	``()`` returning ``self`` after dumping its content on the terminal in the rought form of pairs (*key*, *value*), including content of table and object *value*, useful for debugging environments.
+	 A *method*	:literal:`()` returning :literal:`self` after dumping its content on the terminal in the rought form of pairs (*key*, *value*), including content of table and object *value*, useful for debugging environments.
 
 **is_open_env**
-	 A *method*	``()`` returning a *boolean* telling if ``self`` is an open environment.
+	 A *method*	:literal:`()` returning a *boolean* telling if :literal:`self` is an open environment.
 
 **raw_len**
-	 A *method*	``()`` returning the *number* of items in the *list* part of the object. This method should not be confused with the native *function* ``rawlen``.
+	 A *method*	:literal:`()` returning the *number* of items in the *list* part of the object. This method should not be confused with the native *function* :literal:`rawlen`.
 
 **raw_get**
-	 A *method*	``(key)`` returning the *value* of the attribute ``key`` without *lambda* evaluation nor inheritance lookup. This method should not be confused with the native *function* ``rawget``.
+	 A *method*	:literal:`(key)` returning the *value* of the attribute :literal:`key` without *lambda* evaluation nor inheritance lookup. This method should not be confused with the native *function* :literal:`rawget`.
 
 **raw_set**
-	 A *method*	``(key, val)`` setting the attribute ``key`` to the *value* ``val``, bypassing all guards of the object model. This method should not be confused with the native *function* ``rawset``. **Warning**: use this dangerous method at your own risk!
+	 A *method*	:literal:`(key, val)` setting the attribute :literal:`key` to the *value* :literal:`val`, bypassing all guards of the object model. This method should not be confused with the native *function* :literal:`rawset`. **Warning**: use this dangerous method at your own risk!
 
 **var_get**
-	 A *method*	``(key)`` returning the *value* of the attribute ``key`` without *lambda* evaluation.
+	 A *method*	:literal:`(key)` returning the *value* of the attribute :literal:`key` without *lambda* evaluation.
 
 **var_val**
-	 A *method*	``(key, val)`` returning the *value* ``val`` of the attribute ``key`` with *lambda* evaluation. This method is the complementary of ``var_get``, i.e. ``__index`` :math:`\equiv` ``var_val`` :math:`\circ` ``var_get``.
+	 A *method*	:literal:`(key, val)` returning the *value* :literal:`val` of the attribute :literal:`key` with *lambda* evaluation. This method is the complementary of :literal:`var_get`, i.e. :literal:`__index` :math:`\equiv` :literal:`var_val` :math:`\circ` :literal:`var_get`.
 
 **dumpobj**
-	 A *method*	``([fname], [cls], [patt], [noeval])`` return ``self`` after dumping its non-private attributes in file ``fname`` (default: ``stdout``) in a hierarchical form down to ``cls``. If the *string* ``patt`` is provided, it filters the names of the attributes to dump. If ``fname == '-'``, the dump is returned as a *string* in place of ``self``. The *log* ``noeval`` prevents the evaluatation the deferred expressions and reports the functions addresses instead. In the output, ``self`` and its parents are displayed indented according to their inheritance level, and preceeded by a ``+`` sign. The attributes overridden through the inheritance are tagged with :math:`n` ``*`` signs, where :math:`n` corresponds to the number of overrides since the first definition.
+	 A *method*	:literal:`([fname], [cls], [patt], [noeval])` return :literal:`self` after dumping its non-private attributes in file :literal:`fname` (default: :literal:`stdout`) in a hierarchical form down to :literal:`cls`. If the *string* :literal:`patt` is provided, it filters the names of the attributes to dump. If :literal:`fname == '-'`, the dump is returned as a *string* in place of :literal:`self`. The *log* :literal:`noeval` prevents the evaluatation the deferred expressions and reports the functions addresses instead. In the output, :literal:`self` and its parents are displayed indented according to their inheritance level, and preceeded by a :literal:`+` sign. The attributes overridden through the inheritance are tagged with :math:`n` :literal:`*` signs, where :math:`n` corresponds to the number of overrides since the first definition.
 
 
 Metamethods
 -----------
 
-New metamethods can be added to objects but not classes, using the :meth:`:set_metamethods(set)` *method* with ``set`` being the *set* of metamethods to add as in the following example:
+New metamethods can be added to objects but not classes, using the :meth:`:set_metamethods(set)` *method* with :literal:`set` being the *set* of metamethods to add as in the following example:
 
 .. code-block::
 	
@@ -460,37 +460,37 @@ New metamethods can be added to objects but not classes, using the :meth:`:set_m
 
 
 
-The root ``object`` provides the following metamethods:
+The root :literal:`object` provides the following metamethods:
 
 **__init**
-	 A *metamethod*	``()`` called to finalize ``self`` before returning from the constructor.
+	 A *metamethod*	:literal:`()` called to finalize :literal:`self` before returning from the constructor.
 
 **__same**
-	 A *metamethod*	``()`` similar to the ``same``.
+	 A *metamethod*	:literal:`()` similar to the :literal:`same`.
 
 **__copy**
-	 A *metamethod*	``()`` similar to the ``copy``.
+	 A *metamethod*	:literal:`()` similar to the :literal:`copy`.
 
 **__len**
-	 A *metamethod*	``()`` called by the length operator ``#`` to return the size of the *list* part of ``self``.
+	 A *metamethod*	:literal:`()` called by the length operator :literal:`#` to return the size of the *list* part of :literal:`self`.
 
 **__call**
-	 A *metamethod*	``([name], tbl)`` called by the call operator ``()`` to return an instance of ``self`` created from ``name`` and ``tbl``, i.e. using ``self`` as a constructor.
+	 A *metamethod*	:literal:`([name], tbl)` called by the call operator :literal:`()` to return an instance of :literal:`self` created from :literal:`name` and :literal:`tbl`, i.e. using :literal:`self` as a constructor.
 
 **__index**
-	 A *metamethod*	``(key)`` called by the indexing operator ``[key]`` to return the *value* of an attribute determined by *key* after having performed *lambda* evaluation and inheritance lookup.
+	 A *metamethod*	:literal:`(key)` called by the indexing operator :literal:`[key]` to return the *value* of an attribute determined by *key* after having performed *lambda* evaluation and inheritance lookup.
 
 **__newindex**
-	 A *metamethod*	``(key, val)`` called by the assignment operator ``[key]=val`` to create new attributes for the pairs (*key*, *value*).
+	 A *metamethod*	:literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*).
 
 **__pairs**
-	 A *metamethod*	``()`` called by the ``pairs`` *function* to return an iterator over the non-private attributes of ``self``.
+	 A *metamethod*	:literal:`()` called by the :literal:`pairs` *function* to return an iterator over the non-private attributes of :literal:`self`.
 
 **__ipairs**
-	 A *metamethod*	``()`` called by the ``ipairs`` *function* to return an iterator over the *list* part of ``self``.
+	 A *metamethod*	:literal:`()` called by the :literal:`ipairs` *function* to return an iterator over the *list* part of :literal:`self`.
 
 **__tostring**
-	 A *metamethod*	``()`` called by the ``tostring`` *function* to return a *string* describing succinctly ``self``.
+	 A *metamethod*	:literal:`()` called by the :literal:`tostring` *function* to return a *string* describing succinctly :literal:`self`.
 
 
 The following attributes are stored with metamethods in the metatable, but have different purposes:
@@ -509,12 +509,12 @@ Flags
 The object model uses *flags* to qualify objects, like *class*-object, *final*-object and *readonly*-object. The difference with *boolean* attributes is that flags are *not* inherited nor copied.
 The flags of objects are managed by the methods :meth:`:get_flags`, :meth:`:set_flags`, :meth:`:clear_flags` and :meth:`:test_flags`. Methods like :meth:`:is_class`, :meth:`:is_final` and :meth:`:is_readonly` are roughly equivalent to call the method :meth:`:test_flags` with the corresponding (private) flag as argument. Note that functions from the :func:`typeid` module that check for types or kinds, like :func:`is_object` or :func:`is_beam`, never rely on flags because types and kinds are not qualifers.
 
-From the technical point of view, flags are encoded into a 32-bit integer and the object model uses the protected bits 29-31, hence bits 0-28 are free of use. Object flags can be used and extended by other modules introducing their own flags, like the ``element`` module that relies on bits 0-4 and used by many commands. In practice, the bit index does not need to be known and should not be used directly but through its name to abstract its value.
+From the technical point of view, flags are encoded into a 32-bit integer and the object model uses the protected bits 29-31, hence bits 0-28 are free of use. Object flags can be used and extended by other modules introducing their own flags, like the :literal:`element` module that relies on bits 0-4 and used by many commands. In practice, the bit index does not need to be known and should not be used directly but through its name to abstract its value.
 
 Environments
 ------------
 
-The object model allows to transform an object into an environment; in other words, a global workspace for a given context, i.e. scope. Objects-as-environments are managed by the methods ``open_env``, ``close_env``, ``load_env``, ``dump_env`` and ``is_open_env``.
+The object model allows to transform an object into an environment; in other words, a global workspace for a given context, i.e. scope. Objects-as-environments are managed by the methods :literal:`open_env`, :literal:`close_env`, :literal:`load_env`, :literal:`dump_env` and :literal:`is_open_env`.
 
 Things defined in this workspace will be stored in the object, and accessible from outside using the standard ways to access object attributes:
 
@@ -536,7 +536,7 @@ Things defined in this workspace will be stored in the object, and accessible fr
 	obj.a = 4
 	print(obj.a, obj.b, obj.c)    -- display: 4   2   4:2
 
-Uncommenting the line ``local a = 1`` would change the last displayed column to :literal:`1:2` for the three prints because the *lambda* defined for ``obj.c`` would capture the local ``a`` as it would exist in its scope. As seen hereabove, once the environment is closed, the object still holds the variables as attributes.
+Uncommenting the line :literal:`local a = 1` would change the last displayed column to :literal:`1:2` for the three prints because the *lambda* defined for :literal:`obj.c` would capture the local :literal:`a` as it would exist in its scope. As seen hereabove, once the environment is closed, the object still holds the variables as attributes.
 
 The MADX environment is an object that relies on this powerful feature to load MAD-X lattices, their settings and their "business logic", and provides functions, constants and elements to mimic the behavior of the global workspace of MAD-X to some extend:
 
@@ -551,13 +551,13 @@ The MADX environment is an object that relies on this powerful feature to load M
 	MADX.MQ_K1 = 0.02
 	print(mq.k1)                     -- display: 0.02
 
-Note that MAD-X workspace is case insensitive and everything is "global" (no scope, namespaces), hence the ``quadrupole`` element has to be directly available inside the MADX environment. Moreover, the MADX object adds the method ``load`` to extend ``load_env`` and ease the conversion of MAD-X lattices. For more details see chapter :doc:`MADX <madx>`
+Note that MAD-X workspace is case insensitive and everything is "global" (no scope, namespaces), hence the :literal:`quadrupole` element has to be directly available inside the MADX environment. Moreover, the MADX object adds the method :literal:`load` to extend :literal:`load_env` and ease the conversion of MAD-X lattices. For more details see chapter :doc:`MADX <madx>`
 
 .. rubric:: Footnotes
 
 .. [#f1] Objects are not clones of prototypes, they share states and behaviors with their parents but do not hold copies.
 .. [#f2] This syntax for creating objects eases the lattices translation from MAD-X to MAD-NG.
-.. [#f3] This feature is used to setup a command from another command, e.g. ``track`` from ``twiss``
-.. [#f4] This approach is safer than the volatile option ``RBARC`` of MAD-X.
-.. [#f5] ``bsearch`` and ``lsearch`` stand for binary (ordered) search and linear (unordered) search respectively.
+.. [#f3] This feature is used to setup a command from another command, e.g. :literal:`track` from :literal:`twiss`
+.. [#f4] This approach is safer than the volatile option :literal:`RBARC` of MAD-X.
+.. [#f5] :literal:`bsearch` and :literal:`lsearch` stand for binary (ordered) search and linear (unordered) search respectively.
 

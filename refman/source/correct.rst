@@ -2,10 +2,10 @@ Correct
 =======
 .. _ch.cmd.correct:
 
-The ``correct`` command (i.e. orbit correction) provides a simple interface to compute the orbit steering correction and setup the kickers of the sequences from the analysis of their ``track`` and ``twiss`` mtables.
+The :literal:`correct` command (i.e. orbit correction) provides a simple interface to compute the orbit steering correction and setup the kickers of the sequences from the analysis of their :literal:`track` and :literal:`twiss` mtables.
 
 .. code-block:: 
-	:caption: Synopsis of the ``correct`` command with default setup.
+	:caption: Synopsis of the :literal:`correct` command with default setup.
 	:name: fig-correct-synop
 
 	mlst = correct { 
@@ -38,128 +38,128 @@ The ``correct`` command (i.e. orbit correction) provides a simple interface to c
 Command synopsis
 ----------------
 
-The ``correct`` command format is summarized in :numref:`fig-correct-synop`, including the default setup of the attributes.
-The ``correct`` command supports the following attributes:
+The :literal:`correct` command format is summarized in :numref:`fig-correct-synop`, including the default setup of the attributes.
+The :literal:`correct` command supports the following attributes:
 
 .. _correct.attr:
 
 	**sequence**
 	 The *sequence* (or a list of *sequence*) to analyze. (no default, required). 
-	 Example: ``sequence = lhcb1``.
+	 Example: :literal:`sequence = lhcb1`.
 
 	**range**
-	 A *range* (or a list of *range*) specifying the span of the sequence to analyze. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute . (default: ``nil``). 
-	 Example: ``range = "S.DS.L8.B1/E.DS.R8.B1"``.
+	 A *range* (or a list of *range*) specifying the span of the sequence to analyze. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute . (default: :literal:`nil`). 
+	 Example: :literal:`range = "S.DS.L8.B1/E.DS.R8.B1"`.
 
 	**title**
-	 A *string* specifying the title of the *mtable*. If no title is provided, the command looks for the name of the sequence, i.e. the attribute ``seq.name``. (default: ``nil``). 
-	 Example: ``title = "Correct orbit around IP5"``.
+	 A *string* specifying the title of the *mtable*. If no title is provided, the command looks for the name of the sequence, i.e. the attribute :literal:`seq.name`. (default: :literal:`nil`). 
+	 Example: :literal:`title = "Correct orbit around IP5"`.
 
 	**model** 
-	 A *mtable* (or a list of *mtable*) providing ``twiss``-like information, e.g. elements, orbits and optical functions, of the corresponding sequences. (no default, required). 
-	 Example: ``model = twmtbl``.
+	 A *mtable* (or a list of *mtable*) providing :literal:`twiss`-like information, e.g. elements, orbits and optical functions, of the corresponding sequences. (no default, required). 
+	 Example: :literal:`model = twmtbl`.
 
 	**orbit**
-	 A *mtable* (or a list of *mtable*) providing ``track``-like information, e.g. elements and measured orbits, of the corresponding sequences. If this attribute is ``nil``, the model orbit is used. (default: ``nil``). 
-	 Example: ``orbit = tkmtbl``.
+	 A *mtable* (or a list of *mtable*) providing :literal:`track`-like information, e.g. elements and measured orbits, of the corresponding sequences. If this attribute is :literal:`nil`, the model orbit is used. (default: :literal:`nil`). 
+	 Example: :literal:`orbit = tkmtbl`.
 
 	**target** 
-	 A *mtable* (or a list of *mtable*) providing ``track``-like information, e.g. elements and target orbits, of the corresponding sequences. If this attribute is ``nil``, the design orbit is used. (default: ``nil``). 
-	 Example: ``target = tgmtbl``.
+	 A *mtable* (or a list of *mtable*) providing :literal:`track`-like information, e.g. elements and target orbits, of the corresponding sequences. If this attribute is :literal:`nil`, the design orbit is used. (default: :literal:`nil`). 
+	 Example: :literal:`target = tgmtbl`.
 
 	**kind** 
-	 A *string* specifying the kind of correction to apply among ``line`` or ``ring``. The kind ``line`` takes care of the causality between monitors, correctors and sequences directions, while the kind ``ring`` considers the system as periodic. (default: ). 
-	 Example: ``kind = 'line'``.
+	 A *string* specifying the kind of correction to apply among :literal:`line` or :literal:`ring`. The kind :literal:`line` takes care of the causality between monitors, correctors and sequences directions, while the kind :literal:`ring` considers the system as periodic. (default: ). 
+	 Example: :literal:`kind = 'line'`.
 
 	**plane**
-	 A *string* specifying the plane to correct among ``x``, , ``y`` and ``xy``. (default: ``'xy'``). 
-	 Example: ``plane = 'x'``.
+	 A *string* specifying the plane to correct among :literal:`x`, , :literal:`y` and :literal:`xy`. (default: :literal:`'xy'`). 
+	 Example: :literal:`plane = 'x'`.
 
 	**method**
-	 A *string* specifying the method to use for correcting the orbit among ``LSQ``, ``SVD`` or ``micado``. These methods correspond to the solver used from the :doc:`linear algebra <linalg>` module to find the orbit correction, namely ``solve``, ``ssolve`` or ``nsolve``. (default: ``'micado'``). 
-	 Example: ``method = 'svd'``.
+	 A *string* specifying the method to use for correcting the orbit among :literal:`LSQ`, :literal:`SVD` or :literal:`micado`. These methods correspond to the solver used from the :doc:`linear algebra <linalg>` module to find the orbit correction, namely :literal:`solve`, :literal:`ssolve` or :literal:`nsolve`. (default: :literal:`'micado'`). 
+	 Example: :literal:`method = 'svd'`.
 
 	**ncor**
-	 A *number* specifying the number of correctors to consider with the method ``micado``, zero meaning all available correctors. (default: ``0``). 
-	 Example: ``ncor = 4``.
+	 A *number* specifying the number of correctors to consider with the method :literal:`micado`, zero meaning all available correctors. (default: :literal:`0`). 
+	 Example: :literal:`ncor = 4`.
 
 	**tol** 
 	 A *number* specifying the rms tolerance on the residuals for the orbit correction. (default: 1e-6). 
-	 Example: ``tol = 1e- 6``.
+	 Example: :literal:`tol = 1e- 6`.
 
 	**unit**
-	 A *number* specifying the unit of the ``orbit`` and ``target`` coordinates. (default: ``1`` [m]). 
-	 Example: ``units = 1e- 3`` [m], i.e. [mm].
+	 A *number* specifying the unit of the :literal:`orbit` and :literal:`target` coordinates. (default: :literal:`1` [m]). 
+	 Example: :literal:`units = 1e- 3` [m], i.e. [mm].
 
 	**corcnd** 
-	 A *log* or a *string* specifying the method to use among ``svdcnd`` and ``pcacnd`` from the :doc:`linear algebra <linalg>` module for the preconditioning of the system. A ``true`` value corresponds to . (default: ``false``). 
-	 Example: ``corcnd = 'pcacnd'``.
+	 A *log* or a *string* specifying the method to use among :literal:`svdcnd` and :literal:`pcacnd` from the :doc:`linear algebra <linalg>` module for the preconditioning of the system. A :literal:`true` value corresponds to . (default: :literal:`false`). 
+	 Example: :literal:`corcnd = 'pcacnd'`.
 
 	**corcut** 
-	 A *number* specifying the thresholds for the singular values to pass to the ``svdcnd`` and ``pcacnd`` method for the preconditioning of the system. (default: ``0``). 
-	 Example: ``cortol = 1e- 6``.
+	 A *number* specifying the thresholds for the singular values to pass to the :literal:`svdcnd` and :literal:`pcacnd` method for the preconditioning of the system. (default: :literal:`0`). 
+	 Example: :literal:`cortol = 1e- 6`.
 
 	**cortol**
-	 A *number* specifying the thresholds for the correctors to pass to the ``svdcnd`` method for the preconditioning of the system. (default: ``0``). 
-	 Example: ``cortol = 1e- 8``.
+	 A *number* specifying the thresholds for the correctors to pass to the :literal:`svdcnd` method for the preconditioning of the system. (default: :literal:`0`). 
+	 Example: :literal:`cortol = 1e- 8`.
 
 	**corset**
-	 A *log* specifying to update the correctors strengths for the corrected orbit. (default: ``true``). 
-	 Example: ``corset = false``.
+	 A *log* specifying to update the correctors strengths for the corrected orbit. (default: :literal:`true`). 
+	 Example: :literal:`corset = false`.
 
 	**monon**
-	 A *number* specifying a fraction of available monitors selected from a uniform RNG. (default: ``false``). 
-	 Example: ``monon = 0.8``, keep 80% of the monitors.
+	 A *number* specifying a fraction of available monitors selected from a uniform RNG. (default: :literal:`false`). 
+	 Example: :literal:`monon = 0.8`, keep 80% of the monitors.
 
 	**moncut**
-	 A *number* specifying a threshold in number of sigma to cut monitor considered as outliers. (default: ``false``). 
-	 Example: ``moncut = 2``, cut monitors above :math:`2\sigma`.
+	 A *number* specifying a threshold in number of sigma to cut monitor considered as outliers. (default: :literal:`false`). 
+	 Example: :literal:`moncut = 2`, cut monitors above :math:`2\sigma`.
 
 	**monerr**
-	 A *number* in ``0..3`` specifying the type of monitor reading errors to consider: ``1`` use scaling errors ``msex`` and ``msey``, ``2`` use alignment errors ``mrex``, ``mrey`` and ``dpsi``, ``3`` use both. (default: ``false``). 
-	 Example: ``monerr = 3``.
+	 A *number* in :literal:`0..3` specifying the type of monitor reading errors to consider: :literal:`1` use scaling errors :literal:`msex` and :literal:`msey`, :literal:`2` use alignment errors :literal:`mrex`, :literal:`mrey` and :literal:`dpsi`, :literal:`3` use both. (default: :literal:`false`). 
+	 Example: :literal:`monerr = 3`.
 
 	**info**
-	 A *number* specifying the information level to control the verbosity of the output on the console. (default: ``nil``). 
-	 Example: ``info = 2``.
+	 A *number* specifying the information level to control the verbosity of the output on the console. (default: :literal:`nil`). 
+	 Example: :literal:`info = 2`.
 
 	**debug**
-	 A *number*\ specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: ``nil``). 
-	 Example: ``debug = 2``.
+	 A *number*\ specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :literal:`nil`). 
+	 Example: :literal:`debug = 2`.
 
 
-The ``correct`` command returns the following object:
+The :literal:`correct` command returns the following object:
 
-	``mlst``
-	 A *mtable* (or a list of *mtable*) corresponding to the TFS table of the ``correct`` command. It is a list when multiple sequences are corrected together.
+	:literal:`mlst`
+	 A *mtable* (or a list of *mtable*) corresponding to the TFS table of the :literal:`correct` command. It is a list when multiple sequences are corrected together.
 
 
 Correct mtable
 --------------
 .. _sec.correct.mtable:
 
-The ``correct`` command returns a *mtable* where the information described hereafter is the default list of fields written to the TFS files. [#f1]_ 
+The :literal:`correct` command returns a *mtable* where the information described hereafter is the default list of fields written to the TFS files. [#f1]_ 
 
 
 
 	**name**
-	 The name of the command that created the ``"correct"``.
+	 The name of the command that created the :literal:`"correct"`.
 	**type**
-	 The type of the ``"correct"``.
+	 The type of the :literal:`"correct"`.
 	**title**
-	 The value of the command attribute ``title``.
+	 The value of the command attribute :literal:`title`.
 	**origin**
-	 The origin of the application that created the ``"MAD 1.0.0 OSX 64"``.
+	 The origin of the application that created the :literal:`"MAD 1.0.0 OSX 64"`.
 	**date**
-	 The date of the creation of the ``"27/05/20"``.
+	 The date of the creation of the :literal:`"27/05/20"`.
 	**time**
-	 The time of the creation of the ``"19:18:36"``.
+	 The time of the creation of the :literal:`"19:18:36"`.
 	**refcol**
-	 The reference *column* for the *mtable* dictionnary, e.g. ``"name"``.
+	 The reference *column* for the *mtable* dictionnary, e.g. :literal:`"name"`.
 	**range**
-	 The value of the command attribute ``range``. [#f2]_ 
+	 The value of the command attribute :literal:`range`. [#f2]_ 
 	**__seq**
-	 The *sequence* from the command attribute ``sequence``. [#f3]_ .. _ref.track.mtbl1}:
+	 The *sequence* from the command attribute :literal:`sequence`. [#f3]_ .. _ref.track.mtbl1}:
 
 
 
@@ -196,7 +196,7 @@ The ``correct`` command returns a *mtable* where the information described herea
 	**eidx**
 	 The index of the element in the sequence.
 
-Note that ``correct`` does not take into account the particles and damaps ``id``s present in the (augmented) ``track`` *mtable*, hence the provided tables should contain single particle or damap information.
+Note that :literal:`correct` does not take into account the particles and damaps :literal:`id`s present in the (augmented) :literal:`track` *mtable*, hence the provided tables should contain single particle or damap information.
 
 Examples
 --------
