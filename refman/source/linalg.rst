@@ -823,6 +823,10 @@ Special Methods
 
    Return the norm of the symplectic deviation matrix given by :math:`M^* S_{2n} M - S_{2n}` of the real or complex matrix :var:`mat`. If :var:`r` is provided, it is filled with the symplectic deviation matrix.
 
+.. function:: mat:dif (mat2, r_)
+
+   Return a real or complex matrix or :var:`r` resulting from the term-by-term difference between the matrices :var:`mat` and :var:`mat2` using the absolute difference for values with magnitude below 1 and the relative difference otherwise, i.e. :math:`r_i = (x_i - y_i) / \max(|x_i|, 1)`.
+
 Solvers and Decompositions
 --------------------------
 
@@ -1541,6 +1545,13 @@ Matrix
                 num_t mad_cmat_symperr (const cpx_t x[], cpx_t r_[], ssz_t n, num_t *tol_)
 
    Return the norm of the symplectic error and fill the optional matrix :var:`r` with the symplectic deviation of the matrix :var:`x`. The optional argument :var:`tol` is used as the tolerance to check if the matrix :var:`x` is symplectic or not, and saves the result as :const:`0` (non-symplectic) or :const:`1` (symplectic) within tol for output. 
+
+.. c:function:: void mad_vec_dif  (const num_t x[], const num_t y[], num_t r[], ssz_t n)
+                void mad_vec_difv (const num_t x[], const cpx_t y[], cpx_t r[], ssz_t n)
+                void mad_cvec_dif (const cpx_t x[], const cpx_t y[], cpx_t r[], ssz_t n)
+                void mad_cvec_difv(const cpx_t x[], const num_t y[], cpx_t r[], ssz_t n)
+
+   Fill the matrix :var:`r` of sizes :var:`[m, n]` with the absolute or relative differences between the elements of the matrix :var:`x` and :var:`y` with compatible sizes. The relative difference is taken for the values with magnitude greater than 1, otherwise it takes the absolute difference.
 
 Rotations
 ---------
