@@ -48,50 +48,50 @@ The :literal:`match` command supports the following attributes:
 .. _match.attr:
 
 :ref:`command <sec.match.cmd>`
-	A *callable*\ :literal:`(e)` that will be invoked during the optimization process at each iteration. (default: :literal:`nil`). 
-	Example: :literal:`command := twiss { twiss-attributes } }`.
+	A *callable*\ :literal:`(e)` that will be invoked during the optimization process at each iteration. (default: :const:`nil`). 
+	Example: :expr:`command := twiss { twiss-attributes } }`.
 
 :ref:`variables <sec.match.var>`
 	An *mappable* of single :ref:`variable <sec.match.var>` specification that can be combined with a *set* of specifications for all variables. (no default, required). 
-	Example: :literal:`variables = {{ var="seq.knobs.mq_k1" }}`.
+	Example: :expr:`variables = {{ var="seq.knobs.mq_k1" }}`.
 
 :ref:`equalities <sec.match.cst>`
 	An *mappable* of single equality specification that can be combined with a *set* of specifications for all equalities. (default: :literal:`{}`). 
-	Example: :literal:`equalities = {{  expr=\t -> t.q1- 64.295, name='q1' }}`.
+	Example: :expr:`equalities = {{  expr=\t -> t.q1- 64.295, name='q1' }}`.
 
 :ref:`inequalities <sec.match.cst>`
 	An *mappable* of single inequality specification that can be combined with a *set* of specifications for all inequalities. (default: :literal:`{}`). 
-	Example: :literal:`inequalities = {{  expr=\t -> t.mq4.beta11- 50 }}`.
+	Example: :expr:`inequalities = {{  expr=\t -> t.mq4.beta11- 50 }}`.
 
 :ref:`weights <sec.match.cst>`
 	A *mappable* of weights specification that can be used in the :literal:`kind` attribute of the constraints specifications. (default: :literal:`{}`). 
-	Example: :literal:`weights = { px=10 }`.
+	Example: :expr:`weights = { px=10 }`.
 
 :ref:`objective <sec.match.obj>`
 	A *mappable* of specifications for the objective to minimize. (default: :literal:`{}`). 
-	Example: :literal:`objective = { method="LD_LMDIF", fmin=1e- 10 }`.
+	Example: :expr:`objective = { method="LD_LMDIF", fmin=1e- 10 }`.
 
 **maxcall**
-	A *number* specifying the maximum allowed calls of the :literal:`command` function or the :literal:`objective` function. (default: :literal:`nil`).
-	Example: :literal:`maxcall = 100`.
+	A *number* specifying the maximum allowed calls of the :literal:`command` function or the :literal:`objective` function. (default: :const:`nil`).
+	Example: :expr:`maxcall = 100`.
 
 **maxtime**
-	A *number* specifying the maximum allowed time in seconds. (default: :literal:`nil`).
-	Example: :literal:`maxtime = 60`.
+	A *number* specifying the maximum allowed time in seconds. (default: :const:`nil`).
+	Example: :expr:`maxtime = 60`.
 
 **info**	
-	A *number* specifying the information level to control the verbosity of the output on the :ref:`console <sec.match.conso>`. (default: :literal:`nil`). 
- 	Example: :literal:`info = 3`.
+	A *number* specifying the information level to control the verbosity of the output on the :ref:`console <sec.match.conso>`. (default: :const:`nil`). 
+ 	Example: :expr:`info = 3`.
 
 .. _match.debug:
 
 **debug** 
-	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the :ref:`console <sec.match.conso>`. (default: :literal:`nil`). 
-	Example: :literal:`debug = 2`.
+	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the :ref:`console <sec.match.conso>`. (default: :const:`nil`). 
+	Example: :expr:`debug = 2`.
 
 **usrdef** 
-	Any user defined data that will be attached to the matching environment, which is passed as extra argument to all user defined functions in the :literal:`match` command. (default: :literal:`nil`). 
-	Example: :literal:`usrdef = { var=vector(15) }`.
+	Any user defined data that will be attached to the matching environment, which is passed as extra argument to all user defined functions in the :literal:`match` command. (default: :const:`nil`). 
+	Example: :expr:`usrdef = { var=vector(15) }`.
 
 
 The :literal:`match` command returns the following values in this order:
@@ -148,15 +148,15 @@ The :literal:`match` command creates a matching environment, which is passed as 
 **dtime**
 	 A *number* reporting the current elapsed time.
 **stop**
-	 A *logical* stopping the :literal:`match` command immediately if set to :literal:`true`.
+	 A *logical* stopping the :literal:`match` command immediately if set to :const:`true`.
 **info**
 	 The current information level :math:`\geq 0`.
 **debug**
 	 The current debugging level :math:`\geq 0`.
 **usrdef**
-	 The :literal:`usrdef` attribute of the :literal:`match` command or :literal:`nil`.
+	 The :literal:`usrdef` attribute of the :literal:`match` command or :const:`nil`.
 **command**
-	 The :literal:`command` attribute of the :literal:`match` command or :literal:`nil`.
+	 The :literal:`command` attribute of the :literal:`match` command or :const:`nil`.
 **variables**
 	 The :literal:`variables` attribute of the :literal:`match` command.
 **equalities**
@@ -171,21 +171,21 @@ Command
 -------
 .. _sec.match.cmd:
 
-The attribute :literal:`command` (default: :literal:`nil`) must be a *callable* :literal:`(e)` that will be invoked with the matching environment as first argument during the optimization, right after the update of the :ref:`variables <sec.match.var>` to their new values, and before the evaluation of the :ref:`constraints <par.match.cst>` and the :ref:`objective <sec.match.obj>` function. (default: :literal:`nil`).
+The attribute :literal:`command` (default: :const:`nil`) must be a *callable* :literal:`(e)` that will be invoked with the matching environment as first argument during the optimization, right after the update of the :ref:`variables <sec.match.var>` to their new values, and before the evaluation of the :ref:`constraints <par.match.cst>` and the :ref:`objective <sec.match.obj>` function. (default: :const:`nil`).
 
 .. code-block:: 
 
 	command = function or nil
 
-The value returned by :literal:`command` is passed as the first argument to all constraints. If this return value is :literal:`nil`, the :literal:`match` command considers the current iteration as invalid. Depending on the selected method, the optimizer can start a new iteration or stop.
+The value returned by :literal:`command` is passed as the first argument to all constraints. If this return value is :const:`nil`, the :literal:`match` command considers the current iteration as invalid. Depending on the selected method, the optimizer can start a new iteration or stop.
 
-A typical :literal:`command` definition for matching optics is a function that calls a :literal:`twiss` command [#f1]_ :
+A typical :literal:`command` definition for matching optics is a function that calls a :var:`twiss` command [#f1]_ :
 
 .. code-block::
 
 	command := mchklost( twiss { twiss-attributes } )
 
-where the function :literal:`mchklost` surrounding the :literal:`twiss` command checks if the returned :literal:`mtable` (i.e. the twiss table) has lost particles and returns :literal:`nil`\ instead:
+where the function :literal:`mchklost` surrounding the :var:`twiss` command checks if the returned :literal:`mtable` (i.e. the twiss table) has lost particles and returns :const:`nil`\ instead:
 
 .. code-block::
 
@@ -212,44 +212,44 @@ The *variable-attributes* is a set of attributes that specify a single variable:
 .. _par.match.var:
 
 **var**
-	A *string* specifying the identifier (and indirection) needed to reach the variable from the user's scope where the :literal:`match` command is defined. (default: :literal:`nil`). 
-	Example: :literal:`var = "lhcb1.mq_12l4_b1.k1"`.
+	A *string* specifying the identifier (and indirection) needed to reach the variable from the user's scope where the :literal:`match` command is defined. (default: :const:`nil`). 
+	Example: :expr:`var = "lhcb1.mq_12l4_b1.k1"`.
 
 **name**
 	A *string* specifying the name of the variable to display when the :var:`info` level is positive. (default: :literal:`var`). 
-	Example: :literal:`name = "MQ.12L4.B1->k1"`.
+	Example: :expr:`name = "MQ.12L4.B1->k1"`.
 
 **min**
 	A *number* specifying the lower bound for the variable. (default: :literal:`-inf` ). 
-	Example: :literal:`min = - 4`.
+	Example: :expr:`min = - 4`.
 
 **max**
 	A *number* specifying the upper bound for the variable. (default: :literal:`+inf` ). 
-	Example: :literal:`max = 10`.
+	Example: :expr:`max = 10`.
 
 **sign** 
-	A *logical* enforcing the sign of the variable by moving :var:`min` or :var:`max` to zero depending on the sign of its initial value. (default: :literal:`false`). 
-	Example: :literal:`sign = true`.
+	A *logical* enforcing the sign of the variable by moving :var:`min` or :var:`max` to zero depending on the sign of its initial value. (default: :const:`false`). 
+	Example: :expr:`sign = true`.
 
 **slope** 
-	A *number* enforcing ( :ref:`LSopt <sec.match.lsopt>` methods only) with its sign the variation direction of the variable, i.e. positive will only increase and negative will only decrease. (default: :literal:`0` ). 
-	Example: :literal:`slope = - 1`.
+	A *number* enforcing ( :ref:`LSopt <sec.match.lsopt>` methods only) with its sign the variation direction of the variable, i.e. positive will only increase and negative will only decrease. (default: :const:`0` ). 
+	Example: :expr:`slope = - 1`.
 
 **step** 
-	A small positive *number* used to approximate the derivatives using the :ref:`sec.match.der` method. If the value is not provided, the command will use some heuristic. (default: :literal:`nil`). 
-	Example: :literal:`step = 1e- 6`.
+	A small positive *number* used to approximate the derivatives using the :ref:`sec.match.der` method. If the value is not provided, the command will use some heuristic. (default: :const:`nil`). 
+	Example: :expr:`step = 1e- 6`.
 
 **tol** 
-	A *number* specifying the tolerance on the variable step. If an update is smaller than :literal:`tol`, the command will return the status :literal:`"XTOL"`. (default: :literal:`0`). 
-	Example: :literal:`tol = 1e- 8`.
+	A *number* specifying the tolerance on the variable step. If an update is smaller than :literal:`tol`, the command will return the status :literal:`"XTOL"`. (default: :const:`0`). 
+	Example: :expr:`tol = 1e- 8`.
 
 **get** 
-	A *callable* :literal:`(e)` returning the variable value as a *number*, optionally using the matching environment passed as first argument. This attribute is required if the variable is *local* or an *upvalue* to avoid a significant slowdown of the code. (default: :literal:`nil`). 
-	Example: :literal:`get := lhcb1.mq_12l4_b1.k1`.
+	A *callable* :literal:`(e)` returning the variable value as a *number*, optionally using the matching environment passed as first argument. This attribute is required if the variable is *local* or an *upvalue* to avoid a significant slowdown of the code. (default: :const:`nil`). 
+	Example: :expr:`get := lhcb1.mq_12l4_b1.k1`.
 
 **set** 
-	A *callable* :literal:`(v, e)` updating the variable value with the *number* passed as first argument, optionally using the matching environment passed as second argument.This attribute is required if the variable is *local* or an *upvalue* to avoid a significant slowdown of the code. (default: :literal:`nil`). 
-	Example: :literal:`set = \v,e => lhcb1.mqxa_1l5.k1 = v*e.usrdef.xon end`.
+	A *callable* :literal:`(v, e)` updating the variable value with the *number* passed as first argument, optionally using the matching environment passed as second argument.This attribute is required if the variable is *local* or an *upvalue* to avoid a significant slowdown of the code. (default: :const:`nil`). 
+	Example: :expr:`set = \v,e => lhcb1.mqxa_1l5.k1 = v*e.usrdef.xon end`.
 
 
 The *variables-attributes* is a set of attributes that specify all variables together, but with a lower precedence than the single variable specification of the same name unless otherwise specified:
@@ -274,23 +274,23 @@ The *variables-attributes* is a set of attributes that specify all variables tog
 
 **rtol** 
 	A *number* specifying the relative tolerance on all variable steps. If an update is smaller than :literal:`rtol` relative to its variable value, the command will return the status :literal:`"XTOL"`\ . (default: :const:`eps`). 
-	Example: :literal:`tol = 1e- 8`.
+	Example: :expr:`tol = 1e- 8`.
 
 **nvar**
-	A *number* specifying the number of variables of the problem. It is useful when the problem is made abstract with functions and it is not possible to deduce this count from single variable definitions, or one needs to override it. (default: :literal:`nil`). 
- 	Example: :literal:`nvar = 15`.
+	A *number* specifying the number of variables of the problem. It is useful when the problem is made abstract with functions and it is not possible to deduce this count from single variable definitions, or one needs to override it. (default: :const:`nil`). 
+ 	Example: :expr:`nvar = 15`.
 
 **get**
-	A *callable* :literal:`(x, e)` updating a *vector* passed as first argument with the values of all variables, optionally using the matching environment passed as second argument. This attribute supersedes all single variable :literal:`get` and may be useful when it is better to read all the variables together, or when they are all *local*\ s or *upvalue*\ s. (default: :literal:`nil`). 
-	Example: :literal:`get = \x,e -> e.usrdef.var:copy(x)`.
+	A *callable* :literal:`(x, e)` updating a *vector* passed as first argument with the values of all variables, optionally using the matching environment passed as second argument. This attribute supersedes all single variable :literal:`get` and may be useful when it is better to read all the variables together, or when they are all *local*\ s or *upvalue*\ s. (default: :const:`nil`). 
+	Example: :expr:`get = \x,e -> e.usrdef.var:copy(x)`.
 
 **set**
-	A *callable* :literal:`(x, e)` updating all the variables with the values passed as first argument in a *vector*, optionally using the matching environment passed as second argument. This attribute supersedes all single variable :literal:`get` and may be useful when it is better to read all the variables together, or when they are all *local*\ s or *upvalue*\ s.(default: :literal:`nil`). 
-	Example: :literal:`set = \x,e -> x:copy(e.usrdef.var)`.
+	A *callable* :literal:`(x, e)` updating all the variables with the values passed as first argument in a *vector*, optionally using the matching environment passed as second argument. This attribute supersedes all single variable :literal:`get` and may be useful when it is better to read all the variables together, or when they are all *local*\ s or *upvalue*\ s.(default: :const:`nil`). 
+	Example: :expr:`set = \x,e -> x:copy(e.usrdef.var)`.
 
 **nowarn**
-	A *logical* disabling a warning emitted when the definition of :literal:`get` and :literal:`set` are advised but not defined. It is safe to not define :literal:`get` and :literal:`set` in such case, but it will significantly slowdown the code. (default: :literal:`nil`). 
-	Example: :literal:`nowarn = true`.
+	A *logical* disabling a warning emitted when the definition of :literal:`get` and :literal:`set` are advised but not defined. It is safe to not define :literal:`get` and :literal:`set` in such case, but it will significantly slowdown the code. (default: :const:`nil`). 
+	Example: :expr:`nowarn = true`.
 
 .. _sec.match.cst:
 
@@ -318,24 +318,24 @@ The attributes :literal:`equalities` (default: :literal:`{}`) and :literal:`ineq
 The *constraint-attributes* is a set of attributes that specify a single constraint, either an *equality* or an *inequality*:
 
 	**expr** 
-		A *callable* :literal:`(r, e)` returning the constraint value as a *number*, optionally using the result of :literal:`command` passed as first argument, and the matching environment passed as second argument. (default: :literal:`nil`)
-		Example: :literal:`expr = \t -> t.IP8.beta11 - beta_ip8`.
+		A *callable* :literal:`(r, e)` returning the constraint value as a *number*, optionally using the result of :literal:`command` passed as first argument, and the matching environment passed as second argument. (default: :const:`nil`)
+		Example: :expr:`expr = \t -> t.IP8.beta11 - beta_ip8`.
 
 	**name**
-	 	A *string* specifying the name of the constraint to display when the :literal:`info` level is positive. (default: :literal:`nil`). 
-		Example: :literal:`name = "betx@IP8"`.
+	 	A *string* specifying the name of the constraint to display when the :literal:`info` level is positive. (default: :const:`nil`). 
+		Example: :expr:`name = "betx@IP8"`.
 
 	**kind** 	
-		A *string* specifying the kind to refer to for the weight of the constraint, taken either in the user-defined or in the default :ref:`weights-list<par.match.wght>`\ . (default: :literal:`nil`). 
-		Example: :literal:`kind = "dq1"`.
+		A *string* specifying the kind to refer to for the weight of the constraint, taken either in the user-defined or in the default :ref:`weights-list<par.match.wght>`\ . (default: :const:`nil`). 
+		Example: :expr:`kind = "dq1"`.
 
 	**weight**
-		A *number* used to override the weight of the constraint. (default: :literal:`nil`). 
-		Example: :literal:`weight = 100`.
+		A *number* used to override the weight of the constraint. (default: :const:`nil`). 
+		Example: :expr:`weight = 100`.
 
 	**tol** 
 		A *number* specifying the tolerance to apply on the constraint when checking for its fulfillment. (default: ). 
-		Example: :literal:`tol = 1e- 6`.
+		Example: :expr:`tol = 1e- 6`.
 
 
 The *constraints-attributes* is a set of attributes that specify all equalities or inequalities constraints together, but with a lower precedence than the single constraint specification of the same name unless otherwise specified:
@@ -344,12 +344,12 @@ The *constraints-attributes* is a set of attributes that specify all equalities 
 		Idem :ref:`constraint-attributes <par.match.cst>`, but for all constraints with no local override.
 
 	**nequ**
-		A *number* specifying the number of equations (i.e. number of equalities or inequalities) of the problem. It is useful when the problem is made abstract with functions and it is not possible to deduce this count from single constraint definitions, or one needs to override it. (default: :literal:`nil`). 
-		Example: :literal:`nequ = 15`.
+		A *number* specifying the number of equations (i.e. number of equalities or inequalities) of the problem. It is useful when the problem is made abstract with functions and it is not possible to deduce this count from single constraint definitions, or one needs to override it. (default: :const:`nil`). 
+		Example: :expr:`nequ = 15`.
 
 	**exec**
-		A *callable* :literal:`(x, c, cjac)` updating a *vector* passed as second argument with the values of all constraints, and updating an optional *matrix* passed as third argument with the Jacobian of all constraints (if not :literal:`nil`), using the variables values passed in a *vector* as first argument. This attribute supersedes all constraints :literal:`expr` and may be useful when it is better to update all the constraints together. (default: :literal:`nil`). 
-		Example: :literal:`exec = myinequ`, where (:literal:`nvar=2` and :literal:`nequ=2`)
+		A *callable* :literal:`(x, c, cjac)` updating a *vector* passed as second argument with the values of all constraints, and updating an optional *matrix* passed as third argument with the Jacobian of all constraints (if not :const:`nil`), using the variables values passed in a *vector* as first argument. This attribute supersedes all constraints :literal:`expr` and may be useful when it is better to update all the constraints together. (default: :const:`nil`). 
+		Example: :expr:`exec = myinequ`, where (:literal:`nvar=2` and :literal:`nequ=2`)
 
 .. code::
 
@@ -362,51 +362,51 @@ The *constraints-attributes* is a set of attributes that specify all equalities 
 
 \
 	**disp** 
-		A *logical* disabling the display of the equalities in the summary if it is explicitly set to :literal:`false`. This is useful for fitting data where equalities are used to compute the residuals. (default: :literal:`nil`). 
-		Example: :literal:`disp = false`.
+		A *logical* disabling the display of the equalities in the summary if it is explicitly set to :const:`false`. This is useful for fitting data where equalities are used to compute the residuals. (default: :const:`nil`). 
+		Example: :expr:`disp = false`.
 
 .. _par.match.wght:
 
-The *weights-list* is a set of attributes that specify weights for kinds used by constraints. It allows to override the default weights of the supported kinds summarized in the :numref:`tbl.match.wght`, or to extend this list with new kinds and weights. The default weight for any undefined :literal:`kind` is :literal:`1`. 
-Example: :literal:`weights = { q1=100, q2=100, mykind=3 }`.
+The *weights-list* is a set of attributes that specify weights for kinds used by constraints. It allows to override the default weights of the supported kinds summarized in the :numref:`tbl.match.wght`, or to extend this list with new kinds and weights. The default weight for any undefined :literal:`kind` is :const:`1`. 
+Example: :expr:`weights = { q1=100, q2=100, mykind=3 }`.
 
 .. table:: List of supported kinds *string* and their default weights (*number*).
 	:name: tbl.match.wght
 	:align: center
 
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|Name               |Weight         |Name             |Weight         |Name             |Weight         |Generic name    |	
-	+===================+===============+=================+===============+=================+===============+================+
-	|:literal:`x`       |:literal:`10`  |:literal:`y`     |:literal:`10`  |:literal:`t`     |:literal:`10`  |                |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`dx`      |:literal:`10`  |:literal:`dy`    |:literal:`10`  |:literal:`dt`    |:literal:`10`  |:literal:`d`    |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`dpx`     |:literal:`100` |:literal:`dpy`   |:literal:`100` |:literal:`dpt`   |:literal:`100` |:literal:`dp`   |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`ddx`     |:literal:`10`  |:literal:`ddy`   |:literal:`10`  |:literal:`ddt`   |:literal:`10`  |:literal:`dd`   |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`ddpx`    |:literal:`100` |:literal:`ddpy`  |:literal:`100` |:literal:`ddpt`  |:literal:`100` |:literal:`ddp`  |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`wx`      |:literal:`1`   |:literal:`wy`    |:literal:`1`   |:literal:`wz`    |:literal:`1`   |:literal:`w`    |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`phix`    |:literal:`1`   |:literal:`phiy`  |:literal:`1`   |:literal:`phiz`  |:literal:`1`   |:literal:`phi`  |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`betx`    |:literal:`1`   |:literal:`bety`  |:literal:`1`   |:literal:`betz`  |:literal:`1`   |:literal:`beta` |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`alfx`    |:literal:`10`  |:literal:`alfy`  |:literal:`10`  |:literal:`alfz`  |:literal:`10`  |:literal:`alfa` |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`mux`     |:literal:`10`  |:literal:`muy`   |:literal:`10`  |:literal:`muz`   |:literal:`10`  |:literal:`mu`   |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`beta1`   |:literal:`1`   |:literal:`beta2` |:literal:`1`   |:literal:`beta3` |:literal:`1`   |:literal:`beta` |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`alfa1`   |:literal:`10`  |:literal:`alfa2` |:literal:`10`  |:literal:`alfa3` |:literal:`10`  |:literal:`alfa` |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`mu1`     |:literal:`10`  |:literal:`mu2`   |:literal:`10`  |:literal:`mu3`   |:literal:`10`  |:literal:`mu`   |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`q1`      |:literal:`10`  |:literal:`q2`    |:literal:`10`  |:literal:`q3`    |:literal:`10`  |:literal:`q`    |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
-	|:literal:`dq1`     |:literal:`1`   |:literal:`dq2`   |:literal:`1`   |:literal:`dq3`   |:literal:`1`   |:literal:`dq`   |   
-	+-------------------+---------------+-----------------+---------------+-----------------+---------------+----------------+
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|Name           |Weight       |Name         |Weight       |Name         |Weight       |Generic name    |	
+	+===============+=============+=============+=============+=============+=============+================+
+	|:var:`x`       |:const:`10`  |:var:`y`     |:const:`10`  |:var:`t`     |:const:`10`  |                |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`dx`      |:const:`10`  |:var:`dy`    |:const:`10`  |:var:`dt`    |:const:`10`  |:var:`d`        |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`dpx`     |:const:`100` |:var:`dpy`   |:const:`100` |:var:`dpt`   |:const:`100` |:var:`dp`       |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`ddx`     |:const:`10`  |:var:`ddy`   |:const:`10`  |:var:`ddt`   |:const:`10`  |:var:`dd`       |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`ddpx`    |:const:`100` |:var:`ddpy`  |:const:`100` |:var:`ddpt`  |:const:`100` |:var:`ddp`      |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`wx`      |:const:`1`   |:var:`wy`    |:const:`1`   |:var:`wz`    |:const:`1`   |:var:`w`        |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`phix`    |:const:`1`   |:var:`phiy`  |:const:`1`   |:var:`phiz`  |:const:`1`   |:var:`phi`      |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`betx`    |:const:`1`   |:var:`bety`  |:const:`1`   |:var:`betz`  |:const:`1`   |:var:`beta`     |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`alfx`    |:const:`10`  |:var:`alfy`  |:const:`10`  |:var:`alfz`  |:const:`10`  |:var:`alfa`     |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`mux`     |:const:`10`  |:var:`muy`   |:const:`10`  |:var:`muz`   |:const:`10`  |:var:`mu`       |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`beta1`   |:const:`1`   |:var:`beta2` |:const:`1`   |:var:`beta3` |:const:`1`   |:var:`beta`     |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`alfa1`   |:const:`10`  |:var:`alfa2` |:const:`10`  |:var:`alfa3` |:const:`10`  |:var:`alfa`     |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`mu1`     |:const:`10`  |:var:`mu2`   |:const:`10`  |:var:`mu3`   |:const:`10`  |:var:`mu`       |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`q1`      |:const:`10`  |:var:`q2`    |:const:`10`  |:var:`q3`    |:const:`10`  |:var:`q`        |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`dq1`     |:const:`1`   |:var:`dq2`   |:const:`1`   |:var:`dq3`   |:const:`1`   |:var:`dq`       |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
 .. _sec.match.obj:
 
 Objective
@@ -424,39 +424,39 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 
 	**method** 
 		A *string* specifying the algorithm to use for solving the problem, see Tables :numref:`tbl.match.mthd`, :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd`. (default: :literal:`"LN_COBYLA"` if :literal:`objective.exec` is defined, :literal:`"LD_JACOBIAN"` otherwise). 
-		Example: :literal:`method = "LD_LMDIF"`.
+		Example: :expr:`method = "LD_LMDIF"`.
 
 	**submethod** 
 		A *string* specifying the algorithm from NLopt module to use for solving the problem locally when the method is an augmented algorithm, see Tables :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd` (default: :literal:`"LN_COBYLA"`). 
-		Example: :literal:`method = "AUGLAG", submethod = "LD_SLSQP"`.
+		Example: :expr:`method = "AUGLAG", submethod = "LD_SLSQP"`.
 
 	**fmin** 
-		A *number* corresponding to the minimum to reach during the optimization. For least squares problems, it corresponds to the tolerance on the :ref:`penalty function <sec.match.fun>`. If an iteration finds a value smaller than :literal:`fmin` and all the constraints are fulfilled, the command will return the status :literal:`"FMIN"` . (default: :literal:`nil`). 
-		Example: :literal:`fmin = 1e- 12`.
+		A *number* corresponding to the minimum to reach during the optimization. For least squares problems, it corresponds to the tolerance on the :ref:`penalty function <sec.match.fun>`. If an iteration finds a value smaller than :literal:`fmin` and all the constraints are fulfilled, the command will return the status :literal:`"FMIN"` . (default: :const:`nil`). 
+		Example: :expr:`fmin = 1e- 12`.
 
 	**tol** 
-		A *number* specifying the tolerance on the objective function step. If an update is smaller than :literal:`tol`, the command will return the status :literal:`"FTOL"`. (default: :literal:`0`). 
-		Example: :literal:`tol = 1e- 10`.
+		A *number* specifying the tolerance on the objective function step. If an update is smaller than :literal:`tol`, the command will return the status :literal:`"FTOL"`. (default: :const:`0`). 
+		Example: :expr:`tol = 1e- 10`.
 
 	**rtol** 
-		A *number* specifying the relative tolerance on the objective function step. If an update is smaller than :literal:`rtol` relative to its step value, the command will return the status :literal:`"FTOL"` (default: :literal:`nil`). 
-		Example: :literal:`tol = 1e- 8`.
+		A *number* specifying the relative tolerance on the objective function step. If an update is smaller than :literal:`rtol` relative to its step value, the command will return the status :literal:`"FTOL"` (default: :const:`nil`). 
+		Example: :expr:`tol = 1e- 8`.
 
 	**bstra** 
-		A *number* specifying the strategy to select the *best case* of the :ref:`objective <sec.match.fun>` function. (default: :literal:`nil`). 
-		Example: :literal:`bstra = 0`. [#f3]_
+		A *number* specifying the strategy to select the *best case* of the :ref:`objective <sec.match.fun>` function. (default: :const:`nil`). 
+		Example: :expr:`bstra = 0`. [#f3]_
 
 	**broyden** 
-		A *logical* allowing the Jacobian approximation by finite difference to update its columns with a *Broyden's rank one* estimates when the step of the corresponding variable is almost collinear with the variables step vector. This option may save some expensive calls to :literal:`command`, e.g. save Twiss calculations, when it does not degrade the rate of convergence of the selected method. (default: :literal:`nil`).
-		Example: :literal:`broyden = true`.
+		A *logical* allowing the Jacobian approximation by finite difference to update its columns with a *Broyden's rank one* estimates when the step of the corresponding variable is almost collinear with the variables step vector. This option may save some expensive calls to :literal:`command`, e.g. save Twiss calculations, when it does not degrade the rate of convergence of the selected method. (default: :const:`nil`).
+		Example: :expr:`broyden = true`.
 
 	**reset** 
-		A *logical* specifying to the :literal:`match` command to restore the initial state of the variables before returning. This is useful to attempt an optimization without changing the state of the variables. Note that if any function amongst :literal:`command`, variables :literal:`get` and :literal:`set`, constraints :literal:`expr` or :literal:`exec`, or objective :literal:`exec` have side effects on the environment, these will be persistent. (default: :literal:`nil`). 
-		Example: :literal:`reset = true`.
+		A *logical* specifying to the :literal:`match` command to restore the initial state of the variables before returning. This is useful to attempt an optimization without changing the state of the variables. Note that if any function amongst :literal:`command`, variables :literal:`get` and :literal:`set`, constraints :literal:`expr` or :literal:`exec`, or objective :literal:`exec` have side effects on the environment, these will be persistent. (default: :const:`nil`). 
+		Example: :expr:`reset = true`.
 
 	**exec** 
-		A *callable* :literal:`(x, fgrd)` returning the value of the objective function as a *number*, and updating a *vector* passed as second argument with its gradient, using the variables values passed in a *vector* as first argument. (default: :literal:`nil`). 
-		Example: :literal:`exec = myfun`, where (:literal:`nvar=2`)
+		A *callable* :literal:`(x, fgrd)` returning the value of the objective function as a *number*, and updating a *vector* passed as second argument with its gradient, using the variables values passed in a *vector* as first argument. (default: :const:`nil`). 
+		Example: :expr:`exec = myfun`, where (:literal:`nvar=2`)
 	
 .. code-block::
 
@@ -470,28 +470,28 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 \
 
 	**grad** 
-		A *logical* enabling (:literal:`true`) or disabling (:literal:`false`) the approximation by finite difference of the gradient of the objective function or the Jacobian of the constraints. A :literal:`nil` value will be converted to :literal:`true` if no :literal:`exec` function is defined and the selected :literal:`method` requires derivatives (:literal:`D`), otherwise it will be converted to :literal:`false`. (default: :literal:`nil`). 
-		Example: :literal:`grad = false`.
+		A *logical* enabling (:const:`true`) or disabling (:const:`false`) the approximation by finite difference of the gradient of the objective function or the Jacobian of the constraints. A :const:`nil` value will be converted to :const:`true` if no :literal:`exec` function is defined and the selected :literal:`method` requires derivatives (:literal:`D`), otherwise it will be converted to :const:`false`. (default: :const:`nil`). 
+		Example: :expr:`grad = false`.
 
 	**bisec**
 		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the maximum number of attempt to minimize an increasing objective function by reducing the variables steps by half, i.e. that is a :ref:`line search <ref.algo.linesearch>` using :math:`\alpha=0.5^k` where :math:`k=0..\text{bisec}`. (default: :literal:`3`)
-		Example: :literal:`bisec = 9`.
+		Example: :expr:`bisec = 9`.
 
 	**rcond** 
 		A *number* specifying ( :ref:`LSopt <sec.match.lsopt>` methods only) how to determine the effective rank of the Jacobian while solving the least squares system (see :literal:`ssolve` from the :doc:`Linear Algebra <linalg>` module). This attribute can be updated between iterations, e.g. through :literal:`env.objective.rcond`. (default: :literal:`eps` ). 
-		Example: :literal:`rcond = 1e- 14`.
+		Example: :expr:`rcond = 1e- 14`.
 
 	**jtol**
 		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the tolerance on the norm of the Jacobian rows to reject useless constraints. This attribute can be updated between iterations, e.g. through :literal:`env.objective.jtol`. (default: :literal:`eps`). 
-		Example: :literal:`tol = 1e- 14`.
+		Example: :expr:`tol = 1e- 14`.
 
 	**jiter**
-		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the maximum allowed attempts to solve the least squares system when variables are rejected, e.g. wrong slope or out-of-bound values. (default: :literal:`10`). 
-		Example: :literal:`jiter = 15`.
+		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the maximum allowed attempts to solve the least squares system when variables are rejected, e.g. wrong slope or out-of-bound values. (default: :const:`10`). 
+		Example: :expr:`jiter = 15`.
 
 	**jstra**
 		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the strategy to use for reducing the variables of the least squares system. (default: ). 
-		Example: :literal:`jstra = 3`. [#f4]_
+		Example: :expr:`jstra = 3`. [#f4]_
 
 
 ======== ========================================================================= 
@@ -508,7 +508,7 @@ jstra    Strategy for reducing variables of least squares system.
 Algorithms
 ----------
 
-The :literal:`match` command supports local and global optimization algorithms through the :literal:`method` attribute, as well as combinations of them with the :literal:`submethod` attribute (see :ref:`objective<sec.match.obj>`). The method should be selected according to the kind of problem that will add a prefix to the method name: local (:literal:`L`) or global (:literal:`G`), with (:literal:`D`) or without (:literal:`N`) derivatives, and least squares or nonlinear function minimization. When the method requires the derivatives (:literal:`D`) and no :literal:`objective.exec` function is defined or the attribute :literal:`grad` is set to :literal:`false`, the :literal:`match` command will approximate the derivatives, i.e. gradient and Jacobian, by the finite difference method (see :ref:`derivatives <sec.match.der>`}).
+The :literal:`match` command supports local and global optimization algorithms through the :literal:`method` attribute, as well as combinations of them with the :literal:`submethod` attribute (see :ref:`objective<sec.match.obj>`). The method should be selected according to the kind of problem that will add a prefix to the method name: local (:literal:`L`) or global (:literal:`G`), with (:literal:`D`) or without (:literal:`N`) derivatives, and least squares or nonlinear function minimization. When the method requires the derivatives (:literal:`D`) and no :literal:`objective.exec` function is defined or the attribute :literal:`grad` is set to :const:`false`, the :literal:`match` command will approximate the derivatives, i.e. gradient and Jacobian, by the finite difference method (see :ref:`derivatives <sec.match.der>`}).
 
 Most global optimization algorithms explore the variables domain with methods belonging to stochastic sampling, deterministic scanning, and splitting strategies, or a mix of them. Hence, all global methods require *boundaries* to define the searching region, which may or may not be internally scaled to a hypercube. Some global methods allow to specify with the :literal:`submethod` attribute, the local method to use for searching local minima. If this is not the case, it is wise to refine the global solution with a local method afterward, as global methods put more effort on finding global solutions than precise local minima. The global (:literal:`G`) optimization algorithms, with (:literal:`D`) or without (:literal:`N`) derivatives, are listed in :numref:`tbl.match.gmthd`.
 
@@ -624,7 +624,7 @@ The derivatives are approximated by the finite difference methods when the selec
     \end{cases}
 
 
-Hence the approximation of the Jacobian will need an extra evaluation of the objective function per variable. If this evaluation has an heavy cost, e.g. like a :literal:`twiss` command, it is possible to approximate the Jacobian evolution by a Broyden's rank-1 update with the :literal:`broyden` attribute:
+Hence the approximation of the Jacobian will need an extra evaluation of the objective function per variable. If this evaluation has an heavy cost, e.g. like a :var:`twiss` command, it is possible to approximate the Jacobian evolution by a Broyden's rank-1 update with the :literal:`broyden` attribute:
 
 .. math:: 
     \vec{J}_{k+1} = \vec{J}_{k} + \frac{\vec{f}(\vec{x}_{k}+\vec{h}_k) - \vec{f}(\vec{x}_{k}) - \vec{J}_{k}\,\vec{h}_{k}}{\|\vec{h}_{k}\|^2}\,\vec{h}^T_k

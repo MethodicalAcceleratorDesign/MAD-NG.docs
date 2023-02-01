@@ -7,7 +7,7 @@ MTables
 
 The :literal:`mtable` object is the *root object* of the TFS tables that store information relative to tables.
 
-The :literal:`mtable` module extends the :doc:`typeid <types>` module with the :literal:`is_mtable` function, which returns :literal:`true` if its argument is a :literal:`mtable` object, :literal:`false` otherwise.
+The :literal:`mtable` module extends the :doc:`typeid <types>` module with the :func:`is_mtable` function, which returns :const:`true` if its argument is a :literal:`mtable` object, :const:`false` otherwise.
 
 Attributes
 ----------
@@ -15,7 +15,7 @@ Attributes
 The :literal:`mtable` object provides the following attributes:
 
 **type**
-	 A *string* specifying the type of the mtable (often) set to the name of the command that created it, like :literal:`survey`, :literal:`track` or :literal:`twiss`. (default: :literal:`'user'`).
+	 A *string* specifying the type of the mtable (often) set to the name of the command that created it, like :literal:`survey`, :var:`track` or :var:`twiss`. (default: :literal:`'user'`).
 
 **title**
 	 A *string* specifying the title of the mtable (often) set to the attribute :literal:`title` of the command that created it. (default: :literal:`'no-title'`).
@@ -30,20 +30,20 @@ The :literal:`mtable` object provides the following attributes:
 	 A *string* specifying the time of creation of the mtable. (default: :literal:`"hour:min:sec"`).
 
 **refcol**
-	 A *string* specifying the name of the reference column used to build the dictionary of the mtable, and to mangle values with counts. (default: :literal:`nil`).
+	 A *string* specifying the name of the reference column used to build the dictionary of the mtable, and to mangle values with counts. (default: :const:`nil`).
 
 **header**
 	 A *list* specifying the augmented attributes names (and their order) used by default for the header when writing the mtable to files. Augmented meaning that the *list* is concatenated to the *list* held by the parent mtable during initialization. 
 	 (default: :literal:`{'name', 'type', 'title', 'origin', 'date', 'time', 'refcol'}`).
 
 **column**
-	 A *list* specifying the augmented columns names (and their order) used by default for the columns when writing the mtable to files. Augmented meaning that the *list* is concatenated to the *list* held by the parent mtable during initialization. (default: :literal:`nil`).
+	 A *list* specifying the augmented columns names (and their order) used by default for the columns when writing the mtable to files. Augmented meaning that the *list* is concatenated to the *list* held by the parent mtable during initialization. (default: :const:`nil`).
 
 **novector**
-	 A *logical* specifying to not convert (:literal:`novector == true`) columns containing only numbers to vectors during the insertion of the second row. The attribute can also be a *list* specifying the columns names to remove from the specialization. If the *list* is empty or :literal:`novector ~= true`, all numeric columns will be converted to vectors, and support all methods and operations from the :doc:`linear algebra <linalg>` module. (default: :literal:`nil`).
+	 A *logical* specifying to not convert (:literal:`novector == true`) columns containing only numbers to vectors during the insertion of the second row. The attribute can also be a *list* specifying the columns names to remove from the specialization. If the *list* is empty or :literal:`novector ~= true`, all numeric columns will be converted to vectors, and support all methods and operations from the :doc:`linear algebra <linalg>` module. (default: :const:`nil`).
 
 **owner**
-	 A *logical* specifying if an *empty* mtable is a view with no data (:literal:`owner ~= true`), or a mtable holding data (:literal:`owner == true`). (default: :literal:`nil`).
+	 A *logical* specifying if an *empty* mtable is a view with no data (:literal:`owner ~= true`), or a mtable holding data (:literal:`owner == true`). (default: :const:`nil`).
 
 **reserve**
 	 A *number* specifying an estimate of the maximum number of rows stored in the mtable. If the value is underestimated, the mtable will still expand on need. (default: :literal:`8`).
@@ -55,10 +55,10 @@ The :literal:`mtable` object provides the following attributes:
 	 A *table* containing all the private data of mtables.
 
 **__seq**
-	 A *sequence* attached to the mtable by the :literal:`survey` and :literal:`track` commands and used by the methods receiving a *reference* to an element as argument. (default: :literal:`nil`).
+	 A *sequence* attached to the mtable by the :literal:`survey` and :var:`track` commands and used by the methods receiving a *reference* to an element as argument. (default: :const:`nil`).
 
 **__cycle**
-	 A *reference* to the row registered with the :literal:`:cycle` method. (default: :literal:`nil`).
+	 A *reference* to the row registered with the :literal:`:cycle` method. (default: :const:`nil`).
 
 
 Methods
@@ -76,40 +76,40 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`()` returning the *number* of columns generators in the mtable. The *number* of columns with data is given by :literal:`:ncol() - :ngen()`.
 
 **colname**
-	 A *method*	:literal:`(idx)` returning the *string* name of the :literal:`idx`-th column in the mtable or :literal:`nil`.
+	 A *method*	:literal:`(idx)` returning the *string* name of the :literal:`idx`-th column in the mtable or :const:`nil`.
 
 **colnames**
 	 A *method*	:literal:`([lst])` returning the *list* :literal:`lst` (default: :literal:`{}`) filled with all the columns names of the mtable.
 
 **index**
-	 A *method*	:literal:`(idx)` returning a positive index, or :literal:`nil`. If :literal:`idx` is negative, it is reflected versus the size of the mtable, e.g. :literal:`- 1` becomes :literal:`#self`, the index of the last row.
+	 A *method*	:literal:`(idx)` returning a positive index, or :const:`nil`. If :literal:`idx` is negative, it is reflected versus the size of the mtable, e.g. :literal:`- 1` becomes :literal:`#self`, the index of the last row.
 
 **name_of**
-	 A *method*	:literal:`(idx, [ref])` returning a *string* corresponding to the (mangled) *value* from the reference column of the row at the index :literal:`idx`, or :literal:`nil`. A row *value* appearing more than once in the reference column will be mangled with an absolute count, e.g. :literal:`mq[3]`, or a relative count versus the reference row determined by :literal:`:index_of(ref)`, e.g. :literal:`mq{- 2}`.
+	 A *method*	:literal:`(idx, [ref])` returning a *string* corresponding to the (mangled) *value* from the reference column of the row at the index :literal:`idx`, or :const:`nil`. A row *value* appearing more than once in the reference column will be mangled with an absolute count, e.g. :literal:`mq[3]`, or a relative count versus the reference row determined by :literal:`:index_of(ref)`, e.g. :literal:`mq{- 2}`.
 
 **index_of**
-	 A *method*	:literal:`(a, [ref], [dir])` returning a *number* corresponding to the positive index of the row determined by the first argument or :literal:`nil`. If :literal:`a` is a *number* (or a *string* representing a *number*), it is interpreted as the index of the row and returned as a second *number*. If :literal:`a` is a *string*, it is interpreted as the (mangled) *value* of the row in the reference column as returned by :literal:`:name_of`. Finally, :literal:`a` can be a *reference* to an element to search for **if** the mtable has both, an attached sequence, and a column named :literal:`'eidx'` mapping the indexes of the elements to the attached sequence. [#f1]_ The argument :literal:`ref` (default: :literal:`nil`) specifies the reference row determined by :literal:`:index_of(ref)` to use for relative indexes, for decoding mangled values with relative counts, or as the reference row to start searching from. The argument :literal:`dir` (default: :literal:`1`) specifies the direction of the search with values :literal:`1` (forward), :literal:`- 1` (backward), or :literal:`0` (no direction), which correspond respectively to the rounding methods :literal:`ceil`, :literal:`floor` and :literal:`round` from the lua math module.
+	 A *method*	:literal:`(a, [ref], [dir])` returning a *number* corresponding to the positive index of the row determined by the first argument or :const:`nil`. If :literal:`a` is a *number* (or a *string* representing a *number*), it is interpreted as the index of the row and returned as a second *number*. If :literal:`a` is a *string*, it is interpreted as the (mangled) *value* of the row in the reference column as returned by :literal:`:name_of`. Finally, :literal:`a` can be a *reference* to an element to search for **if** the mtable has both, an attached sequence, and a column named :literal:`'eidx'` mapping the indexes of the elements to the attached sequence. [#f1]_ The argument :literal:`ref` (default: :const:`nil`) specifies the reference row determined by :literal:`:index_of(ref)` to use for relative indexes, for decoding mangled values with relative counts, or as the reference row to start searching from. The argument :literal:`dir` (default: :const:`1`) specifies the direction of the search with values :const:`1` (forward), :literal:`- 1` (backward), or :const:`0` (no direction), which correspond respectively to the rounding methods :literal:`ceil`, :literal:`floor` and :literal:`round` from the lua math module.
 
 **range_of**
-	 A *method*	:literal:`([rng], [ref], [dir])` returning three *number*\ s corresponding to the positive indexes *start* and *end* of the range and its direction *dir* (default: :literal:`1`), or :literal:`nil` for an empty range. If :literal:`rng` is omitted, it returns :literal:`1`, :literal:`#self`, :literal:`1`, or :literal:`#self`, :literal:`1`, :literal:`- 1` if :literal:`dir` is negative. If :literal:`rng` is a *number* or a *string* with no :literal:`'/'` separator, it is interpreted as *start* and *end*, both determined by :literal:`:index_of`. If :literal:`rng` is a *string* containing the separator :literal:`'/'`, it is split in two *string*\ s interpreted as *start* and *end*, both determined by :literal:`:index_of`. If :literal:`rng` is a *list*, it will be interpreted as { *start*, *end*, :literal:`[ref]`, :literal:`[dir]` }, both determined by :literal:`:index_of`. The arguments :literal:`ref` and :literal:`dir` are forwarded to all invocations of :literal:`:index_of` with a higher precedence than ones in the *list* :literal:`rng`, and a runtime error is raised if the method returns :literal:`nil`, i.e. to disambiguate between a valid empty range and an invalid range.
+	 A *method*	:literal:`([rng], [ref], [dir])` returning three *number*\ s corresponding to the positive indexes *start* and *end* of the range and its direction *dir* (default: :const:`1`), or :const:`nil` for an empty range. If :literal:`rng` is omitted, it returns :const:`1`, :literal:`#self`, :const:`1`, or :literal:`#self`, :const:`1`, :literal:`- 1` if :literal:`dir` is negative. If :literal:`rng` is a *number* or a *string* with no :literal:`'/'` separator, it is interpreted as *start* and *end*, both determined by :literal:`:index_of`. If :literal:`rng` is a *string* containing the separator :literal:`'/'`, it is split in two *string*\ s interpreted as *start* and *end*, both determined by :literal:`:index_of`. If :literal:`rng` is a *list*, it will be interpreted as { *start*, *end*, :literal:`[ref]`, :literal:`[dir]` }, both determined by :literal:`:index_of`. The arguments :literal:`ref` and :literal:`dir` are forwarded to all invocations of :literal:`:index_of` with a higher precedence than ones in the *list* :literal:`rng`, and a runtime error is raised if the method returns :const:`nil`, i.e. to disambiguate between a valid empty range and an invalid range.
 
 **length_of**
-	 A *method*	:literal:`([rng], [ntrn], [dir])` returning a *number* specifying the length of the range optionally including :literal:`ntrn` extra turns (default: :literal:`0`), and calculated from the indexes returned by :literal:`:range_of([rng], nil, [dir])`.
+	 A *method*	:literal:`([rng], [ntrn], [dir])` returning a *number* specifying the length of the range optionally including :literal:`ntrn` extra turns (default: :const:`0`), and calculated from the indexes returned by :literal:`:range_of([rng], nil, [dir])`.
 
 **get**
-	 A *method*	:literal:`(row, col, [cnt])` returning the *value* stored in the mtable at the cell :literal:`(row,col)`, or :literal:`nil`. If :literal:`row` is a not a row index determined by :literal:`:index(row)`, it is interpreted as a (mangled) *value* to search in the reference column, taking into account the count :literal:`cnt` (default: :literal:`1`). If :literal:`col` is not a column index, it is interpreted as a column name.
+	 A *method*	:literal:`(row, col, [cnt])` returning the *value* stored in the mtable at the cell :literal:`(row,col)`, or :const:`nil`. If :literal:`row` is a not a row index determined by :literal:`:index(row)`, it is interpreted as a (mangled) *value* to search in the reference column, taking into account the count :literal:`cnt` (default: :const:`1`). If :literal:`col` is not a column index, it is interpreted as a column name.
 
 **set**
-	 A *method*	:literal:`(row, col, val, [cnt])` returning the mtable itself after updating the cell :literal:`(row,col)` to the value :literal:`val`, or raising an error if the cell does not exist. If :literal:`row` is a not a row index determined by :literal:`:index(row)`, it is interpreted as a (mangled) *value* to search in the reference column, taking into account the count :literal:`cnt` (default: :literal:`1`). If :literal:`col` is not a column index, it is interpreted as a column name.
+	 A *method*	:literal:`(row, col, val, [cnt])` returning the mtable itself after updating the cell :literal:`(row,col)` to the value :var:`val`, or raising an error if the cell does not exist. If :literal:`row` is a not a row index determined by :literal:`:index(row)`, it is interpreted as a (mangled) *value* to search in the reference column, taking into account the count :literal:`cnt` (default: :const:`1`). If :literal:`col` is not a column index, it is interpreted as a column name.
 
 **getcol**
-	 A *method*	:literal:`(col)` returning the column :literal:`col`, or :literal:`nil`. If :literal:`col` is not a column index, it is interpreted as a column name.
+	 A *method*	:literal:`(col)` returning the column :literal:`col`, or :const:`nil`. If :literal:`col` is not a column index, it is interpreted as a column name.
 
 **setcol**
-	 A *method*	:literal:`(col, val)` returning the mtable itself after updating the column :literal:`col` with the values of :literal:`val`, or raising an error if the column does not exist. If :literal:`col` is not a column index, it is interpreted as a column name. If the column is a generator, so must be :literal:`val` or an error will be raised. If the column is not a generator and :literal:`val` is a *callable* :literal:`(ri)`, it will be invoked with the row index :literal:`ri` as its sole argument, using its returned value to update the column cell. Otherwise :literal:`val` must be an *iterable* or an error will be raised. If the column is already a specialized *vector*, the *iterable* must provide enough numbers to fill it entirely as :literal:`nil` is not a valid value.
+	 A *method*	:literal:`(col, val)` returning the mtable itself after updating the column :literal:`col` with the values of :var:`val`, or raising an error if the column does not exist. If :literal:`col` is not a column index, it is interpreted as a column name. If the column is a generator, so must be :var:`val` or an error will be raised. If the column is not a generator and :var:`val` is a *callable* :literal:`(ri)`, it will be invoked with the row index :literal:`ri` as its sole argument, using its returned value to update the column cell. Otherwise :var:`val` must be an *iterable* or an error will be raised. If the column is already a specialized *vector*, the *iterable* must provide enough numbers to fill it entirely as :const:`nil` is not a valid value.
 
 **inscol**
-	 A *method*	:literal:`([ref], col, val, [nvec])` returning the mtable itself after inserting the column data :literal:`val` with the *string* name :literal:`col` at index :literal:`ref` (default: :literal:`:ncol()+1`). If :literal:`ref` is not a column index, it is interpreted as a column name. If :literal:`val` is a *callable* :literal:`(ri)`, it will be added as a column generator. Otherwise :literal:`val` must be an *iterable* or an error will be raised. The *iterable* will used to fill the new column that will be specialized to a *vector* if its first value is a *number* and :literal:`nvec ~= true` (default: :literal:`nil`).
+	 A *method*	:literal:`([ref], col, val, [nvec])` returning the mtable itself after inserting the column data :var:`val` with the *string* name :literal:`col` at index :literal:`ref` (default: :literal:`:ncol()+1`). If :literal:`ref` is not a column index, it is interpreted as a column name. If :var:`val` is a *callable* :literal:`(ri)`, it will be added as a column generator. Otherwise :var:`val` must be an *iterable* or an error will be raised. The *iterable* will used to fill the new column that will be specialized to a *vector* if its first value is a *number* and :literal:`nvec ~= true` (default: :const:`nil`).
 
 **addcol**
 	 A *method*	:literal:`(col, val, [nvec])` equivalent to :literal:`:inscol(nil, col, val, [nvec])`.
@@ -121,13 +121,13 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`(col, new)` returning the mtable itself after renaming the column :literal:`col` to the *string* :literal:`new`, or raising an error if the column does not exist. If :literal:`col` is not a column index, it is interpreted as a column name.
 
 **getrow**
-	 A *method*	:literal:`(row, [ref])` returning the *mappable* (proxy) of the row determined by the method :literal:`:index_of(row, [ref])`, or :literal:`nil`.
+	 A *method*	:literal:`(row, [ref])` returning the *mappable* (proxy) of the row determined by the method :literal:`:index_of(row, [ref])`, or :const:`nil`.
 
 **setrow**
-	 A *method*	:literal:`(row, val, [ref])` returning the mtable itself after updating the row at index determined by :literal:`:index_of(row, [ref])` using the values provided by the *mappable* :literal:`val`, which can be a *list* iterated as pairs of (*index*, *value*) or a *set* iterated as pairs of (*key*, *value*) with *key* being the column names, or a combination of the two. An error is raised if the column does not exist.
+	 A *method*	:literal:`(row, val, [ref])` returning the mtable itself after updating the row at index determined by :literal:`:index_of(row, [ref])` using the values provided by the *mappable* :var:`val`, which can be a *list* iterated as pairs of (*index*, *value*) or a *set* iterated as pairs of (*key*, *value*) with *key* being the column names, or a combination of the two. An error is raised if the column does not exist.
 
 **insrow**
-	 A *method*	:literal:`(row, val, [ref])` returning the mtable itself after inserting a new row at index determined by :literal:`:index_of(row, [ref])` and filled with the values provided by the *mappable* :literal:`val`, which can be a *list* iterated as pairs of (*index*, *value*) or a *set* iterated as pairs of (*key*, *value*) with *key* being the column names or a combination of the two.
+	 A *method*	:literal:`(row, val, [ref])` returning the mtable itself after inserting a new row at index determined by :literal:`:index_of(row, [ref])` and filled with the values provided by the *mappable* :var:`val`, which can be a *list* iterated as pairs of (*index*, *value*) or a *set* iterated as pairs of (*key*, *value*) with *key* being the column names or a combination of the two.
 
 **addrow**
 	 A *method*	:literal:`(val)` equivalent to :literal:`:insrow(#self+1, val)`.
@@ -139,22 +139,22 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`(row1, row2, [ref1], [ref2])` returning the mtable itself after swapping the content of the rows, both determined by the method :literal:`:index_of(row, [ref])`, or raising an error if one of the row does not exist.
 
 **clrrow**
-	 A *method*	:literal:`(row, [ref])` returning the mtable itself after clearing the row determined by the method :literal:`:index_of(row, [ref])`, or raising an error if the row does not exist; where clearing the row means to set *vector* value to :literal:`0` and :literal:`nil` otherwise.
+	 A *method*	:literal:`(row, [ref])` returning the mtable itself after clearing the row determined by the method :literal:`:index_of(row, [ref])`, or raising an error if the row does not exist; where clearing the row means to set *vector* value to :const:`0` and :const:`nil` otherwise.
 
 **clear**
 	 A *method*	:literal:`()` returning the mtable itself after clearing all the rows, i.e. :literal:`#self == 0`, with an opportunity for new columns specialization.
 
 **iter**
-	 A *method*	:literal:`([rng], [ntrn], [dir])` returning an iterator over the mtable rows. The optional range is determined by :literal:`:range_of([rng], [dir])`, optionally including :literal:`ntrn` turns (default: :literal:`0`). The optional direction :literal:`dir` specifies the forward :literal:`1` or the backward :literal:`- 1` direction of the iterator. If :literal:`rng` is not provided and the mtable is cycled, the *start* and *end* indexes are determined by :literal:`:index_of(self.__cycle)`. When used with a generic :literal:`for` loop, the iterator returns at each rows the index and the row *mappable* (proxy).
+	 A *method*	:literal:`([rng], [ntrn], [dir])` returning an iterator over the mtable rows. The optional range is determined by :literal:`:range_of([rng], [dir])`, optionally including :literal:`ntrn` turns (default: :const:`0`). The optional direction :literal:`dir` specifies the forward :const:`1` or the backward :literal:`- 1` direction of the iterator. If :literal:`rng` is not provided and the mtable is cycled, the *start* and *end* indexes are determined by :literal:`:index_of(self.__cycle)`. When used with a generic :literal:`for` loop, the iterator returns at each rows the index and the row *mappable* (proxy).
 
 **foreach**
-	 A *method*	:literal:`(act, [rng], [sel], [not])` returning the mtable itself after applying the action :literal:`act` on the selected rows. If :literal:`act` is a *set* representing the arguments in the packed form, the missing arguments will be extracted from the attributes :literal:`action`, :literal:`range`, :literal:`select` and :literal:`default`. The action :literal:`act` must be a *callable* :literal:`(row, idx)` applied to a row passed as first argument and its index as second argument. The optional range is used to generate the loop iterator :literal:`:iter([rng])`. The optional selector :literal:`sel` is a *callable* :literal:`(row, idx)` predicate selecting eligible rows for the action from the row itself passed as first argument and its index as second argument. The selector :literal:`sel` can be specified in other ways, see :doc:`row selections <numrange>` for details. The optional *logical* :literal:`not` (default: :literal:`false`) indicates how to interpret default selection, as *all* or *none*, depending on the semantic of the action. [#f2]_ method needs remove all rows if no selector is provided.}
+	 A *method*	:literal:`(act, [rng], [sel], [not])` returning the mtable itself after applying the action :literal:`act` on the selected rows. If :literal:`act` is a *set* representing the arguments in the packed form, the missing arguments will be extracted from the attributes :literal:`action`, :literal:`range`, :literal:`select` and :literal:`default`. The action :literal:`act` must be a *callable* :literal:`(row, idx)` applied to a row passed as first argument and its index as second argument. The optional range is used to generate the loop iterator :literal:`:iter([rng])`. The optional selector :literal:`sel` is a *callable* :literal:`(row, idx)` predicate selecting eligible rows for the action from the row itself passed as first argument and its index as second argument. The selector :literal:`sel` can be specified in other ways, see :doc:`row selections <numrange>` for details. The optional *logical* :literal:`not` (default: :const:`false`) indicates how to interpret default selection, as *all* or *none*, depending on the semantic of the action. [#f2]_ method needs remove all rows if no selector is provided.}
 
 **select**
-	 A *method*	:literal:`([rng], [sel], [not])` returning the mtable itself after selecting the rows using :literal:`:foreach(sel_act, [rng], [sel], [not])`. By default mtable have all their rows deselected, the selection being stored as *boolean* in the column at index :literal:`0` and named :literal:`is_selected`.
+	 A *method*	:literal:`([rng], [sel], [not])` returning the mtable itself after selecting the rows using :literal:`:foreach(sel_act, [rng], [sel], [not])`. By default mtable have all their rows deselected, the selection being stored as *boolean* in the column at index :const:`0` and named :func:`is_selected`.
 
 **deselect**
-	 A *method*	:literal:`([rng], [sel], [not])` returning the mtable itself after deselecting the rows using :literal:`:foreach(desel_act, [rng], [sel], [not])`. By default mtable have all their rows deselected, the selection being stored as *boolean* in the column at index :literal:`0` and named :literal:`is_selected`.
+	 A *method*	:literal:`([rng], [sel], [not])` returning the mtable itself after deselecting the rows using :literal:`:foreach(desel_act, [rng], [sel], [not])`. By default mtable have all their rows deselected, the selection being stored as *boolean* in the column at index :const:`0` and named :func:`is_selected`.
 
 **filter**
 	 A *method*	:literal:`([rng], [sel], [not])` returning a *list* containing the positive indexes of the rows determined by :literal:`:foreach(filt_act, [rng], [sel], [not])`, and its size.
@@ -175,7 +175,7 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`([name], [owner])` returning a new mtable from a copy of :literal:`self`, with the optional :literal:`name` and the optional attribute :literal:`owner` set. If the mtable is a view, so will be the copy unless :literal:`owner == true`.
 
 **is_view**
-	 A *method*	:literal:`()` returning :literal:`true` if the mtable is a view over another mtable data, :literal:`false` otherwise.
+	 A *method*	:literal:`()` returning :const:`true` if the mtable is a view over another mtable data, :const:`false` otherwise.
 
 **set_readonly**
 	 Set the mtable as read-only, including the columns and the rows proxies.
@@ -184,7 +184,7 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`([filname])` returning a new instance of :literal:`self` filled with the data read from the file determined by :literal:`openfile(filename, 'r', {'.tfs','.txt','.dat'})` from the :doc:`utility <miscfuns>` module. This method can read columns containing the data types *nil*, *boolean*, *number*, *complex number*, (numerical) *range*, and (quoted) *string*. The header can also contain tables saved as *string* and decoded with *function* :literal:`str2tbl` from the :doc:`utility <miscfuns>` module.
 
 **write**
-	 A *method*	:literal:`([filname], [clst], [hlst], [rsel])` returning the mtable itself after writing its content to the file determined by :literal:`openfile(filename, 'w', {'.tfs', '.txt', '.dat'})` from the :doc:`utility <miscfuns>` module. The columns to write and their order is determined by :literal:`clst` or :literal:`self.column` (default: :literal:`nil` :math:`\equiv` all columns). The attributes to write in the header and their order is determined by :literal:`hlst` or :literal:`self.header`. The *logical* :literal:`rsel` indicates to save all rows or only rows selected by the :literal:`:select` method (:literal:`rsel == true`). This method can write columns containing the data types *nil*, *boolean*, *number*, *complex number*, (numerical) *range*, and (quoted) *string*. The header can also contain tables saved as *string* and encoded with *function* :literal:`tbl2str` from the :doc:`utility <miscfuns>` module.
+	 A *method*	:literal:`([filname], [clst], [hlst], [rsel])` returning the mtable itself after writing its content to the file determined by :literal:`openfile(filename, 'w', {'.tfs', '.txt', '.dat'})` from the :doc:`utility <miscfuns>` module. The columns to write and their order is determined by :literal:`clst` or :literal:`self.column` (default: :const:`nil` :math:`\equiv` all columns). The attributes to write in the header and their order is determined by :literal:`hlst` or :literal:`self.header`. The *logical* :literal:`rsel` indicates to save all rows or only rows selected by the :literal:`:select` method (:literal:`rsel == true`). This method can write columns containing the data types *nil*, *boolean*, *number*, *complex number*, (numerical) *range*, and (quoted) *string*. The header can also contain tables saved as *string* and encoded with *function* :literal:`tbl2str` from the :doc:`utility <miscfuns>` module.
 
 **print**
 	 A *method*	:literal:`([clst], [hlst], [rsel])` equivalent to :literal:`:write(nil, [clst], [hlst], [rsel])`.
@@ -196,7 +196,7 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`(sel)` restoring the rows selection from the *iterable* :literal:`sel`. The indexes of :literal:`sel` must match the indexes of the rows in the mtable.
 
 **make_dict**
-	 A *method*	:literal:`([col])` returning the mtable itself after building the rows dictionnary from the values of the reference column determined by :literal:`col` (default: :literal:`refcol`) for fast row access. If :literal:`col` is not a column index, it is interpreted as a column name except for the special name :literal:`'none'` that disables the rows dictionnary and reset :literal:`refcol` to :literal:`nil`.
+	 A *method*	:literal:`([col])` returning the mtable itself after building the rows dictionnary from the values of the reference column determined by :literal:`col` (default: :literal:`refcol`) for fast row access. If :literal:`col` is not a column index, it is interpreted as a column name except for the special name :literal:`'none'` that disables the rows dictionnary and reset :literal:`refcol` to :const:`nil`.
 
 **check_mtbl**
 	 A *method*	:literal:`()` checking the integrity of the mtable and its dictionary (if any), for debugging purpose only.
@@ -212,16 +212,16 @@ The :literal:`mtable` object provides the following metamethods:
 	 A *metamethod*	:literal:`()` called by the length operator :literal:`#` to return the number of rows in the mtable.
 
 **__add**
-	 A *metamethod*	:literal:`(val)` called by the plus operator :literal:`+` returning the mtable itself after appending the row :literal:`val` at its end, similiar to the :literal:`:addrow` method.
+	 A *metamethod*	:literal:`(val)` called by the plus operator :literal:`+` returning the mtable itself after appending the row :var:`val` at its end, similiar to the :literal:`:addrow` method.
 
 **__index**
 	 A *metamethod*	:literal:`(key)` called by the indexing operator :literal:`[key]` to return the *value* of an attribute determined by *key*. The *key* is interpreted differently depending on its type with the following precedence:
 
-		#. A *number* is interpreted as a row index and returns an *iterable* on the row (proxy) or :literal:`nil`.
+		#. A *number* is interpreted as a row index and returns an *iterable* on the row (proxy) or :const:`nil`.
 		#. Other *key* types are interpreted as *object* attributes subject to object model lookup.
-		#. If the *value* associated with *key* is :literal:`nil`, then *key* is interpreted as a column name and returns the column if it exists, otherwise...
+		#. If the *value* associated with *key* is :const:`nil`, then *key* is interpreted as a column name and returns the column if it exists, otherwise...
 		#. If *key* is not a column name, then *key* is interpreted as a value in the reference column and returns either an *iterable* on the row (proxy) determined by this value or an *iterable* on the rows (proxies) holding this non-unique value. 
-		#. Otherwise returns :literal:`nil`.
+		#. Otherwise returns :const:`nil`.
 
 **__newindex**
 	 A *metamethod*	:literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*). If *key* is a *number* or a value specifying a row in the reference column or a *string* specifying a column name, the following error is raised:
@@ -335,7 +335,7 @@ Iterators and ranges
 
 Ranging a mtable triggers a complex look up mechanism where the arguments will be interpreted in various ways as described in the method :literal:`:range_of`, itself based on the methods :literal:`:index_of` and :literal:`:index`. The number of rows selected by a mtable range can be computed by the :literal:`:length_of` method, which accepts an extra *number* of turns to consider in the calculation.
 
-The mtable iterators are created by the method :literal:`:iter`, based on the method :literal:`:range_of` as mentioned in its description and includes an extra *number* of turns as for the method :literal:`:length_of`, and a direction :literal:`1` (forward) or :literal:`- 1` (backward) for the iteration.
+The mtable iterators are created by the method :literal:`:iter`, based on the method :literal:`:range_of` as mentioned in its description and includes an extra *number* of turns as for the method :literal:`:length_of`, and a direction :const:`1` (forward) or :literal:`- 1` (backward) for the iteration.
 
 The method :literal:`:foreach` uses the iterator returned by :literal:`:iter` with a range as its sole argument to loop over the rows where to apply the predicate before executing the action. The methods :literal:`:select`, :literal:`:deselect`, :literal:`:filter`, :literal:`:insert`, and :literal:`:remove` are all based directly or indirectly on the :literal:`:foreach` method. Hence, to iterate backward over a mtable range, these methods have to use either its *list* form or a numerical range. For example the invocation :literal:`tbl:foreach(\r -> print(r.name), {-2, 2, nil, -1})` will iterate backward over the entire mtable excluding the first and last rows, equivalently to the invocation :literal:`tbl:foreach(\r -> print(r.name), -2..2..-1)`.
 
@@ -380,7 +380,7 @@ Examples
 Creating a MTable
 """""""""""""""""
 
-The following example shows how the :literal:`track` command, i.e. :literal:`self` hereafter, creates its MTable:
+The following example shows how the :var:`track` command, i.e. :literal:`self` hereafter, creates its MTable:
 
 .. code-block::
 	
@@ -403,7 +403,7 @@ The following example shows how the :literal:`track` command, i.e. :literal:`sel
 Extending a MTable
 """"""""""""""""""
 
-The following example shows how to extend the MTable created by a :literal:`twiss` command with the elements tilt, angle and integrated strengths from the attached sequence:
+The following example shows how to extend the MTable created by a :var:`twiss` command with the elements tilt, angle and integrated strengths from the attached sequence:
 
 .. code-block::
 	
@@ -462,7 +462,7 @@ Hopefully, the :doc:`physics <gphys>` module provides the *function* :literal:`m
 
 .. rubric:: Footnotes
 
-.. [#f1] These information are usually provided by the command creating the :literal:`mtable`, like :literal:`survey` and :literal:`track`.
+.. [#f1] These information are usually provided by the command creating the :literal:`mtable`, like :literal:`survey` and :var:`track`.
 .. [#f2] For example, the :literal:`:remove` method needs :literal:`not=true` to *not* remove all rows if no selector is provided.
 .. [#f3] A *mappable* supports the length operator :literal:`#`, the indexing operator :literal:`[]`, and generic :literal:`for` loops with :literal:`pairs`.
 .. [#f4] An *iterable* supports the length operator :literal:`#`, the indexing operator :literal:`[]`, and generic :literal:`for` loops with :literal:`ipairs`.

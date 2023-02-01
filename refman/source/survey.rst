@@ -48,103 +48,103 @@ The :literal:`survey` command format is summarized in :numref:`fig.survey.synop`
 
 **sequence**
 	 The *sequence* to survey. (no default, required). 
- 	 Example: :literal:`sequence = lhcb1`.
+ 	 Example: :expr:`sequence = lhcb1`.
 
 **range** 
-	 A *range* specifying the span of the sequence survey. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute . (default: :literal:`nil`). 
-	 Example: :literal:`range = "S.DS.L8.B1/E.DS.R8.B1"`.
+	 A *range* specifying the span of the sequence survey. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute . (default: :const:`nil`). 
+	 Example: :expr:`range = "S.DS.L8.B1/E.DS.R8.B1"`.
 
 **dir** 
-	 The :math:`s`-direction of the tracking: :literal:`1` forward, :literal:`-1` backward. (default: :literal:`1`). 
-	 Example: :literal:`dir = - 1`.
+	 The :math:`s`-direction of the tracking: :const:`1` forward, :const:`-1` backward. (default: :const:`1`). 
+	 Example: :expr:`dir = - 1`.
 
 **s0** 
-	 A *number* specifying the initial :math:`s`-position offset. (default: :literal:`0` [m]). 
-	 Example: :literal:`s0 = 5000`.
+	 A *number* specifying the initial :math:`s`-position offset. (default: :const:`0` [m]). 
+	 Example: :expr:`s0 = 5000`.
 
 **X0** 
-	 A *mappable* specifying the initial coordinates :literal:`{x,y,z}`. (default: :literal:`0` [m]). 
-	 Example: :literal:`X0 = { x=100, y=- 50 }`
+	 A *mappable* specifying the initial coordinates :literal:`{x,y,z}`. (default: :const:`0` [m]). 
+	 Example: :expr:`X0 = { x=100, y=- 50 }`
 
 **A0** 
-	 A *mappable* specifying the initial angles :literal:`theta`, :literal:`phi` and :literal:`psi` or an orientation *matrix* :literal:`W0`. [#f2]_ :literal:`W=matrix(3):rotzxy(- phi,theta,psi)}.` (default: :literal:`0` [rad]). 
-	 Example: :literal:`A0 = { theta=deg2rad(30) }`
+	 A *mappable* specifying the initial angles :literal:`theta`, :literal:`phi` and :literal:`psi` or an orientation *matrix* :literal:`W0`. [#f2]_ :literal:`W=matrix(3):rotzxy(- phi,theta,psi)}.` (default: :const:`0` [rad]). 
+	 Example: :expr:`A0 = { theta=deg2rad(30) }`
 
 **nturn** 
 	 A *number* specifying the number of turn to track. (default: :literal:`2`). 
-	 Example: :literal:`nturn = 2`.
+	 Example: :expr:`nturn = 2`.
 
 **nstep** 
-	 A *number* specifying the number of element to track. A negative value will track all elements. (default: :literal:`-1`). 
-	 Example: :literal:`nstep = 1`.
+	 A *number* specifying the number of element to track. A negative value will track all elements. (default: :const:`-1`). 
+	 Example: :expr:`nstep = 1`.
 
 **nslice** 
-	 A *number* specifying the number of slices or an *iterable* of increasing relative positions or a *callable* :literal:`(elm, mflw, lw)` returning one of the two previous kind of positions to track in the elements. The arguments of the callable are in order, the current element, the tracked map flow, and the length weight of the step. This attribute can be locally overridden by the element. (default: :literal:`1`). 
-	 Example: :literal:`nslice = 5`.
+	 A *number* specifying the number of slices or an *iterable* of increasing relative positions or a *callable* :literal:`(elm, mflw, lw)` returning one of the two previous kind of positions to track in the elements. The arguments of the callable are in order, the current element, the tracked map flow, and the length weight of the step. This attribute can be locally overridden by the element. (default: :const:`1`). 
+	 Example: :expr:`nslice = 5`.
 
 **implicit** 
-	 A *log* indicating that implicit elements must be sliced too, e.g. for smooth plotting. (default: :literal:`false`). 
-	 Example: :literal:`implicit = true`.
+	 A *log* indicating that implicit elements must be sliced too, e.g. for smooth plotting. (default: :const:`false`). 
+	 Example: :expr:`implicit = true`.
 
 **misalign** 
-	 A *log* indicating that misalignment must be considered. (default: :literal:`true`). 
-	 Example: :literal:`implicit = true`.
+	 A *log* indicating that misalignment must be considered. (default: :const:`true`). 
+	 Example: :expr:`implicit = true`.
 
 **save** 
-	 A *log* specifying to create a *mtable* and record tracking information at the observation points. The :literal:`save` attribute can also be a *string* specifying saving positions in the observed elements: :literal:`"atentry"`, :literal:`"atslice"`, :literal:`"atexit"` (i.e. :literal:`true`), :literal:`"atbound"` (i.e. entry and exit), :literal:`"atbody"` (i.e. slices and exit) and :literal:`"atall"`. (default: :literal:`true`). 
-	 Example: :literal:`save = false`.
+	 A *log* specifying to create a *mtable* and record tracking information at the observation points. The :literal:`save` attribute can also be a *string* specifying saving positions in the observed elements: :literal:`"atentry"`, :literal:`"atslice"`, :literal:`"atexit"` (i.e. :const:`true`), :literal:`"atbound"` (i.e. entry and exit), :literal:`"atbody"` (i.e. slices and exit) and :literal:`"atall"`. (default: :const:`true`). 
+	 Example: :expr:`save = false`.
 
 **title** 
-	 A *string* specifying the title of the *mtable*. If no title is provided, the command looks for the name of the sequence, i.e. the attribute :literal:`seq.name`. (default: :literal:`nil`). 
-	 Example: :literal:`title = "Survey around IP5"`.
+	 A *string* specifying the title of the *mtable*. If no title is provided, the command looks for the name of the sequence, i.e. the attribute :literal:`seq.name`. (default: :const:`nil`). 
+	 Example: :expr:`title = "Survey around IP5"`.
 
 **observe** 
-	 A *number* specifying the observation points to consider for recording the tracking information. A zero value will consider all elements, while a positive value will consider selected elements only, checked with method :literal:`:is_observed`, every :literal:`observe` :math:`>0` turns. (default: :literal:`0`). 
-	 Example: :literal:`observe = 1`.
+	 A *number* specifying the observation points to consider for recording the tracking information. A zero value will consider all elements, while a positive value will consider selected elements only, checked with method :literal:`:is_observed`, every :literal:`observe` :math:`>0` turns. (default: :const:`0`). 
+	 Example: :expr:`observe = 1`.
 
 **savesel** 
-	 A *callable* :literal:`(elm, mflw, lw, islc)` acting as a predicate on selected elements for observation, i.e. the element is discarded if the predicate returns :literal:`false`. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`) 
-	 Example: :literal:`savesel = \LMB e -> mylist[e.name] ~= nil`.
+	 A *callable* :literal:`(elm, mflw, lw, islc)` acting as a predicate on selected elements for observation, i.e. the element is discarded if the predicate returns :const:`false`. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`) 
+	 Example: :expr:`savesel = \LMB e -> mylist[e.name] ~= nil`.
 
 **savemap** 
-	 A *log* indicating to save the orientation matrix :literal:`W` in the column :literal:`__map` of the *mtable*. (default: :literal:`false`). 
-	 Example: :literal:`savemap = true`.
+	 A *log* indicating to save the orientation matrix :literal:`W` in the column :literal:`__map` of the *mtable*. (default: :const:`false`). 
+	 Example: :expr:`savemap = true`.
 
 **atentry** 
 	 A *callable* :literal:`(elm, mflw, 0, - 1)` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index . (default: :literal:`fnil`). 
-	 Example: :literal:`atentry = myaction`.
+	 Example: :expr:`atentry = myaction`.
 
 **atslice** 
 	 A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`). 
-	 Example: :literal:`atslice = myaction`.
+	 Example: :expr:`atslice = myaction`.
 
 **atexit** 
 	 A *callable* :literal:`(elm, mflw, 0, - 2)` invoked at element exit. The arguments are in order, the current element, the tracked map flow, zero length and the slice index . (default: :literal:`fnil`). 
-	 Example: :literal:`atexit = myaction`.
+	 Example: :expr:`atexit = myaction`.
 
 **atsave** 
 	 A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element saving steps, by default at exit. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`). 
-	 Example: :literal:`atsave = myaction`.
+	 Example: :expr:`atsave = myaction`.
 
 **atdebug** 
 	 A *callable* :literal:`(elm, mflw, lw, [msg], [...])` invoked at the entry and exit of element maps during the integration steps, i.e. within the slices. The arguments are in order, the current element, the tracked map flow, the length weight of the integration step and a *string* specifying a debugging message, e.g. :literal:`"map_name:0"` for entry and :literal:`":1"` for exit. If the level :literal:`debug` :math:`\geq 4` and :literal:`atdebug` is not specified, the default *function* :literal:`mdump` is used. In some cases, extra arguments could be passed to the method. (default: :literal:`fnil` ). 
-	 Example: :literal:`atdebug = myaction` .
+	 Example: :expr:`atdebug = myaction` .
 	 
 **info**
-	 A *number* specifying the information level to control the verbosity of the output on the console. (default: :literal:`nil`). 
-	 Example: :literal:`info = 2`.
+	 A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
+	 Example: :expr:`info = 2`.
 
 **debug**
-	 A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :literal:`nil`). 
-	 Example: :literal:`debug = 2`.
+	 A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
+	 Example: :expr:`debug = 2`.
 
 **usrdef** 
-	 Any user defined data that will be attached to the tracked map flow, which is internally passed to the elements method :meth:`:survey` and to their underlying maps. (default: :literal:`nil`). 
-	 Example: :literal:`usrdef = { myvar=somevalue }`.
+	 Any user defined data that will be attached to the tracked map flow, which is internally passed to the elements method :meth:`:survey` and to their underlying maps. (default: :const:`nil`). 
+	 Example: :expr:`usrdef = { myvar=somevalue }`.
 
 **mflow** 
-	 A *mflow* containing the current state of a :literal:`survey` command. If a map flow is provided, all attributes are discarded except :literal:`nstep`, :literal:`info` and :literal:`debug`, as the command was already set up upon its creation. (default: :literal:`nil`). 
-	 Example: :literal:`mflow = mflow0`.
+	 A *mflow* containing the current state of a :literal:`survey` command. If a map flow is provided, all attributes are discarded except :literal:`nstep`, :literal:`info` and :literal:`debug`, as the command was already set up upon its creation. (default: :const:`nil`). 
+	 Example: :expr:`mflow = mflow0`.
 
 
 The :literal:`survey` command returns the following objects in this order:
@@ -192,7 +192,7 @@ The :literal:`survey` command returns a *mtable* where the information described
 **range**
 	 The value of the command attribute :literal:`range`. [#f4]_ 
 **__seq**
-	 The *sequence* from the command attribute :literal:`sequence`. [#f5]_
+	 The *sequence* from the command attribute :var:`sequence`. [#f5]_
 
 
 
@@ -257,7 +257,7 @@ Slicing
 
 The surrounding :literal:`P` and :literal:`P`\ :math:`^{-1}` maps represent the patches applied around the body of the element to change the frames, after the :literal:`atentry` and before the :literal:`atexit` actions:
 
-	#.	 The misalignment of the element to move from the *global frame* to the *element frame* if the command attribute :literal:`misalign` is set to :literal:`true`.
+	#.	 The misalignment of the element to move from the *global frame* to the *element frame* if the command attribute :literal:`misalign` is set to :const:`true`.
 
 	#.	 The tilt of the element to move from the element frame to the *titled frame* if the element attribute :literal:`tilt` is non-zero. The :literal:`atslice` actions take place in this frame.
 
@@ -266,7 +266,7 @@ The surrounding :literal:`P` and :literal:`P`\ :math:`^{-1}` maps represent the 
 Sub-elements
 """"""""""""
 
-The :literal:`survey` command takes sub-elements into account, mainly for compatibility with the :literal:`track` command. In this case, the slicing specification is taken between sub-elements, e.g. 3 slices with 2 sub-elements gives a final count of 9 slices. It is possible to adjust the number of slices between sub-elements with the third form of slicing specifier, i.e. by using a callable where the length weight argument is between the current (or the end of the element) and the last sub-elements (or the start of the element).
+The :literal:`survey` command takes sub-elements into account, mainly for compatibility with the :var:`track` command. In this case, the slicing specification is taken between sub-elements, e.g. 3 slices with 2 sub-elements gives a final count of 9 slices. It is possible to adjust the number of slices between sub-elements with the third form of slicing specifier, i.e. by using a callable where the length weight argument is between the current (or the end of the element) and the last sub-elements (or the start of the element).
 
 Examples
 --------

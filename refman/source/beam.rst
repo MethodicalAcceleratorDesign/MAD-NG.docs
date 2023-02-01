@@ -2,14 +2,14 @@ Beams
 =====
 .. _ch.gen.beam:
 
-The :literal:`beam` object is the *root object* of beams that store information relative to particles and particle beams. It also provides a simple interface to the particles and nuclei database.
+The :var:`beam` object is the *root object* of beams that store information relative to particles and particle beams. It also provides a simple interface to the particles and nuclei database.
 
-The :literal:`beam` module extends the :doc:`typeid <types>` module with the :literal:`is_beam` *function*, which returns :literal:`true` if its argument is a :literal:`beam` object, :literal:`false` otherwise.
+The :var:`beam` module extends the :doc:`typeid <types>` module with the :func:`is_beam` *function*, which returns :const:`true` if its argument is a :var:`beam` object, :const:`false` otherwise.
 
 Attributes
 ----------
 
-The :literal:`beam` *object* provides the following attributes:
+The :var:`beam` *object* provides the following attributes:
 
 **particle**
 	 A *string* specifying the name of the particle. (default: :literal:`"positron"`).
@@ -18,10 +18,10 @@ The :literal:`beam` *object* provides the following attributes:
 	 A *number* specifying the energy-mass of the particle [GeV]. (default: :literal:`emass`).
 
 **charge**
-	 A *number* specifying the charge of the particle in [q] unit of :literal:`qelect`. [#f1]_ (default: :literal:`1`).
+	 A *number* specifying the charge of the particle in [q] unit of :literal:`qelect`. [#f1]_ (default: :const:`1`).
 
 **spin**
-	 A *number* specifying the spin of the particle. (default: :literal:`0`).
+	 A *number* specifying the spin of the particle. (default: :const:`0`).
 
 **emrad**
 	 A *lambda* returning the electromagnetic radius of the particle [m], 
@@ -34,7 +34,7 @@ The :literal:`beam` *object* provides the following attributes:
 	 :math:`\mathrm{aphot} = \mathrm{kpht\_GeV}\times\mathrm{charge}^2*\mathrm{betgam}` where :math:`\mathrm{kpht\_GeV}` :math:`= \frac{5}{2\sqrt{3}}`.
 
 **energy**
-	 A *number* specifying the particle energy [GeV]. (default: :literal:`1`).
+	 A *number* specifying the particle energy [GeV]. (default: :const:`1`).
 
 **pc**
 	 A *lambda* returning the particle momentum times the speed of light [GeV],
@@ -71,49 +71,49 @@ The :literal:`beam` *object* provides the following attributes:
 	 :literal:`brho = GeV_c * pc/|charge|` where :literal:`GeV_c` = :math:`10^{9}/c`
 
 **ex**
-	 A *number* specifying the horizontal emittance :math:`\epsilon_x` [m]. (default: :literal:`1`).
+	 A *number* specifying the horizontal emittance :math:`\epsilon_x` [m]. (default: :const:`1`).
 
 **ey**
-	 A *number* specifying the vertical emittance :math:`\epsilon_y` [m]. (default: :literal:`1`).
+	 A *number* specifying the vertical emittance :math:`\epsilon_y` [m]. (default: :const:`1`).
 
 **et**
-	 A *number* specifying the longitudinal emittance :math:`\epsilon_t` [m]. (default: :literal:`1e-3`).
+	 A *number* specifying the longitudinal emittance :math:`\epsilon_t` [m]. (default: :const:`1e-3`).
 
 **exn**
 	 A *lambda* returning the normalized horizontal emittance [m], 
 
-	 :literal:`exn = ex * betgam`.
+	 :expr:`exn = ex * betgam`.
 
 **eyn**
 	 A *lambda* returning the normalized vertical emittance [m], 
 
-	 :literal:`eyn = ey * betgam`.
+	 :expr:`eyn = ey * betgam`.
 
 **etn**
 	 A *lambda* returning the normalized longitudinal emittance [m], 
 
-	 :literal:`etn = et * betgam`.
+	 :expr:`etn = et * betgam`.
 
 **nbunch**
-	 A *number* specifying the number of particle bunches in the machine. (default: :literal:`0`).
+	 A *number* specifying the number of particle bunches in the machine. (default: :const:`0`).
 
 **npart**
-	 A *number* specifying the number of particles per bunch. (default: :literal:`0`).
+	 A *number* specifying the number of particles per bunch. (default: :const:`0`).
 
 **sigt**
-	 A *number* specifying the bunch length in :math:`c \sigma_t`. (default: :literal:`1`).
+	 A *number* specifying the bunch length in :math:`c \sigma_t`. (default: :const:`1`).
 
 **sige**
-	 A *number* specifying the relative energy spread in :math:`\sigma_E/E` [GeV]. (default: :literal:`1e-3`).
+	 A *number* specifying the relative energy spread in :math:`\sigma_E/E` [GeV]. (default: :const:`1e-3`).
 
 
-The :literal:`beam` *object* also implements a special protect-and-update mechanism for its attributes to ensure consistency and precedence between the physical quantities stored internally:
+The :var:`beam` *object* also implements a special protect-and-update mechanism for its attributes to ensure consistency and precedence between the physical quantities stored internally:
 
 #.	 The following attributes are *read-only*, i.e. writing to them triggers an error:
 		:literal:`mass, charge, spin, emrad, aphot`
 
 #.	 The following attributes are *read-write*, i.e. hold values, with their accepted numerical ranges:
-		:literal:`particle, energy` :math:`>` :literal:`mass`,
+		:literal:`particle, energy` :math:`>` :var:`mass`,
 		:literal:`ex` :math:`>0`, :literal:`ey` :math:`>0`, :literal:`et` :math:`>0`,
 		:literal:`nbunch` :math:`>0`, :literal:`npart` :math:`>0`, :literal:`sigt` :math:`>0`, :literal:`sige` :math:`>0`.
 
@@ -127,13 +127,13 @@ The :literal:`beam` *object* also implements a special protect-and-update mechan
 Methods
 -------
 
-The :literal:`beam` object provides the following methods:
+The :var:`beam` object provides the following methods:
 
 **new_particle**
-	 A *method*	:literal:`(particle, mass, charge, [spin])` creating new particles or nuclei and store them in the particles database. The arguments specify in order the new :literal:`particle`'s name, energy-:literal:`mass` [GeV], :literal:`charge` [q], and :literal:`spin` (default: :literal:`0`). These arguments can also be grouped into a *table* with same attribute names as the argument names and passed as the solely argument.
+	 A *method*	:literal:`(particle, mass, charge, [spin])` creating new particles or nuclei and store them in the particles database. The arguments specify in order the new :literal:`particle`'s name, energy-:var:`mass` [GeV], :var:`charge` [q], and :var:`spin` (default: :const:`0`). These arguments can also be grouped into a *table* with same attribute names as the argument names and passed as the solely argument.
 
 **set_variables**
-	 A *method*	:literal:`(set)` returning :literal:`self` with the attributes set to the pairs (*key*, *value*) contained in :literal:`set`. This method overrides the original one to implement the special protect-and-update mechanism, but the order of the updates is undefined. It also creates new particle on-the-fly if the :literal:`mass` and the :literal:`charge` are defined, and then select it. Shortcut :literal:`setvar`.
+	 A *method*	:literal:`(set)` returning :literal:`self` with the attributes set to the pairs (*key*, *value*) contained in :literal:`set`. This method overrides the original one to implement the special protect-and-update mechanism, but the order of the updates is undefined. It also creates new particle on-the-fly if the :var:`mass` and the :var:`charge` are defined, and then select it. Shortcut :literal:`setvar`.
 
 **showdb**
 	 A *method*	:literal:`([file])` displaying the content of the particles database to :literal:`file` (default: :literal:`io.stdout`).
@@ -142,13 +142,13 @@ The :literal:`beam` object provides the following methods:
 Metamethods
 -----------
 
-The :literal:`beam` object provides the following metamethods:
+The :var:`beam` object provides the following metamethods:
 
 **__init**
-	 A *metamethod*	:literal:`()` returning :literal:`self` after having processed the attributes with the special protect-and-update mechanism, where the order of the updates is undefined. It also creates new particle on-the-fly if the :literal:`mass` and the :literal:`charge` are defined, and then select it.
+	 A *metamethod*	:literal:`()` returning :literal:`self` after having processed the attributes with the special protect-and-update mechanism, where the order of the updates is undefined. It also creates new particle on-the-fly if the :var:`mass` and the :var:`charge` are defined, and then select it.
 
 **__newindex**
-	 A *metamethod*	:literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*) or to update the underlying physical quantity of the :literal:`beam` objects.
+	 A *metamethod*	:literal:`(key, val)` called by the assignment operator :expr:`[key]=val` to create new attributes for the pairs (*key*, *value*) or to update the underlying physical quantity of the :var:`beam` objects.
 
 
 The following attribute is stored with metamethods in the metatable, but has different purpose:
@@ -161,11 +161,11 @@ The following attribute is stored with metamethods in the metatable, but has dif
 Particles database
 ------------------
 
-The :literal:`beam` *object* manages the particles database, which is shared by all :literal:`beam` instances. The default set of supported particles is:
+The :var:`beam` *object* manages the particles database, which is shared by all :var:`beam` instances. The default set of supported particles is:
 		electron, positron, proton, antiproton, neutron, antineutron, ion, muon, 
 		antimuon, deuteron, antideuteron, negmuon (=muon), posmuon (=antimuon).
 
-New particles can be added to the database, either explicitly using the :literal:`new_particle` method, or by creating or updating a beam *object* and specifying all the attributes of a particle, i.e. :literal:`particle`'s name, :literal:`charge`, :literal:`mass`, and (optional) :literal:`spin`:
+New particles can be added to the database, either explicitly using the :literal:`new_particle` method, or by creating or updating a beam *object* and specifying all the attributes of a particle, i.e. :literal:`particle`'s name, :var:`charge`, :var:`mass`, and (optional) :var:`spin`:
 
 .. code-block:: lua
 	
@@ -178,7 +178,7 @@ New particles can be added to the database, either explicitly using the :literal
 	-- create a new beam and a new nucleus
 	local pbbeam = beam { particle='pb208', mass=82*pmass+126*nmass, charge=82 }
 
-The particles database can be displayed with the :literal:`showdb` method at any time from any beam:
+The particles database can be displayed with the :func:`showdb` method at any time from any beam:
 
 .. code-block:: lua
 	
@@ -188,7 +188,7 @@ The particles database can be displayed with the :literal:`showdb` method at any
 Particle charges
 ----------------
 
-The physics of \MAD is aware of particle charges. To enable the compatibility with codes like MAD-X that ignores the particle charges, the global option :literal:`nocharge` can be used to control the behavior of created beams as shown by the following example:
+The physics of \MAD is aware of particle charges. To enable the compatibility with codes like MAD-X that ignores the particle charges, the global option :var:`nocharge` can be used to control the behavior of created beams as shown by the following example:
 
 .. code-block:: lua
 	
@@ -227,5 +227,5 @@ Examples
 
 .. rubric:: Footnotes
 
-.. [#f1] The :literal:`qelect` value is defined in the :doc:`constants` module.
-.. [#f2] The option :literal:`rbarc` in MAD-X is too volatile and does not ensure such consistency...
+.. [#f1] The :var:`qelect` value is defined in the :doc:`constants` module.
+.. [#f2] The option :var:`rbarc` in MAD-X is too volatile and does not ensure such consistency...

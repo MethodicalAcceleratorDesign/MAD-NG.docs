@@ -179,7 +179,7 @@ It is worth understanding the error message that invalid syntaxes above would re
 	file:line: attempt to perform arithmetic on a function value. }
 
 
-as it is a bit subtle and needs some explanations: the *lambda* is syntactically closed at the end of the returned expression :literal:`(x+y)`, and the following operations :literal:`/` or :literal:`*` are considered as being outside the *lambda* definition, that is applied to the freshly created function itself...
+as it is a bit subtle and needs some explanations: the *lambda* is syntactically closed at the end of the returned expression :expr:`(x+y)`, and the following operations :literal:`/` or :literal:`*` are considered as being outside the *lambda* definition, that is applied to the freshly created function itself...
 
 Finally, the *lambda* function syntax supports full function syntax (for consistency) using the *fat* arrow operator :literal:`=>` in place of the arrow operator:
 
@@ -208,7 +208,7 @@ The deferred expression operator :literal:`:=` is semantically equivalent to a *
 	var = 20
 	print(tbl.v1(), tbl.v2(), tbl.v3, fun()) -- display: 20 20 10 20
 
-The deferred expressions hereabove have to be explicitly called to retrieve their values, because they are defined in a *table*. It is a feature of the object model making the deferred expressions behaving like values. Still, it is possible to support deferred expressions as values in a raw *table*, i.e. a table without metatable, using the :literal:`deferred` function from the :doc:`typeid <types>` module:
+The deferred expressions hereabove have to be explicitly called to retrieve their values, because they are defined in a *table*. It is a feature of the object model making the deferred expressions behaving like values. Still, it is possible to support deferred expressions as values in a raw *table*, i.e. a table without metatable, using the :func:`deferred` function from the :doc:`typeid <types>` module:
 
 .. code-block::
 	
@@ -234,7 +234,7 @@ The ranges are created from pairs or triplets of concatenated numbers: [#f6]_
 	4..3..-0.1          -- negative steps are handled
 	stop..start..-step  -- operator precedence
 
-The default value for unspecified :literal:`step` is :literal:`1`. The Lua syntax has been modified to accept concatenation operator without surrounding spaces for convenience.
+The default value for unspecified :var:`step` is :const:`1`. The Lua syntax has been modified to accept concatenation operator without surrounding spaces for convenience.
 
 Ranges are *iterable* and *lengthable* so the following code excerpt is valid:
 
@@ -244,7 +244,7 @@ Ranges are *iterable* and *lengthable* so the following code excerpt is valid:
 	print(#rng) -- display: 11
 	for i,v in ipairs(rng) do print(i,v) end
 
-More details on ranges can be found in the :doc:`Range <numrange>` module, especially about the :literal:`range` and :literal:`logrange` constructors that may adjust :literal:`step` to ensure precise loops and iterators behaviors with floating-point numbers.
+More details on ranges can be found in the :doc:`Range <numrange>` module, especially about the :mod:`range` and :mod:`logrange` constructors that may adjust :var:`step` to ensure precise loops and iterators behaviors with floating-point numbers.
 
 Lua syntax and extensions
 """""""""""""""""""""""""
@@ -297,22 +297,22 @@ Types
 MAD-NG is based on Lua, a dynamically typed programming language that provides the following *basic types* often italicized in this textbook:
 
 *nil*
-	The type of the value :literal:`nil`. Uninitialized variables, unset attributes, mismatched arguments, mismatched return values etc, have :literal:`nil` values.
+	The type of the value :const:`nil`. Uninitialized variables, unset attributes, mismatched arguments, mismatched return values etc, have :const:`nil` values.
 
 *boolean*
-	The type of the values :literal:`true` and :literal:`false`.
+	The type of the values :const:`true` and :const:`false`.
 
 *number*
-	The type of IEEE 754 double precision floating point numbers. They are exact for integers up to :math:`\pm 2^{53}` (:math:`\approx \pm 10^{16}`). Values like :literal:`0`, :literal:`1`, :literal:`1e3`, :literal:`1e-3` are numbers.
+	The type of IEEE 754 double precision floating point numbers. They are exact for integers up to :math:`\pm 2^{53}` (:math:`\approx \pm 10^{16}`). Values like :const:`0`, :const:`1`, :const:`1e3`, :const:`1e-3` are numbers.
 
 *string*
 	The type of character strings. Strings are "internalized" meaning that two strings with the same content compare equal and share the same memory address:
-	:literal:`a="hello"; b="hello"; print(a==b) -- display: true`.
+	:expr:`a="hello"; b="hello"; print(a==b) -- display: true`.
 
 *table*
 	The type of tables, see `Lua 5.2`_ §3.4.8 for details. In this textbook, the following qualified types are used to distinguish between two kinds of special use of tables:
 
-    *	 A *list* is a table used as an array, that is a table indexed by a *continuous* sequence of integers starting from :literal:`1` where the length operator :literal:`#` has defined behavior. [#f7]_
+    *	 A *list* is a table used as an array, that is a table indexed by a *continuous* sequence of integers starting from :const:`1` where the length operator :literal:`#` has defined behavior. [#f7]_
 
     *	 A *set* is a table used as a dictionary, that is a table indexed by keys --- strings or other types --- or a *sparse* sequence of integers where the length operator :literal:`#` has undefined behavior.
 
@@ -345,7 +345,7 @@ This textbook uses also some extra terms in place of types:
 *reference*
 	A valid memory location storing some *value*.
 *logical*
-	A *value* used by control flow, where :literal:`nil` :math:`\equiv` :literal:`false` and *anything-else* :math:`\equiv` :literal:`true`.
+	A *value* used by control flow, where :const:`nil` :math:`\equiv` :const:`false` and *anything-else* :math:`\equiv` :const:`true`.
 
 
 Value vs reference
@@ -355,7 +355,7 @@ The types *nil*, *boolean* and *number* have a semantic by *value*, meaning that
 
 The types *string*, *function*, *table*, *thread*, *userdata* and *cdata* have a semantic by *reference*, meaning that variables, arguments, return values, etc., do not store their instances directly but a *reference* to them. As a consequence, any assignment makes a copy of the *reference* and the instance becomes shared, i.e. references have a semantic by *value* but changing the content of the value does change the copy. [#f12]_ 
 
-The types *string*, *function* [#f13]_, *thread* , :literal:`complex` *cdata* and numeric (:literal:`log`):literal:`range` *cdata* have a hybrid semantic. In practice these types have a semantic by *reference*, but they behave like types with semantic by *value* because their instances are immutable, and therefore sharing them is safe.
+The types *string*, *function* [#f13]_, *thread* , :var:`cpx` *cdata* and numeric (:literal:`log`):literal:`range` *cdata* have a hybrid semantic. In practice these types have a semantic by *reference*, but they behave like types with semantic by *value* because their instances are immutable, and therefore sharing them is safe.
 
 
 

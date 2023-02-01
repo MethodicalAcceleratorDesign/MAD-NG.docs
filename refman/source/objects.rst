@@ -2,7 +2,7 @@ Objects
 =======
 .. _ch.gen.obj:
 
-The object model is of key importance as it implements many features used extensively by objects like :literal:`beam`, :literal:`sequence`, :literal:`mtable`, all the commands, all the elements, and the :literal:`MADX` environment. The aim of the object model is to extend the scripting language with concepts like objects, inheritance, methods, metamethods, deferred expressions, commands and more.
+The object model is of key importance as it implements many features used extensively by objects like :var:`beam`, :var:`sequence`, :literal:`mtable`, all the commands, all the elements, and the :literal:`MADX` environment. The aim of the object model is to extend the scripting language with concepts like objects, inheritance, methods, metamethods, deferred expressions, commands and more.
 
 	*	 A *prototypical object* is an object created from a prototype, [#f1]_ named its parent.
 	*	 *Single inheritance* specifies that an object has only one direct parent.
@@ -112,7 +112,7 @@ An object used as a prototype to create new objects becomes a *class*, and a cla
 Identification
 """"""""""""""
 
-The :literal:`object` module extends the :doc:`typeid <types>` module with the :literal:`is_object(a)` *function*, which returns :literal:`true` if its argument :literal:`a` is an object, :literal:`false` otherwise:
+The :literal:`object` module extends the :doc:`typeid <types>` module with the :func:`is_object(a)` *function*, which returns :const:`true` if its argument :literal:`a` is an object, :const:`false` otherwise:
 
 .. code-block::
 	
@@ -175,7 +175,7 @@ The following example is similar to the second example of the section :ref:`ssec
 Writing attributes
 """"""""""""""""""
 
-Writing to an object uses direct access and does not involve any lookup. Hence setting an attribute with a non-\ :literal:`nil` value in an object hides his definition inherited from the parents, while setting an attribute with :literal:`nil` in an object restores the inheritance lookup:
+Writing to an object uses direct access and does not involve any lookup. Hence setting an attribute with a non-\ :const:`nil` value in an object hides his definition inherited from the parents, while setting an attribute with :const:`nil` in an object restores the inheritance lookup:
 
 .. code-block::
 	
@@ -213,7 +213,7 @@ To get the list of *public* attributes of an instance, use the :meth:`:get_varke
 	*	 the object :literal:`hmonitor` (only).
 	*	 the objects in the hierachy from :literal:`hmonitor` to :literal:`object` included.
 	*	 the objects in the hierachy from :literal:`hmonitor` to :literal:`instrument` included.
-	*	 the object :literal:`element` (only), the root of all elements.
+	*	 the object :var:`element` (only), the root of all elements.
 
 
 Examples
@@ -329,10 +329,10 @@ The root :literal:`object` provides the following methods:
 	 A *method*	:literal:`([a])` returning :literal:`self` set as read-only if :literal:`a ~= false` or read-write.
 
 **same**
-	 A *method*	:literal:`([name])` returning an empty clone of :literal:`self` and named after the *string* :literal:`name` (default: :literal:`nil`).
+	 A *method*	:literal:`([name])` returning an empty clone of :literal:`self` and named after the *string* :literal:`name` (default: :const:`nil`).
 
 **copy**
-	 A *method*	:literal:`([name])` returning a copy of :literal:`self` and named after the *string* :literal:`name` (default: :literal:`nil`). The private attributes are not copied, e.g. the final, class or read-only qualifiers are not copied.
+	 A *method*	:literal:`([name])` returning a copy of :literal:`self` and named after the *string* :literal:`name` (default: :const:`nil`). The private attributes are not copied, e.g. the final, class or read-only qualifiers are not copied.
 
 **get_varkeys**
 	 A *method*	:literal:`([cls])` returning both, the *list* of the non-private attributes of :literal:`self` down to :literal:`cls` (default: :literal:`self`) included, and the *set* of their keys in the form of pairs (*key*, *key*).
@@ -349,7 +349,7 @@ The root :literal:`object` provides the following methods:
 **wrap_variables**
 	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes wrapped by the pairs (*key*, *value*) contained in :literal:`set`, where the *value* must be a *callable* :literal:`(a)` that takes the attribute (as a callable) and returns the wrapped *value*. If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated.
 
-The following example shows how to convert the length :literal:`l` of an RBEND from cord to arc, [#f4]_ keeping its strength :literal:`k0` to be computed on the fly:
+The following example shows how to convert the length :var:`l` of an RBEND from cord to arc, [#f4]_ keeping its strength :var:`k0` to be computed on the fly:
 
 .. code-block::
 	
@@ -363,13 +363,13 @@ The following example shows how to convert the length :literal:`l` of an RBEND f
 	rb.angle = pi/20 -- update angle
 	printf("l=%.5f, k0=%.5f\n", rb.l, rb.k0) -- l=2.00206, k0=0.07846
 
-The method converts non-\ *callable* attributes into callables automatically to simplify the user-side, i.e. :literal:`l()` can always be used as a *callable* whatever its original form was. At the end, :literal:`k0` and :literal:`l` are computed values and updating :literal:`angle` affects both as expected.
+The method converts non-\ *callable* attributes into callables automatically to simplify the user-side, i.e. :literal:`l()` can always be used as a *callable* whatever its original form was. At the end, :var:`k0` and :var:`l` are computed values and updating :var:`angle` affects both as expected.
 
 **clear_variables**
-	 A *method*	:literal:`()` returning :literal:`self` after setting all non-private attributes to :literal:`nil`.
+	 A *method*	:literal:`()` returning :literal:`self` after setting all non-private attributes to :const:`nil`.
 
 **clear_array**
-	 A *method*	:literal:`()` returning :literal:`self` after setting the array slots to :literal:`nil`, i.e. clear the *list* part.
+	 A *method*	:literal:`()` returning :literal:`self` after setting the array slots to :const:`nil`, i.e. clear the *list* part.
 
 **clear_all**
 	 A *method*	:literal:`()` returning :literal:`self` after clearing the object except its private attributes.
@@ -393,10 +393,10 @@ The method converts non-\ *callable* attributes into callables automatically to 
 	 A *method*	:literal:`([cmp])` returning :literal:`self` after sorting in-place its *list* part using the ordering *callable* (:literal:`cmp(ai, aj)`) (default: :literal:`"<"`), which must define a partial order over the items. The sorting algorithm is not stable.
 
 **bsearch**
-	 A *method*	:literal:`(a, [cmp], [low], [high])` returning the lowest index :literal:`idx` in the range specified by :literal:`low..high` (default: :literal:`1..#self`) from the **ordered** *list* of :literal:`self` that compares :literal:`true` with item :literal:`a` using the *callable* (:literal:`cmp(a, self[idx])`) (default: :literal:`"<="` for ascending, :literal:`">="` for descending), or :literal:`high+1`. In the presence of multiple equal items, :literal:`"<="` (resp. :literal:`">="`) will return the index of the first equal item while :literal:`"<"` (resp. :literal:`">"`) the index next to the last equal item for ascending (resp. descending) order. [#f5]_ 
+	 A *method*	:literal:`(a, [cmp], [low], [high])` returning the lowest index :literal:`idx` in the range specified by :literal:`low..high` (default: :literal:`1..#self`) from the **ordered** *list* of :literal:`self` that compares :const:`true` with item :literal:`a` using the *callable* (:literal:`cmp(a, self[idx])`) (default: :literal:`"<="` for ascending, :literal:`">="` for descending), or :literal:`high+1`. In the presence of multiple equal items, :literal:`"<="` (resp. :literal:`">="`) will return the index of the first equal item while :literal:`"<"` (resp. :literal:`">"`) the index next to the last equal item for ascending (resp. descending) order. [#f5]_ 
 
 **lsearch**
-	 A *method*	:literal:`(a, [cmp], [low], [high])` returning the lowest index :literal:`idx` in the range specified by :literal:`low..high` (default: :literal:`1..#self`) from the *list* of :literal:`self` that compares :literal:`true` with item :literal:`a` using the *callable* (:literal:`cmp(a, self[idx])`) (default: :literal:`"=="`), or :literal:`high+1`. In the presence of multiple equal items in an ordered *list*, :literal:`"<="` (resp. :literal:`">="`) will return the index of the first equal item while :literal:`"<"` (resp. :literal:`">"`) the index next to the last equal item for ascending (resp. descending) order. [#f5]_
+	 A *method*	:literal:`(a, [cmp], [low], [high])` returning the lowest index :literal:`idx` in the range specified by :literal:`low..high` (default: :literal:`1..#self`) from the *list* of :literal:`self` that compares :const:`true` with item :literal:`a` using the *callable* (:literal:`cmp(a, self[idx])`) (default: :literal:`"=="`), or :literal:`high+1`. In the presence of multiple equal items in an ordered *list*, :literal:`"<="` (resp. :literal:`">="`) will return the index of the first equal item while :literal:`"<"` (resp. :literal:`">"`) the index next to the last equal item for ascending (resp. descending) order. [#f5]_
 
 **get_flags**
 	 A *method*	:literal:`()` returning the flags of :literal:`self`. The flags are not inherited nor copied.
@@ -429,16 +429,16 @@ The method converts non-\ *callable* attributes into callables automatically to 
 	 A *method*	:literal:`()` returning the *number* of items in the *list* part of the object. This method should not be confused with the native *function* :literal:`rawlen`.
 
 **raw_get**
-	 A *method*	:literal:`(key)` returning the *value* of the attribute :literal:`key` without *lambda* evaluation nor inheritance lookup. This method should not be confused with the native *function* :literal:`rawget`.
+	 A *method*	:literal:`(key)` returning the *value* of the attribute :var:`key` without *lambda* evaluation nor inheritance lookup. This method should not be confused with the native *function* :literal:`rawget`.
 
 **raw_set**
-	 A *method*	:literal:`(key, val)` setting the attribute :literal:`key` to the *value* :literal:`val`, bypassing all guards of the object model. This method should not be confused with the native *function* :literal:`rawset`. **Warning**: use this dangerous method at your own risk!
+	 A *method*	:literal:`(key, val)` setting the attribute :var:`key` to the *value* :var:`val`, bypassing all guards of the object model. This method should not be confused with the native *function* :literal:`rawset`. **Warning**: use this dangerous method at your own risk!
 
 **var_get**
-	 A *method*	:literal:`(key)` returning the *value* of the attribute :literal:`key` without *lambda* evaluation.
+	 A *method*	:literal:`(key)` returning the *value* of the attribute :var:`key` without *lambda* evaluation.
 
 **var_val**
-	 A *method*	:literal:`(key, val)` returning the *value* :literal:`val` of the attribute :literal:`key` with *lambda* evaluation. This method is the complementary of :literal:`var_get`, i.e. :literal:`__index` :math:`\equiv` :literal:`var_val` :math:`\circ` :literal:`var_get`.
+	 A *method*	:literal:`(key, val)` returning the *value* :var:`val` of the attribute :var:`key` with *lambda* evaluation. This method is the complementary of :literal:`var_get`, i.e. :literal:`__index` :math:`\equiv` :literal:`var_val` :math:`\circ` :literal:`var_get`.
 
 **dumpobj**
 	 A *method*	:literal:`([fname], [cls], [patt], [noeval])` return :literal:`self` after dumping its non-private attributes in file :literal:`fname` (default: :literal:`stdout`) in a hierarchical form down to :literal:`cls`. If the *string* :literal:`patt` is provided, it filters the names of the attributes to dump. If :literal:`fname == '-'`, the dump is returned as a *string* in place of :literal:`self`. The *log* :literal:`noeval` prevents the evaluatation the deferred expressions and reports the functions addresses instead. In the output, :literal:`self` and its parents are displayed indented according to their inheritance level, and preceeded by a :literal:`+` sign. The attributes overridden through the inheritance are tagged with :math:`n` :literal:`*` signs, where :math:`n` corresponds to the number of overrides since the first definition.
@@ -509,12 +509,12 @@ Flags
 The object model uses *flags* to qualify objects, like *class*-object, *final*-object and *readonly*-object. The difference with *boolean* attributes is that flags are *not* inherited nor copied.
 The flags of objects are managed by the methods :meth:`:get_flags`, :meth:`:set_flags`, :meth:`:clear_flags` and :meth:`:test_flags`. Methods like :meth:`:is_class`, :meth:`:is_final` and :meth:`:is_readonly` are roughly equivalent to call the method :meth:`:test_flags` with the corresponding (private) flag as argument. Note that functions from the :func:`typeid` module that check for types or kinds, like :func:`is_object` or :func:`is_beam`, never rely on flags because types and kinds are not qualifers.
 
-From the technical point of view, flags are encoded into a 32-bit integer and the object model uses the protected bits 29-31, hence bits 0-28 are free of use. Object flags can be used and extended by other modules introducing their own flags, like the :literal:`element` module that relies on bits 0-4 and used by many commands. In practice, the bit index does not need to be known and should not be used directly but through its name to abstract its value.
+From the technical point of view, flags are encoded into a 32-bit integer and the object model uses the protected bits 29-31, hence bits 0-28 are free of use. Object flags can be used and extended by other modules introducing their own flags, like the :var:`element` module that relies on bits 0-4 and used by many commands. In practice, the bit index does not need to be known and should not be used directly but through its name to abstract its value.
 
 Environments
 ------------
 
-The object model allows to transform an object into an environment; in other words, a global workspace for a given context, i.e. scope. Objects-as-environments are managed by the methods :literal:`open_env`, :literal:`close_env`, :literal:`load_env`, :literal:`dump_env` and :literal:`is_open_env`.
+The object model allows to transform an object into an environment; in other words, a global workspace for a given context, i.e. scope. Objects-as-environments are managed by the methods :literal:`open_env`, :literal:`close_env`, :literal:`load_env`, :literal:`dump_env` and :func:`is_open_env`.
 
 Things defined in this workspace will be stored in the object, and accessible from outside using the standard ways to access object attributes:
 
@@ -557,7 +557,7 @@ Note that MAD-X workspace is case insensitive and everything is "global" (no sco
 
 .. [#f1] Objects are not clones of prototypes, they share states and behaviors with their parents but do not hold copies.
 .. [#f2] This syntax for creating objects eases the lattices translation from MAD-X to MAD-NG.
-.. [#f3] This feature is used to setup a command from another command, e.g. :literal:`track` from :literal:`twiss`
+.. [#f3] This feature is used to setup a command from another command, e.g. :var:`track` from :var:`twiss`
 .. [#f4] This approach is safer than the volatile option :literal:`RBARC` of MAD-X.
 .. [#f5] :literal:`bsearch` and :literal:`lsearch` stand for binary (ordered) search and linear (unordered) search respectively.
 

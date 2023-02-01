@@ -41,7 +41,7 @@ MAD-NG releases are tagged on the Github repository and use mangled binary names
 **arch**
 	 is the platform architecture for binaries among :literal:`linux`, :literal:`macos` and :literal:`windows`.
 **v**
-	 is the **v**\ ersion number, :literal:`0` meaning beta-version under active development.
+	 is the **v**\ ersion number, :const:`0` meaning beta-version under active development.
 **m**
 	 is the **m**\ ajor release number corresponding to features completeness.
 **n**

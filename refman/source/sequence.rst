@@ -5,29 +5,29 @@ Sequences
    :numbered:
 
 The MAD Sequences are objects convenient to describe accelerators lattices built from a *list* of elements with increasing :data:`s`-positions. The sequences are also containers that provide fast access to their elements by referring to their indexes, :data:`s`-positions, or (mangled) names, or by running iterators constrained with ranges and predicates.
-The :literal:`sequence` object is the *root object* of sequences that store information relative to lattices.
+The :var:`sequence` object is the *root object* of sequences that store information relative to lattices.
 
-The :literal:`sequence` module extends the :doc:`typeid <types>` module with the :literal:`is_sequence` function, which returns :literal:`true` if its argument is a :literal:`sequence` object, :literal:`false` otherwise.
+The :var:`sequence` module extends the :doc:`typeid <types>` module with the :func:`is_sequence` function, which returns :const:`true` if its argument is a :var:`sequence` object, :const:`false` otherwise.
  
 Attributes
 ==========
 
-The :literal:`sequence` object provides the following attributes: 
+The :var:`sequence` object provides the following attributes: 
 
 **l**
-   A *number* specifying the length of the sequence :literal:`[m]`. A :literal:`nil` will be replaced by the computed lattice length. A value greater or equal to the computed lattice length will be used to place the :literal:`$end` marker. Other values will raise an error. (default: :literal:`nil`).
+   A *number* specifying the length of the sequence :literal:`[m]`. A :const:`nil` will be replaced by the computed lattice length. A value greater or equal to the computed lattice length will be used to place the :literal:`$end` marker. Other values will raise an error. (default: :const:`nil`).
  
 **dir**
-   A *number* holding one of :literal:`1` (forward) or :literal:`-1` (backward) and specifying the direction of the sequence. [#f1]_ (default:~ :literal:`1`)
+   A *number* holding one of :const:`1` (forward) or :const:`-1` (backward) and specifying the direction of the sequence. [#f1]_ (default:~ :const:`1`)
 
 **refer** 
-   A *string* holding one of :literal:`"entry"`, :literal:`"centre"` or return true :literal:`"exit"` to specify the default reference position in the elements to use for their placement. An element can override it with its :literal:`refpos` attribute, see `element positions`_ for details. (default: :literal:`nil` :math:`\equiv` :literal:`"centre"`).
+   A *string* holding one of :literal:`"entry"`, :literal:`"centre"` or return true :literal:`"exit"` to specify the default reference position in the elements to use for their placement. An element can override it with its :literal:`refpos` attribute, see `element positions`_ for details. (default: :const:`nil` :math:`\equiv` :literal:`"centre"`).
 
 **minlen**
    A *number* specifying the minimal length :literal:`[m]` when checking for negative drifts or when generating *implicit* drifts between elements in :math:`s`-iterators returned by the method :literal:`:siter`. This attribute is automatically set to :math:`10^{-6}` m when a sequence is created within the MADX environment. (default: :math:`10^{-6}`)
 
 **beam** 
-   An attached :literal:`beam`. (default: :literal:`nil`)
+   An attached :var:`beam`. (default: :const:`nil`)
 
 **Warning**: the following private and read-only attributes are present in all sequences and should *never be used, set or changed*; breaking this rule would lead to an *undefined behavior*:
 
@@ -35,74 +35,74 @@ The :literal:`sequence` object provides the following attributes:
    A *table* containing all the private data of sequences.
 
 **__cycle**
-   A *reference* to the element registered with the :literal:`:cycle` method. (default: :literal:`nil`)
+   A *reference* to the element registered with the :literal:`:cycle` method. (default: :const:`nil`)
 
 
 Methods
 =======
 
-The :literal:`sequence` object provides the following methods:
+The :var:`sequence` object provides the following methods:
 
 **elem** 
-   A *method* :literal:`(idx)` returning the element stored at the positive index :literal:`idx` in the sequence, or :literal:`nil`.
+   A *method* :literal:`(idx)` returning the element stored at the positive index :literal:`idx` in the sequence, or :const:`nil`.
 
 **spos**
-   A *method* :literal:`(idx)` returning the :math:`s`-position at the entry of the element stored at the positive index :literal:`idx` in the sequence, or :literal:`nil`.
+   A *method* :literal:`(idx)` returning the :math:`s`-position at the entry of the element stored at the positive index :literal:`idx` in the sequence, or :const:`nil`.
 
 **upos**
    A *method* :literal:`(idx)` returning the :math:`s`-position at the user-defined :literal:`refpos` offset of the element stored at the positive index :literal:`idx` 
-   in the sequence, or :literal:`nil`.
+   in the sequence, or :const:`nil`.
 
 **ds**
-   A *method* :literal:`(idx)` returning the length of the element stored at the positive index :literal:`idx` in the sequence, or :literal:`nil`.
+   A *method* :literal:`(idx)` returning the length of the element stored at the positive index :literal:`idx` in the sequence, or :const:`nil`.
 
 **align**
-   A *method* :literal:`(idx)` returning a *set* specifying the misalignment of the element stored at the positive index :literal:`idx` in the sequence, or :literal:`nil`.
+   A *method* :literal:`(idx)` returning a *set* specifying the misalignment of the element stored at the positive index :literal:`idx` in the sequence, or :const:`nil`.
 
 **index**
-   A *method* :literal:`(idx)` returning a positive index, or :literal:`nil`. If :literal:`idx` is negative, it is reflected versus the size of the sequence, e.g. :literal:`-1` 
+   A *method* :literal:`(idx)` returning a positive index, or :const:`nil`. If :literal:`idx` is negative, it is reflected versus the size of the sequence, e.g. :const:`-1` 
    becomes :literal:`#self`, the index of the :literal:`$end` marker.
 
 **name_of**
-   A *method* :literal:`(idx, [ref])` returning a *string* corresponding to the (mangled) name of the element at the index :literal:`idx` or :literal:`nil`. An element 
+   A *method* :literal:`(idx, [ref])` returning a *string* corresponding to the (mangled) name of the element at the index :literal:`idx` or :const:`nil`. An element 
    name appearing more than once in the sequence will be mangled with an absolute count, e.g. :literal:`mq[3]`, or a relative count versus the optional 
    reference element :literal:`ref` determined by :literal:`:index_of`, e.g. :literal:`mq{-2}`.
 
 **index_of**
-   A *method* :literal:`(a, [ref], [dir])` returning a *number* corresponding to the positive index of the element determined by the first argument or :literal:`nil`. 
+   A *method* :literal:`(a, [ref], [dir])` returning a *number* corresponding to the positive index of the element determined by the first argument or :const:`nil`. 
    If :literal:`a` is a *number* (or a *string* representing a *number*), it is interpreted as the :math:`s`-position of an element and returned as a second 
    *number*. If :literal:`a` is a *string*, it is interpreted as the (mangled) name of an element as returned by :literal:`:name_of`. Finally, :literal:`a` can be a *reference* 
    to an element to search for. The argument :literal:`ref` (default: :literal:`nil)` specifies the reference element determined by :literal:`:index_of(ref)` to use for 
    relative :math:`s`-positions, for decoding mangled names with relative counts, or as the element to start searching from. The argument :literal:`dir` 
-   (default: :literal:`1)` specifies the direction of the search with values :literal:`1` (forward), :literal:`-1` (backward), or :literal:`0` (no direction). The :literal:`dir=0`
+   (default: :literal:`1)` specifies the direction of the search with values :const:`1` (forward), :const:`-1` (backward), or :const:`0` (no direction). The :literal:`dir=0`
    case may return an index at half-integer if :literal:`a` is interpreted as an :math:`s`-position pointing to an *implicit drift*.
 
 **range_of**
    A *method* :literal:`([rng], [ref], [dir]`) returning three *numbers* corresponding to the positive indexes *start* and *end* of the range and 
-   its direction *dir*, or :literal:`nil` for an empty range. If :literal:`rng` is omitted, it returns :literal:`1`, :literal:`#self`, :literal:`1`, or :literal:`#self`, :literal:`1`, :literal:`-1` 
+   its direction *dir*, or :const:`nil` for an empty range. If :literal:`rng` is omitted, it returns :const:`1`, :literal:`#self`, :const:`1`, or :literal:`#self`, :const:`1`, :const:`-1` 
    if :literal:`dir` is negative. If :literal:`rng` is a *number* or a *string* with no :literal:`'/'` separator, it is interpreted as both *start* and *end* and 
    determined by :literal:`index_of`. If :literal:`rng` is a *string* containing the separator :literal:`'/'`, it is split in two *strings* interpreted as *start* 
    and *end*, both determined by :literal:`:index_of`. If :literal:`rng` is a *list*, it will be interpreted as {*start*, *end*, :literal:`[ref]`, :literal:`[dir]`}, 
    both determined by :literal:`:index_of`, unless :literal:`ref` equals :literal:`'idx'` then both are determined by :literal:`:index` (i.e. a *number* is interpreted as an 
-   index instead of a :math:`s`-position). The arguments :literal:`ref` (default: :literal:`nil`) and :literal:`dir` (default: :literal:`1`) are forwarded to all invocations 
-   of :literal:`:index_of` with a higher precedence than ones in the *list* :literal:`rng`, and a runtime error is raised if the method returns :literal:`nil`, i.e. 
+   index instead of a :math:`s`-position). The arguments :literal:`ref` (default: :const:`nil`) and :literal:`dir` (default: :const:`1`) are forwarded to all invocations 
+   of :literal:`:index_of` with a higher precedence than ones in the *list* :literal:`rng`, and a runtime error is raised if the method returns :const:`nil`, i.e. 
    to disambiguate between a valid empty range and an invalid range.
 
 **length_of**
-   A *method* :literal:`([rng], [ntrn], [dir]`) returning a *number* specifying the length of the range optionally including :literal:`ntrn` extra turns (default: :literal:`0`), 
+   A *method* :literal:`([rng], [ntrn], [dir]`) returning a *number* specifying the length of the range optionally including :literal:`ntrn` extra turns (default: :const:`0`), 
    and calculated from the indexes returned by :literal:`:range_of([rng], nil, [dir])`.
 
 **iter**
    A *method* :literal:`([rng], [ntrn], [dir])` returning an iterator over the sequence elements. The optional range is determined by 
-   :meth:`:range_of(rng, [dir])`, optionally including :literal:`ntrn` turns (default: :literal:`0`). The optional direction :literal:`dir` specifies the forward :literal:`1` 
-   or the backward :literal:`-1` direction of the iterator. If :literal:`rng` is not provided and the ?sequence? is cycled, the *start* and *end* indexes are 
+   :meth:`:range_of(rng, [dir])`, optionally including :literal:`ntrn` turns (default: :const:`0`). The optional direction :literal:`dir` specifies the forward :const:`1` 
+   or the backward :const:`-1` direction of the iterator. If :literal:`rng` is not provided and the ?sequence? is cycled, the *start* and *end* indexes are 
    determined by :literal:`:index_of(self.__cycle)`. When used with a generic :literal:`for` loop, the iterator returns at each element: its index, 
    the element itself, its :math:`s`-position over the running loop and its signed length depending on the direction.
 
 **siter**
    A *method* :literal:`([rng], [ntrn], [dir])` returning an :math:`s`-iterator over the sequence elements. The optional range is determined by 
-   :literal:`:range_of([rng], nil, [dir])`, optionally including :literal:`ntrn` turns (default: :literal:`0`). The optional direction :literal:`dir` specifies the 
-   forward :literal:`1` or the backward :literal:`-1` direction of the iterator. When used with a generic :literal:`for` loop, the iterator returns at each 
+   :literal:`:range_of([rng], nil, [dir])`, optionally including :literal:`ntrn` turns (default: :const:`0`). The optional direction :literal:`dir` specifies the 
+   forward :const:`1` or the backward :const:`-1` direction of the iterator. When used with a generic :literal:`for` loop, the iterator returns at each 
    iteration: its index, the element itself or an *implicit* :literal:`drift`, its :math:`s`-position over the running loop and its signed length 
    depending on the direction. Each *implicit* drift is built on-the-fly by the iterator with a length equal to the gap between the elements 
    surrounding it and a half-integer index equal to the average of their indexes. The length of *implicit* drifts is bounded by the maximum 
@@ -115,7 +115,7 @@ The :literal:`sequence` object provides the following methods:
    first argument and its index as second argument, the optional third argument being the index of the main element in case :literal:`elm` is a sub-element. 
    The optional range is used to generate the loop iterator :literal:`:iter([rng])`. The optional selector :literal:`sel` is a *callable* :literal:`(elm, idx, [midx])`
    predicate selecting eligible elements for the action using the same arguments. The selector :literal:`sel` can be specified in other ways, 
-   see `element selections`_ for details. The optional *logical* :literal:`not` (default: :literal:`false`) indicates how to interpret default selection, as 
+   see `element selections`_ for details. The optional *logical* :literal:`not` (default: :const:`false`) indicates how to interpret default selection, as 
    *all* or *none*, depending on the semantic of the action. [#f2]_
 **select**
    A *method* :literal:`([flg], [rng], [sel], [not])` returning the sequence itself after applying the action :literal:`:select([flg])` to the elements using
@@ -142,7 +142,7 @@ The :literal:`sequence` object provides the following methods:
 
 **replace**
    A *method* :literal:`(elm, [rng], [sel])` returning the *list* of replaced elements by the elements in the *list* :literal:`elm` placed at their `element positions`_, and the
-   *list* of their respective indexes, both determined by :literal:`:filter([rng], [sel], true)`. The *list* :literal:`elm` cannot contain instances of :literal:`sequence` or :literal:`bline`
+   *list* of their respective indexes, both determined by :literal:`:filter([rng], [sel], true)`. The *list* :literal:`elm` cannot contain instances of :var:`sequence` or :literal:`bline`
    elements and will be recycled as many times as needed to replace all selected elements. If the arguments are passed in the packed form, the extra attribute
    :literal:`elements` will be used as a replacement for the argument :literal:`elm`. The *logical* :literal:`sel.subelem` specifies to replace selected sub-elements too and set
    their :literal:`sat` attribute to the same value. The *implicit* drifts are checked only once all elements have been replaced.
@@ -185,7 +185,7 @@ The :literal:`sequence` object provides the following methods:
 
 **publish**
    A *method* :literal:`(env, [keep])` returning the sequence after publishing all its elements in the environment :literal:`env`. If the *logical* :literal:`keep` is
-   :literal:`true`, the method will preserve existing elements from being overridden. This method is automatically invoked with :literal:`keep=true` when sequences
+   :const:`true`, the method will preserve existing elements from being overridden. This method is automatically invoked with :literal:`keep=true` when sequences
    are created within the :literal:`MADX` environment.
 
 **copy**
@@ -213,7 +213,7 @@ The :literal:`sequence` object provides the following methods:
 Metamethods
 ===========
 
-The :literal:`sequence` object provides the following metamethods:
+The :var:`sequence` object provides the following metamethods:
 
 **__len** 
    A *method* () called by the length operator :literal:`#` to return the size of the sequence, i.e. the number of elements stored including the :literal:`"\$start"` and 
@@ -222,10 +222,10 @@ The :literal:`sequence` object provides the following metamethods:
 **__index** 
    A *method* :literal:`(key)` called by the indexing operator :literal:`[key]` to return the *value* of an attribute determined by *key*. The *key* is interpreted differently depending 
    on its type with the following precedence:
-   1. A *number* is interpreted as an element index and returns the element or :literal:`nil`.
+   1. A *number* is interpreted as an element index and returns the element or :const:`nil`.
    #. Other *key* types are interpreted as *object* attributes subject to object model lookup.
-   #. If the *value* associated with *key* is :literal:`nil`, then *key* is interpreted as an element name and returns either the element or an *iterable* on the elements with the same name. [#f4]_
-   #. Otherwise returns :literal:`nil`.
+   #. If the *value* associated with *key* is :const:`nil`, then *key* is interpreted as an element name and returns either the element or an *iterable* on the elements with the same name. [#f4]_
+   #. Otherwise returns :const:`nil`.
 
 **__newindex**
    A *method* :literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*). 
@@ -301,7 +301,7 @@ A sequence looks at the following attributes of an element, including sub-sequen
 **refpos**
    A *string* holding one of :literal:`"entry"`, :literal:`"centre"` or :literal:`"exit"`,  or the (mangled) name of a sequence sub-element to use as the reference position,
    or a *number* specifying a position [m] from the start of the element, all of them resulting in an offset to substract to the :literal:`at` attribute to find the 
-   :math:`s`-position of the element entry. (default: :literal:`nil` :math:`\equiv` :literal:`self.refer`).
+   :math:`s`-position of the element entry. (default: :const:`nil` :math:`\equiv` :literal:`self.refer`).
 
 **shared** 
    A *logical* specifying if an element is used at different positions in the same sequence definition, i.e. shared multiple times,
@@ -356,7 +356,7 @@ Indexes, names and counts
 
 Indexing a sequence triggers a complex look up mechanism where the arguments will be interpreted in various ways as described in the :literal:`:__index` metamethod. 
 A *number* will be interpreted as a relative slot index in the list of elements, and a negative index will be considered as relative to the end of the sequence, 
-i.e. :literal:`-1` is the :literal:`$end` marker. Non- *number* will be interpreted first as an object key (can be anything), looking for sequence methods or attributes;
+i.e. :const:`-1` is the :literal:`$end` marker. Non- *number* will be interpreted first as an object key (can be anything), looking for sequence methods or attributes;
 then as an element name if nothing was found.
 
 If an element exists but its name is not unique in the sequence, an *iterable* is returned. An *iterable* supports the length :literal:`#` operator to retrieve the 
@@ -399,7 +399,7 @@ itself based on the methods :literal:`:index_of` and :literal:`:index`. The numb
 which accepts an extra *number* of turns to consider in the calculation.
 
 The sequence iterators are created by the methods :literal:`:iter` and :literal:`:siter`, and both are based on the :literal:`:range_of` method as mentioned in their descriptions
-and includes an extra *number* of turns as for the method :literal:`:length_of`, and a direction :literal:`1` (forward) or :literal:`-1` (backward) for the iteration.
+and includes an extra *number* of turns as for the method :literal:`:length_of`, and a direction :const:`1` (forward) or :const:`-1` (backward) for the iteration.
 The :literal:`:siter` differs from the :literal:`:iter` by its loop, which returns not only the sequence elements but also *implicit* drifts built on-the-fly when a gap 
 :math:`>10^{-10}` m is detected between two sequence elements. Such implicit drift have half-integer indexes and make the iterator "continuous" in :math:`s`-positions.
 
@@ -410,7 +410,7 @@ For example the invocation :literal:`seq:foreach(\e -> print(e.name), {2, 2, 'id
 and :literal:`$end` markers, while the invocation :literal:`seq:foreach(\e -> print(e.name), 5..2..-1)` will iterate backward over the elements with :math:`s`-positions sitting in the
 interval :math:`[2,5]` m.
 
-The tracking commands :literal:`survey` and :literal:`track` use the iterator returned by :literal:`:siter` for their main loop, with their :literal:`range`, :literal:`nturn` and :literal:`dir` attributes
+The tracking commands :literal:`survey` and :var:`track` use the iterator returned by :literal:`:siter` for their main loop, with their :literal:`range`, :literal:`nturn` and :literal:`dir` attributes
 as arguments. These commands also save the iterator states in their :literal:`mflw` to allow the users to run them :literal:`nstep` by :literal:`nstep`, see commands :doc:`survey <survey>` 
 and :doc:`track <track>` for details.
 
