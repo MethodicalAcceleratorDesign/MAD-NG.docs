@@ -166,7 +166,7 @@ The ``thick_element`` *object* adds the following multipolar and fringe fields a
 	 A *list* specifying respectively the multipolar and skew integrated strengths errors of the element [m\ :math:`^{-i+1}`]. (default: ).
 
 **e1, e2**
-	 A *number* specifying respectively the horizontal angle of the pole faces at entry and exit of the element [rad]. A positive angle goes toward inside the element, see Figures `<fig:gen:sbend>`_ and `<fig:gen:rbend>`_. (default: ``0``).
+	 A *number* specifying respectively the horizontal angle of the pole faces at entry and exit of the element [rad]. A positive angle goes toward inside the element, see Figures :numref:`figsbend` and :numref:`figrbend`. (default: ``0``).
 
 **h1, h2**
 	 A *number* specifying respectively the horizontal curvature of the pole faces at entry and exit of the element [m\ :math:`^{-1}`]. A positive curvature goes toward inside the element. (default: ).
@@ -272,7 +272,7 @@ Some elements define new attributes or override the default values provided by t
 SBend
 """""
 
-The ``sbend`` element is a sector bending magnet with a curved reference system as shown in :numref:`fig-gen-sbend`, and defines or overrides the following attributes:
+The ``sbend`` element is a sector bending magnet with a curved reference system as shown in :numref:`figsbend`, and defines or overrides the following attributes:
 
 **k0**
 	A ``number`` specifying the dipolar strength of the element [:math:`\mathrm{m}^{-1}`].
@@ -291,7 +291,7 @@ The ``sbend`` element is a sector bending magnet with a curved reference system 
 	 Set to flag ``fringe.bend`` to activate the fringe fields by default, see :ref:`Flags <sec.elm.flgs>` for details.
 
 .. figure:: fig/elm_refsys_sbend.jpg
-	:name: fig-gen-sbend
+	:name: figsbend
 	:align: center
 
 	Reference system for a sector bending magnet.
@@ -299,7 +299,7 @@ The ``sbend`` element is a sector bending magnet with a curved reference system 
 RBend
 """""
 
-The ``rbend`` element is a rectangular bending magnet with a straight reference system as shown in :numref:`fig-gen-rbend`, and defines or overrides the following attributes:
+The ``rbend`` element is a rectangular bending magnet with a straight reference system as shown in :numref:`figrbend`, and defines or overrides the following attributes:
 
 **k0**
 	A ``number`` specifying the dipolar strength of the element [:math:`\mathrm{m}^{-1}`].
@@ -318,10 +318,10 @@ The ``rbend`` element is a rectangular bending magnet with a straight reference 
 	 Set to flag ``fringe.bend`` to activate the fringe fields by default, see :ref:`Flags <sec.elm.flgs>` for details.
 
 **true_rbend**
-	 A *log* specifying if this ``rbend`` element behaves like (``false``) a ``sbend`` element with parallel pole faces, i.e. :math:`e_1=e_2=\alpha/2` in Figure `<fig:gen:sbend>`_ , or like (``true``) a rectangular bending magnet with a straight reference system as shown in Figure `<fig:gen:rbend>`_ . (default: ``false``). [#f6]_
+	 A *log* specifying if this ``rbend`` element behaves like (``false``) a ``sbend`` element with parallel pole faces, i.e. :math:`e_1=e_2=\alpha/2` in :numref:`figsbend` , or like (``true``) a rectangular bending magnet with a straight reference system as shown in :numref:`figrbend`. (default: ``false``). [#f6]_
 
 .. figure:: fig/elm_refsys_rbend.jpg
-	:name: fig-gen-rbend
+	:name: figrbend
 	:align: center
 
 	Reference system for a rectangular bending magnet.
