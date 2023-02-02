@@ -56,41 +56,41 @@ The ``match`` command supports the following attributes:
 	Example: ``variables = {{ var="seq.knobs.mq_k1" }}``.
 
 :ref:`equalities <sec.match.cst>`
-	An *mappable* of single equality specification that can be combined with a *set* of specifications for all equalities. (default: ). 
+	An *mappable* of single equality specification that can be combined with a *set* of specifications for all equalities. (default: ``{}``). 
 	Example: ``equalities = {{  expr=\t -> t.q1- 64.295, name='q1' }}``.
 
 :ref:`inequalities <sec.match.cst>`
-	An *mappable* of single inequality specification that can be combined with a *set* of specifications for all inequalities. (default: ). 
+	An *mappable* of single inequality specification that can be combined with a *set* of specifications for all inequalities. (default: ``{}``). 
 	Example: ``inequalities = {{  expr=\t -> t.mq4.beta11- 50 }}``.
 
 :ref:`weights <sec.match.cst>`
-	A *mappable* of weights specification that can be used in the  A *mappable* of weights specification that can be used in the ``kind`` attribute of the constraints specifications. (default: ). 
+	A *mappable* of weights specification that can be used in the ``kind`` attribute of the constraints specifications. (default: ``{}``). 
 	Example: ``weights = { px=10 }``.
 
 :ref:`objective <sec.match.obj>`
-	A *mappable* of specifications for the objective to minimize. (default: ). 
+	A *mappable* of specifications for the objective to minimize. (default: ``{}``). 
 	Example: ``objective = { method="LD_LMDIF", fmin=1e- 10 }``.
 
 **maxcall**
-	A  *number*  specifying the maximum allowed calls of the ``command`` function or the ``objective`` function. (default: ``nil``).
+	A *number* specifying the maximum allowed calls of the ``command`` function or the ``objective`` function. (default: ``nil``).
 	Example: ``maxcall = 100``.
 
 **maxtime**
-	A *number* specifying the maximum allowed time in seconds. (default:  ``nil``).
+	A *number* specifying the maximum allowed time in seconds. (default: ``nil``).
 	Example: ``maxtime = 60``.
 
 **info**	
-	A *number* specifying the information level to control the verbosity of the output on the . (default: ``nil``). 
+	A *number* specifying the information level to control the verbosity of the output on the :ref:`console <sec.match.conso>`. (default: ``nil``). 
  	Example: ``info = 3``.
 
 .. _match.debug:
 
 **debug** 
-	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the :ref:`console <match.debug>`. (default: ``nil``). 
+	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the :ref:`console <sec.match.conso>`. (default: ``nil``). 
 	Example: ``debug = 2``.
 
 **usrdef** 
-	Any user defined data that will be attached to the matching environment, which is passed as extra argument to all user defined functions in the  command. (default: ``nil``). 
+	Any user defined data that will be attached to the matching environment, which is passed as extra argument to all user defined functions in the ``match`` command. (default: ``nil``). 
 	Example: ``usrdef = { var=vector(15) }``.
 
 
@@ -144,7 +144,7 @@ Environment
 The ``match`` command creates a matching environment, which is passed as argument to user's functions invoked during an iteration. It contains some useful attributes that can be read or changed during the optimization process (with care):
 
 **ncall**
-	 The current *number* of calls of  the ``command`` and/or the ``objective`` functions.
+	 The current *number* of calls of the ``command`` and/or the ``objective`` functions.
 **dtime**
 	 A *number* reporting the current elapsed time.
 **stop**
@@ -212,11 +212,11 @@ The *variable-attributes* is a set of attributes that specify a single variable:
 .. _par.match.var:
 
 **var**
-	A *string* specifying the identifier (and indirection) needed to reach the variable from the user's scope where the  command is defined. (default: ``nil``). 
+	A *string* specifying the identifier (and indirection) needed to reach the variable from the user's scope where the ``match`` command is defined. (default: ``nil``). 
 	Example: ``var = "lhcb1.mq_12l4_b1.k1"``.
 
 **name**
-	A *string* specifying the name of the variable to display when the  A *string* specifying the name of the variable to display when the :var:`info` level is positive. (default: ``var``). 
+	A *string* specifying the name of the variable to display when the :var:`info` level is positive. (default: ``var``). 
 	Example: ``name = "MQ.12L4.B1->k1"``.
 
 **min**
@@ -228,7 +228,7 @@ The *variable-attributes* is a set of attributes that specify a single variable:
 	Example: ``max = 10``.
 
 **sign** 
-	A *logical* enforcing the sign of the variable by moving  A *logical* enforcing the sign of the variable by moving :var:`min` or  or :var:`max` to zero depending on the sign of its initial value. (default: ``false``). 
+	A *logical* enforcing the sign of the variable by moving :var:`min` or :var:`max` to zero depending on the sign of its initial value. (default: ``false``). 
 	Example: ``sign = true``.
 
 **slope** 
@@ -236,11 +236,11 @@ The *variable-attributes* is a set of attributes that specify a single variable:
 	Example: ``slope = - 1``.
 
 **step** 
-	A small positive *number* used to approximate the derivatives using the  method. If the value is not provided, the command will use some heuristic.  (default: ``nil``). 
+	A small positive *number* used to approximate the derivatives using the :ref:`sec.match.der` method. If the value is not provided, the command will use some heuristic. (default: ``nil``). 
 	Example: ``step = 1e- 6``.
 
 **tol** 
-	A *number* specifying the tolerance on the variable step. If an update is smaller than  A *number* specifying the tolerance on the variable step. If an update is smaller than ``tol``, the command will return the status , the command will return the status ``"XTOL"``}. (default: ``0``). 
+	A *number* specifying the tolerance on the variable step. If an update is smaller than ``tol``, the command will return the status ``"XTOL"``. (default: ``0``). 
 	Example: ``tol = 1e- 8``.
 
 **get** 
@@ -255,25 +255,25 @@ The *variable-attributes* is a set of attributes that specify a single variable:
 The *variables-attributes* is a set of attributes that specify all variables together, but with a lower precedence than the single variable specification of the same name unless otherwise specified:
 
 **min**
-	 Idem :ref:`variable-attributes <par.match.var>`  but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
 
 **max**
-	 Idem :ref:`variable-attributes <par.match.var>`  but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
 
 **sign**
-	 Idem :ref:`variable-attributes <par.match.var>`  but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
 
 **slope**
-	 Idem :ref:`variable-attributes <par.match.var>`  but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
 
 **step**
-	 Idem :ref:`variable-attributes <par.match.var>`  but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
 
 **tol**
-	 Idem :ref:`variable-attributes <par.match.var>`  but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
 
 **rtol** 
-	A *number* specifying the relative tolerance on all variable steps. If an update is smaller than  A *number* specifying the relative tolerance on all variable steps. If an update is smaller than ``rtol`` relative to its variable value, the command will return the status  relative to its variable value, the command will return the status ``"XTOL"``\ . (default: :const:`eps`). 
+	A *number* specifying the relative tolerance on all variable steps. If an update is smaller than ``rtol`` relative to its variable value, the command will return the status ``"XTOL"``\ . (default: :const:`eps`). 
 	Example: ``tol = 1e- 8``.
 
 **nvar**
@@ -281,7 +281,7 @@ The *variables-attributes* is a set of attributes that specify all variables tog
  	Example: ``nvar = 15``.
 
 **get**
-	A *callable* ``(x, e)`` updating a *vector* passed as first argument with the values of all variables, optionally using the matching environment passed as second argument.  This attribute supersedes all single variable ``get`` and may be useful when it is better to read all the variables together, or when they are all *local*\ s or *upvalue*\ s. (default: ``nil``). 
+	A *callable* ``(x, e)`` updating a *vector* passed as first argument with the values of all variables, optionally using the matching environment passed as second argument. This attribute supersedes all single variable ``get`` and may be useful when it is better to read all the variables together, or when they are all *local*\ s or *upvalue*\ s. (default: ``nil``). 
 	Example: ``get = \x,e -> e.usrdef.var:copy(x)``.
 
 **set**
@@ -318,7 +318,7 @@ The attributes ``equalities`` (default: ``{}``) and ``inequalities`` (default: `
 The *constraint-attributes* is a set of attributes that specify a single constraint, either an *equality* or an *inequality*:
 
 	**expr** 
-		A *callable* ``(r, e)`` returning the constraint value as a *number*, optionally using the result of  passed as first argument, and the matching environment passed as second argument. (default: ``nil``)
+		A *callable* ``(r, e)`` returning the constraint value as a *number*, optionally using the result of ``command`` passed as first argument, and the matching environment passed as second argument. (default: ``nil``)
 		Example: ``expr = \t -> t.IP8.beta11 - beta_ip8``.
 
 	**name**
@@ -326,11 +326,11 @@ The *constraint-attributes* is a set of attributes that specify a single constra
 		Example: ``name = "betx@IP8"``.
 
 	**kind** 	
-		A *string* specifying the kind to refer to for the weight of the constraint, taken either in the user-defined or in the default  specifying the kind to refer to for the weight of the constraint, taken either in the user-defined or in the default :ref:`weights-list<par.match.wght>`\ . (default: ``nil``). 
+		A *string* specifying the kind to refer to for the weight of the constraint, taken either in the user-defined or in the default :ref:`weights-list<par.match.wght>`\ . (default: ``nil``). 
 		Example: ``kind = "dq1"``.
 
 	**weight**
-		A *number* used to override the weight of the constraint.  (default: ``nil``). 
+		A *number* used to override the weight of the constraint. (default: ``nil``). 
 		Example: ``weight = 100``.
 
 	**tol** 
@@ -348,7 +348,7 @@ The *constraints-attributes* is a set of attributes that specify all equalities 
 		Example: ``nequ = 15``.
 
 	**exec**
-		A *callable* ``(x, c, cjac)`` updating a *vector* passed as second argument with the values of all constraints, and updating an optional  updating a *vector* passed as second argument with the values of all constraints, and updating an optional *matrix* passed as third argument with the Jacobian of all constraints (if not ``nil``), using the variables values passed in a *vector* as first argument. This attribute supersedes all constraints ``expr`` and may be useful when it is better to update all the constraints together. (default: ``nil``). 
+		A *callable* ``(x, c, cjac)`` updating a *vector* passed as second argument with the values of all constraints, and updating an optional *matrix* passed as third argument with the Jacobian of all constraints (if not ``nil``), using the variables values passed in a *vector* as first argument. This attribute supersedes all constraints ``expr`` and may be useful when it is better to update all the constraints together. (default: ``nil``). 
 		Example: ``exec = myinequ``, where (``nvar=2`` and ``nequ=2``)
 
 .. code::
@@ -416,7 +416,7 @@ The attribute ``objective`` (default: ``{}``) defines the objective that the com
 
 .. code-block::
 
-	objective = {  objective-attributes },
+	objective = { objective-attributes },
 
 .. _par.match.obj:
 
@@ -427,7 +427,7 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 		Example: ``method = "LD_LMDIF"``.
 
 	**submethod** 
-		A *string* specifying the algorithm from NLopt module to use for solving the problem locally when the method is an augmented algorithm, see Tables :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd` (default:  ``"LN_COBYLA"``). 
+		A *string* specifying the algorithm from NLopt module to use for solving the problem locally when the method is an augmented algorithm, see Tables :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd` (default: ``"LN_COBYLA"``). 
 		Example: ``method = "AUGLAG", submethod = "LD_SLSQP"``.
 
 	**fmin** 
@@ -462,7 +462,7 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 
 		local function myfun(x, fgrd) 
 			if =fgrd then -- fill [2x1] vector if present
-				fgrd:fill { 0,  0.5/sqrt(x[2]) }
+				fgrd:fill { 0, 0.5/sqrt(x[2]) }
 		 	end
 			return sqrt(x[2])
 		end
@@ -557,8 +557,8 @@ The ``match`` command will stop the iteration of the algorithm and return one of
 	``FMIN``
 		Check :math:`f\leq f_{\min}` if :math:`c_{\text{fail}} = 0` or ``bstra == 0``, where :math:`f` is the current value of the objective function, and :math:`c_{\text{fail}}` is the number of failed constraints (i.e. feasible point).
 
-	``FTOL``  
-		Check :math:`|\Delta f| \leq f_{\text{tol}}` or :math:`|\Delta f| \leq f_{\text{rtol}}\,|f|`  if :math:`c_{\text{fail}} = 0`, where :math:`f` and :math:`\Delta f` are the current value and step of the objective function, and :math:`c_{\text{fail}}` the number of failed constraints (i.e. feasible point).
+	``FTOL`` 
+		Check :math:`|\Delta f| \leq f_{\text{tol}}` or :math:`|\Delta f| \leq f_{\text{rtol}}\,|f|` if :math:`c_{\text{fail}} = 0`, where :math:`f` and :math:`\Delta f` are the current value and step of the objective function, and :math:`c_{\text{fail}}` the number of failed constraints (i.e. feasible point).
 
 	``XTOL``
 		Check :math:`\max (|\Delta \vec{x}|-\vec{x}_{\text{tol}}) \leq 0` or :math:`\max (|\Delta \vec{x}|-\vec{x}_{\text{rtol}}\circ|\vec{x}|) \leq 0`, where :math:`\vec{x}` and :math:`\Delta\vec{x}` are the current values and steps of the variables. Note that these criteria are checked even for non feasible points, i.e. :math:`c_{\text{fail}} > 0`, as the algorithm can be trapped in a local minima that does not satisfy the constraints.
@@ -629,7 +629,7 @@ Hence the approximation of the Jacobian will need an extra evaluation of the obj
 .. math:: 
     \vec{J}_{k+1} = \vec{J}_{k} + \frac{\vec{f}(\vec{x}_{k}+\vec{h}_k) - \vec{f}(\vec{x}_{k}) - \vec{J}_{k}\,\vec{h}_{k}}{\|\vec{h}_{k}\|^2}\,\vec{h}^T_k
 
-The update of the :math:`i`-th column of the Jacobian by the Broyden approximation makes sense if the angle between :math:`\vec{h}` and :math:`\vec{e}_i` is small, that is when :math:`|\vec{h}^T\vec{e}_i| \geq \gamma\,\|\vec{h}\|`. The  command uses a rather pessimistic choice of :math:`\gamma = 0.8`, which gives good performance. Nevertheless, it is advised to always check if Broyden's update saves evaluations of the objective function for your study.
+The update of the :math:`i`-th column of the Jacobian by the Broyden approximation makes sense if the angle between :math:`\vec{h}` and :math:`\vec{e}_i` is small, that is when :math:`|\vec{h}^T\vec{e}_i| \geq \gamma\,\|\vec{h}\|`. The ``match`` command uses a rather pessimistic choice of :math:`\gamma = 0.8`, which gives good performance. Nevertheless, it is advised to always check if Broyden's update saves evaluations of the objective function for your study.
 
 .. _sec.match.conso:
 
@@ -925,7 +925,7 @@ The following example hereafter shows how to squeeze the beam 1 of the LHC to :m
 	lhcb1.range = SS.."/"..ES 
 	for n=1,2 do 
 		 beta_ip8 = beta_ip8*0.6 
-		 local status, fmin, ncall = match {  
+		 local status, fmin, ncall = match { 
 			command := twiss { sequence=lhcb1, X0=bir8b1, method=4, observe=1 }, 
 			variables = { sign=true, rtol=1e-8, -- 20 variables 
 			 { var='MADX.kq4_l8b1', name='kq4.l8b1', min=-lim2, max=lim2 }, 

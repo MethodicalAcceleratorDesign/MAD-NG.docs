@@ -12,7 +12,7 @@ MAD-NG is free open-source software, distributed under the GNU General Public Li
 Installation
 ------------
 
-Download the binary corresponding to your platform from the `releases repository`_ and install it in a local directory. Update (or check) that the  and install it in a local directory. Update (or check) that the ``PATH`` environment variable contains the path to your local directory or prefix  environment variable contains the path to your local directory or prefix ``mad`` with this path to run it. Rename the application from  with this path to run it. Rename the application from ``mad-arch-v.m.n`` to  to ``mad`` and make it executable with the command ' and make it executable with the command '``chmod u+x mad``' on Unix systems or add the  extension on Windows.
+Download the binary corresponding to your platform from the `releases repository`_ and install it in a local directory. Update (or check) that the ``PATH`` environment variable contains the path to your local directory or prefix ``mad`` with this path to run it. Rename the application from ``mad-arch-v.m.n`` to ``mad`` and make it executable with the command '``chmod u+x mad``' on Unix systems or add the ``.exe`` extension on Windows.
 
 .. code-block:: console
 	
@@ -51,7 +51,7 @@ MAD-NG releases are tagged on the Github repository and use mangled binary names
 Interactive Mode
 ----------------
 
-To run MAD-NG in interactive mode, just typewrite its name on the Shell invite like any command-line tool. It is recommended to wrap MAD-NG with the `readline wrapper <http://github.com/hanslub42/rlwrap>`_  in interactive mode for easier use and commands history:
+To run MAD-NG in interactive mode, just typewrite its name on the Shell invite like any command-line tool. It is recommended to wrap MAD-NG with the `readline wrapper <http://github.com/hanslub42/rlwrap>`_ ``rlwrap`` in interactive mode for easier use and commands history:
 
 .. code-block:: console
 
@@ -195,7 +195,7 @@ Complementary to the ``help`` function, the function ``show`` displays the type 
 
 .. rubric:: Footnotes
 
-.. [#f1] MAD-NG embeds the libraries  `FFTW <http://github.com/FFTW>`_ `NFFT <http://github.com/NFFT>`_ and `NLopt <http://github.com/stevengj/nlopt>`_ released under GNU (L)GPL too.
+.. [#f1] MAD-NG embeds the libraries `FFTW <http://github.com/FFTW>`_ `NFFT <http://github.com/NFFT>`_ and `NLopt <http://github.com/stevengj/nlopt>`_ released under GNU (L)GPL too.
 .. [#f5] MAD-NG has few thousands unit tests that do few millions checks, and it is constantly growing.
 .. [#f2] Note that sending ``Crtl+D`` twice from MAD-NG invite will quit both MAD-NG and its parent Shell...
 .. [#f3] A chunk is the unit of execution in Lua (see `Lua 5.2 <http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf>`_ §3.3.2).

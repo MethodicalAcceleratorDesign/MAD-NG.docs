@@ -8,7 +8,7 @@ Command synopsis
 ----------------
 .. _sec.twiss.synop:
 
-The ``twiss`` command format is summarized in the :numref:`fig-twiss-synop`, including the default setup of the attributes. Most of these attributes are set to ``nil`` by default, meaning that ``twiss`` relies on the ``track`` and the ``cofind`` commands defaults.
+The ``twiss`` command format is summarized in :numref:`fig-twiss-synop`, including the default setup of the attributes. Most of these attributes are set to ``nil`` by default, meaning that ``twiss`` relies on the ``track`` and the ``cofind`` commands defaults.
 
 .. code-block:: lua
 	:name: fig-twiss-synop
