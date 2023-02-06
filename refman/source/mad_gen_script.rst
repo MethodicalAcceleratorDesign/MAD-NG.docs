@@ -12,7 +12,7 @@ The easiest way to shortly describe these choices is to cite their authors.
 
 *"Lua is a powerful, efficient, lightweight, embeddable scripting language. It supports procedural programming, object-oriented programming, functional programming, data-driven programming, and data description. Lua combines simple procedural syntax with powerful data description constructs based on associative arrays and extensible semantics. Lua is dynamically typed and has automatic memory management with incremental garbage collection, making it ideal for configuration, scripting, and rapid prototyping."* [#f1]_ 
 
-*"LuaJIT\index{LuaJIT} is widely considered to be one of the fastest dynamic language implementations. It has outperformed other dynamic languages on many cross-language benchmarks since its first release in 2005 --- often by a substantial margin --- and breaks into the performance range traditionally reserved for offline, static language compilers."* [#f2]_ 
+*"LuaJIT is widely considered to be one of the fastest dynamic language implementations. It has outperformed other dynamic languages on many cross-language benchmarks since its first release in 2005 --- often by a substantial margin --- and breaks into the performance range traditionally reserved for offline, static language compilers."* [#f2]_ 
 
 Lua and LuaJIT are free open-source software, distributed under the very liberal MIT license.
 
@@ -270,7 +270,7 @@ The operator precedence (see `Lua 5.2`_ §3.4.7) is recapped and extended in :nu
 	+--+-----------------------------------------------+------------------+
 	|7:| 	not   #  -  + (unary)                      |  left            |
 	+--+-----------------------------------------------+------------------+
-	|8:| 	\POW                                       |  right           |
+	|8:| 	^                                          |  right           |
 	+--+-----------------------------------------------+------------------+
 	|9:| 	.  []  () (call)                           |  left            |
 	+--+-----------------------------------------------+------------------+
@@ -328,7 +328,7 @@ MAD-NG is based on Lua, a dynamically typed programming language that provides t
 
 
 *thread* 
-	See `Lua 5.2`_ §2.6 for details.
+	 The type of coroutines, see `Lua 5.2`_ §2.6 for details.
 
 *userdata*
 	The type of raw pointers with memory managed by Lua, and its companion *lightuserdata* with memory managed by the host language, usually C. They are mainly useful for interfacing Lua with its C API, but MAD-NG favors the faster FFI [#f11]_ extension of LuaJIT.
@@ -355,14 +355,13 @@ The types *nil*, *boolean* and *number* have a semantic by *value*, meaning that
 
 The types *string*, *function*, *table*, *thread*, *userdata* and *cdata* have a semantic by *reference*, meaning that variables, arguments, return values, etc., do not store their instances directly but a *reference* to them. As a consequence, any assignment makes a copy of the *reference* and the instance becomes shared, i.e. references have a semantic by *value* but changing the content of the value does change the copy. [#f12]_ 
 
-The types *string*, *function* [#f13]_, *thread* , :var:`cpx` *cdata* and numeric (:literal:`log`):literal:`range` *cdata* have a hybrid semantic. In practice these types have a semantic by *reference*, but they behave like types with semantic by *value* because their instances are immutable, and therefore sharing them is safe.
-
+The types *string*, *function* [#f13]_, *thread*, :var:`cpx` *cdata* and numeric (:literal:`log`):literal:`range` *cdata* have a hybrid semantic. In practice these types have a semantic by *reference*, but they behave like types with semantic by *value* because their instances are immutable, and therefore sharing them is safe.
 
 
 Concepts
 --------
 
-The concepts are natural extensions of types that concentrate more on behavior of objects [#f8]_than on types. MAD-NG introduces many concepts to validate objects passed as argument before using them. The main concepts used in this textbook are listed below, see the \hyperref[ch:mod:types]{\TT{typeid} module for more concepts:
+The concepts are natural extensions of types that concentrate more on behavior of objects [#f8]_ than on types. MAD-NG introduces many concepts to validate objects passed as argument before using them. The main concepts used in this textbook are listed below, see the :doc:`typeid </mad_mod_types>` module for more concepts:
 
 *lengthable*
 	An object that can be sized using the length operator :literal:`#`. Strings, lists, vectors and ranges are examples of *lengthable* objects.

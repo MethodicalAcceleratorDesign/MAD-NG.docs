@@ -7,7 +7,7 @@ Presentation
 
 The Methodical Accelerator Design -- Next Generation application is an all-in-one standalone versatile tool for particle accelerator design, modeling, and optimization, and for beam dynamics and optics studies. Its general purpose scripting language is based on the simple yet powerful Lua programming language (with a few extensions) and embeds the state-of-art Just-In-Time compiler LuaJIT. Its physics is based on symplectic integration of differential maps made out of GTPSA (Generalized Truncated Power Series). The physics of the transport maps and the normal form analysis were both strongly inspired by the PTC/FPP library from E. Forest. MAD-NG development started in 2016 by the author as a side project of MAD-X, hence MAD-X users should quickly become familiar with its ecosystem, e.g. lattices definition.
 
-MAD-NG is free open-source software, distributed under the GNU General Public License v3. The source code, units tests, integration tests, and examples are all available on its Github `repository <https://github.com/MethodicalAcceleratorDesign/MAD>`_, including the `documentation <https://github.com/MethodicalAcceleratorDesign/MADdocs>`_ and its LaTeX source. For convenience, the binaries and few examples are also made available from the `releases repository <http://cern.ch/mad/releases/madng/>`_ located on the AFS shared file system at CERN.
+MAD-NG is free open-source software, distributed under the GNU General Public License v3 [#f1]_. The source code, units tests, [#f5]_ integration tests, and examples are all available on its Github `repository <https://github.com/MethodicalAcceleratorDesign/MAD>`_, including the `documentation <https://github.com/MethodicalAcceleratorDesign/MADdocs>`_ and its LaTeX source. For convenience, the binaries and few examples are also made available from the `releases repository <http://cern.ch/mad/releases/madng/>`_ located on the AFS shared file system at CERN.
 
 Installation
 ------------
@@ -60,13 +60,9 @@ To run MAD-NG in interactive mode, just typewrite its name on the Shell invite l
       /  \/  \   /  _  \   /  _  \   |   release: 0.9.0 (OSX 64)
      /  __   /  /  /_/ /  /  /_/ /   |   support: http://cern.ch/mad
     /__/  /_/  /__/ /_/  /_____ /    |   licence: GPL3 (C) CERN 2016+
-                                     |   started: 2020-08-01 20:13:51
-
-
-.. code-block::
-	
-	> print "hello world!"
-	"hello world!"
+                                     |   started: 2020-08-01 20:13:51	
+  > print "hello world!"
+  hello world!"
 
 Here the application is assumed to be installed in the current directory '`.`' and the character ':literal:`>`' is the prompt waiting for user input in interactive mode. If you write an incomplete statement, the interpreter waits for its completion by issuing a different prompt:
 
@@ -88,10 +84,10 @@ Typing the character ':literal:`=`' right after the 1st level prompt is equivale
 
 To quit the application typewrite :literal:`Crtl+D` to send :literal:`EOF` (end-of-file) on the input, [#f2]_ :literal:`Crtl+\` to send the :literal:`SIGQUIT` (quit) signal, or :literal:`Crtl+C` to send the stronger :literal:`SIGINT` (interrupt) signal. If the application is stalled or looping for ever, typewriting a single :literal:`Crtl+\` or :literal:`Crtl+C` twice will stop it:
 
-.. code-block::
+.. code-block::  
 	
 	> while true do end    -- loop forever, 1st Crtl+C doesn't stop it
-	pending interruption (*in*) VM! (next will exit)         -- 2nd Crtl+C
+	pending interruption in VM! (next will exit)         -- 2nd Crtl+C
 	interrupted!           -- application stopped
 	
 	> while true do end    -- loop forever, a single Crtl+\ does stop it
@@ -106,7 +102,7 @@ In interactive mode, each line input is run in its own *chunk* [#f3]_, which als
 	> print(a.." world!")
 	  stdin:1: attempt to concatenate global 'a' (a nil value)
 	  stack traceback:
-	  stdin:1: (*in*) main chunk
+	  stdin:1: in main chunk
 	  [C]: at 0x01000325c0
 	
 	> do                   -- 1st level prompt, open the chunck

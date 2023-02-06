@@ -31,7 +31,7 @@ The :var:`beam` *object* provides the following attributes:
 **aphot**
 	 A *lambda* returning the average number of photon emitted per bending unit, 
 
-	 :math:`\mathrm{aphot} = \mathrm{kpht\_GeV}\times\mathrm{charge}^2*\mathrm{betgam}` where :math:`\mathrm{kpht\_GeV}` :math:`= \frac{5}{2\sqrt{3}}`.
+	 :math:`\mathrm{aphot} = \mathrm{kpht\_GeV}\times\mathrm{charge}^2\times\mathrm{betgam}` where :math:`\mathrm{kpht\_GeV}` :math:`= \frac{5}{2\sqrt{3}}`.
 
 **energy**
 	 A *number* specifying the particle energy [GeV]. (default: :const:`1`).
@@ -109,18 +109,18 @@ The :var:`beam` *object* provides the following attributes:
 
 The :var:`beam` *object* also implements a special protect-and-update mechanism for its attributes to ensure consistency and precedence between the physical quantities stored internally:
 
-#.	 The following attributes are *read-only*, i.e. writing to them triggers an error:
+*	 The following attributes are *read-only*, i.e. writing to them triggers an error:
 		:literal:`mass, charge, spin, emrad, aphot`
 
-#.	 The following attributes are *read-write*, i.e. hold values, with their accepted numerical ranges:
+*	 The following attributes are *read-write*, i.e. hold values, with their accepted numerical ranges:
 		:literal:`particle, energy` :math:`>` :var:`mass`,
 		:literal:`ex` :math:`>0`, :literal:`ey` :math:`>0`, :literal:`et` :math:`>0`,
 		:literal:`nbunch` :math:`>0`, :literal:`npart` :math:`>0`, :literal:`sigt` :math:`>0`, :literal:`sige` :math:`>0`.
 
-#.	 The following attributes are *read-update*, i.e. setting these attributes update the :literal:`energy`, with their accepted numerical ranges:
+*	 The following attributes are *read-update*, i.e. setting these attributes update the :literal:`energy`, with their accepted numerical ranges:
 		:literal:`pc` :math:`>0`, :math:`0.9>` :literal:`beta` :math:`>0`, :literal:`gamma` :math:`>1`, :literal:`betgam` :math:`>0.1`, :literal:`brho` :math:`>0`,
 		:literal:`pc2`, :literal:`beta2`, :literal:`betgam2`.
-#.	 The following attributes are *read-update*, i.e. setting these attributes update the emittances :literal:`ex`, :literal:`ey`, and :literal:`et` repectively, with their accepted numerical ranges:
+*	 The following attributes are *read-update*, i.e. setting these attributes update the emittances :literal:`ex`, :literal:`ey`, and :literal:`et` repectively, with their accepted numerical ranges:
 		:literal:`exn` :math:`>0`, :literal:`eyn` :math:`>0`, :literal:`etn` :math:`>0`.
 
 
@@ -188,7 +188,7 @@ The particles database can be displayed with the :func:`showdb` method at any ti
 Particle charges
 ----------------
 
-The physics of \MAD is aware of particle charges. To enable the compatibility with codes like MAD-X that ignores the particle charges, the global option :var:`nocharge` can be used to control the behavior of created beams as shown by the following example:
+The physics of MAD-NG is aware of particle charges. To enable the compatibility with codes like MAD-X that ignores the particle charges, the global option :var:`nocharge` can be used to control the behavior of created beams as shown by the following example:
 
 .. code-block:: lua
 	
@@ -208,7 +208,7 @@ This approach ensures consistency of beams behavior during their entire lifetime
 Examples
 --------
 
-
+The following code snippet creates the LHC lead beams made of bare nuclei :math:`^{208}\mathrm{Pb}^{82+}`
 
 .. code-block:: lua
 	

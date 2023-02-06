@@ -4,6 +4,8 @@ Objects
 
 The object model is of key importance as it implements many features used extensively by objects like :var:`beam`, :var:`sequence`, :literal:`mtable`, all the commands, all the elements, and the :literal:`MADX` environment. The aim of the object model is to extend the scripting language with concepts like objects, inheritance, methods, metamethods, deferred expressions, commands and more.
 
+In computer science, the object model of MAD-NG is said to implement the concepts of prototypical objects, single inheritance and dynamic lookup of attributes:
+
 	*	 A *prototypical object* is an object created from a prototype, [#f1]_ named its parent.
 	*	 *Single inheritance* specifies that an object has only one direct parent.
 	*	 *Dynamic lookup* means that undefined attributes are searched in the parents at *each* read.
@@ -117,10 +119,11 @@ The :literal:`object` module extends the :doc:`typeid <mad_mod_types>` module wi
 .. code-block::
 	
 	local is_object in MAD.typeid
-	print(is_object(object), is_object(object), is_object)
+	print(is_object(object), is_object(object{}), is_object{})
 	-- display: true  true  false
 
 It is possible to know the objects qualifiers using the appropriate methods: 
+
 .. code-block::
 	
 	print(object:is_class(), object:is_final(), object:is_readonly())
@@ -208,7 +211,7 @@ To get the list of *public* attributes of an instance, use the :meth:`:get_varke
 	for _,a in ipairs(hmonitor:get_varkeys(instrument)) do print(a) end
 	for _,a in ipairs(element:get_varkeys()) do print(a) end
 
-
+The code snippet above lists the names of the attributes set by:
 
 	*	 the object :literal:`hmonitor` (only).
 	*	 the objects in the hierachy from :literal:`hmonitor` to :literal:`object` included.
@@ -220,7 +223,7 @@ Examples
 """"""""
 
 .. _fig.gen.objmod:
-.. figure:: fig/dyna-trck-slice-crop.png
+.. figure:: fig/objmod-lookup-crop.png
 	:align: center
 	
 	Object model and inheritance.
@@ -293,7 +296,7 @@ The root :literal:`object` provides the following attributes:
 Methods
 -------
 
-New methods can be added to objects but not classes, using the :literal:`:set_methods(set)` :literal:`set` being the *set* of methods to add as in the following example:
+New methods can be added to objects but not classes, using the :literal:`:set_methods(set)` *method* with :literal:`set` being the *set* of methods to add as in the following example:
 
 .. code-block::
 	
@@ -458,7 +461,7 @@ New metamethods can be added to objects but not classes, using the :meth:`:set_m
 	  ...
 	}
 
-
+where the keys are the names of the added metamethods and their values must be a *callable* accepting the object itself, i.e. ``self``, as their first argument. Classes cannot set new metamethods.
 
 The root :literal:`object` provides the following metamethods:
 
