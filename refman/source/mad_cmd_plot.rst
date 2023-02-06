@@ -2,7 +2,7 @@ Plot
 ====
 .. _ch.cmd.plot:
 
-The ``plot`` command provides a simple interface to the `Gnuplot <http://www.gnuplot.info>`_ application. The Gnuplot release 5.2 or higher must be installed and visible in the user ``PATH`` by MAD to be able to run this command.
+The :literal:`plot` command provides a simple interface to the `Gnuplot <http://www.gnuplot.info>`_ application. The Gnuplot release 5.2 or higher must be installed and visible in the user :literal:`PATH` by MAD to be able to run this command.
 
 Command synopsis
 ----------------
@@ -10,7 +10,7 @@ Command synopsis
 
 .. code-block:: lua
 	:name: fig-plot-synop
-	:caption: Synopsis of the ``plot`` command with default setup.
+	:caption: Synopsis of the :literal:`plot` command with default setup.
 
 	cmd = plot { 
 		sid			= 1,	 -- stream id 1 <= n <= 25 (Gnuplot instances)
@@ -38,20 +38,20 @@ Command synopsis
 	}
 
 
-The ``plot`` command format is summarized in :numref:`fig-plot-synop`, including the default setup of the attributes.
-The ``plot`` command supports the following attributes:
+The :literal:`plot` command format is summarized in :numref:`fig-plot-synop`, including the default setup of the attributes.
+The :literal:`plot` command supports the following attributes:
 
 .. _plot.attr:
 
 	**info**
-		A *number* specifying the information level to control the verbosity of the output on the console. (default: ``nil``). 
-		Example: ``info = 2``.
+		A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
+		Example: :expr:`info = 2`.
 
 	**debug**
-		A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: ``nil``). 
-		Example: ``debug = 2``.
+		A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
+		Example: :expr:`debug = 2`.
 
-The ``plot`` command returns itself.
+The :literal:`plot` command returns itself.
 
 .. rubric:: Footnotes
 

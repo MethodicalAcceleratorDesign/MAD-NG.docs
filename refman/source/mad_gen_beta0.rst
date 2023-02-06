@@ -4,35 +4,35 @@ Beta0 Blocks
 
 
 
-The ``beta0`` object is the *root object* of beta0 blocks that store information relative to the phase space at given positions, e.g. initial conditions, Poincaré section.
+The :var:`beta0` object is the *root object* of beta0 blocks that store information relative to the phase space at given positions, e.g. initial conditions, Poincaré section.
 
-The ``beta0`` module extends the :doc:`typeid <mad_mod_types>` module with the ``is_beta0`` *function*, which returns ``true`` if its argument is a ``beta0`` object, ``false`` otherwise.
+The :var:`beta0` module extends the :doc:`typeid <mad_mod_types>` module with the :func:`is_beta0` *function*, which returns :const:`true` if its argument is a :var:`beta0` object, :const:`false` otherwise.
 
 Attributes
 ----------
 
-The ``beta0`` *object* provides the following attributes:
+The :var:`beta0` *object* provides the following attributes:
 
 **particle**
-	 A *string* specifying the name of the particle. (default: ``"positron"``).
+	 A *string* specifying the name of the particle. (default: :literal:`"positron"`).
 
 
 Methods
 -------
 
-The ``beta0`` object provides the following methods:
+The :var:`beta0` object provides the following methods:
 
 **showdb**
-	 A *method*	``([file])`` displaying the content of the particles database to ``file`` (default: ``io.stdout``).
+	 A *method*	:literal:`([file])` displaying the content of the particles database to :literal:`file` (default: :literal:`io.stdout`).
 
 
 Metamethods
 -----------
 
-The ``beta0`` object provides the following metamethods:
+The :var:`beta0` object provides the following metamethods:
 
 **__init**
-	 A *metamethod*	``()`` returning \SLF after having processed the attributes with the special protect-and-update mechanism, where the order of the updates is undefined. It also creates new particle on-the-fly if the ``mass`` and the ``charge`` are defined, and then select it.
+	 A *metamethod*	:literal:`()` returning :literal:`self` after having processed the attributes with the special protect-and-update mechanism, where the order of the updates is undefined. It also creates new particle on-the-fly if the :var:`mass` and the :var:`charge` are defined, and then select it.
 
 
 
