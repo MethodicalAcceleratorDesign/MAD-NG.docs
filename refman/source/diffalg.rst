@@ -39,7 +39,7 @@ The validity of the polynomial representation :math:`T_f^n(x;a)` for the real or
 and the `radius of convergence <https://en.wikipedia.org/wiki/Radius_of_convergence>`_ :math:`h` of :math:`T_f^n(x;a)` nearby the point :math:`a` is given by:
 
 .. math::
-   \min_{h>0} \lim_{n \rightarrow \infty} R_f^n(a\pm h ; a) \neq 0.
+   \min_{h>0} \lim_{n \rightarrow \infty} R_f^n(x\pm h ; a) \neq 0.
 
 By using the `mean value theorem <https://en.wikipedia.org/wiki/Mean_value_theorem>`_ recursively we can derive the explicit mean-value form of the remainder:
 
@@ -51,7 +51,9 @@ for some :math:`\xi` strictly between :math:`x` and :math:`a`, leading to the me
 .. math::
    f_a(x) = T_f^n(x ; a) + R_f^n(x ; a) = \sum_{k=0}^{n} \frac{f_{a}^{(k)}}{k!}(x-a)^k + \frac{f^{(n+1)}_a(\xi)}{(n+1)!} (x-a)^{n+1}
 
-In practice, a truncation error is always present due to the truncated nature of the TPSA at order :math:`n`, but it is rarely calculated analytically for complex systems as it can be estimated by comparing the calculations at high and low orders, and determining the lowest order for which the result is sufficiently stable.
+Note that a large radius of convergence does not necessarily mean rapid convergence of the Taylor series to the function, although there is a relationship between the rate of convergence, the function :math:`f`, the point :math:`a` and the length :math:`h`. Nevertheless, Taylor series are known to be slow to converge in most cases for numerical applications, except in some cases where appropriate range reduction or `convergence acceleration <https://en.wikipedia.org/wiki/Series_acceleration>`_ methods give good results. Thus, Taylor series should not be used as interpolation functions when better formulas exist for this purpose, see for example fixed-point or `minmax <https://en.wikipedia.org/wiki/Minimax_approximation_algorithm>`_ algorithms.
+
+In our practice, a truncation error is always present due to the truncated nature of the TPSA at order :math:`n`, but it is rarely calculated analytically for complex systems as it can be estimated by comparing the calculations at high and low orders, and determining the lowest order for which the result is sufficiently stable.
 
 By extension, a TPSA in the two variables :math:`x` and :math:`y` at order 2 in the neighbourhood of the point :math:`(a,b)` in the domain of the function :math:`f`, noted :math:`T_f^2(x,y;a,b)`, has the following representation:
 
@@ -98,7 +100,7 @@ MAD-NG is a tracking code that never composes elements maps during tracking, but
 
 Users may be tempted to compute or compose elements maps to model whole elements or even large lattice sections before applying them to some input differential maps in order to speed up tracking or parallelise computations. But this approach leads to the two types of approximations that we have just explained: the resulting map is not only truncated, thus loosing local feed-down effects implied by e.g. a translation from orbit :math:`x` to :math:`x+h(s)` along the path :math:`s` or equivalently by the misalignment of the elements, but the derivatives are also approximated for each particle orbit by the global composition calculated on a nearby orbit, typically the zero orbit. So as the addition of floating point numbers is not associative, the composition of truncated maps is not associative too.
 
-The following equations show the successive refinement of the calculations during tracking, starting from the worst but common approximations at the top-left to the more general and accurate functional application without approximation at the bottom-right, as computed by MAD-NG:
+The following equations show the successive refinement of the type of calculations performed by the tracking codes, starting from the worst but common approximations at the top-left to the more general and accurate functional application without approximation at the bottom-right, as computed by MAD-NG:
 
 .. math::
    ({\mathcal M}_n \circ \cdots \circ {\mathcal M}_2 \circ {\mathcal M}_1) (X_0)
@@ -152,4 +154,4 @@ C API
 
 .. rubric:: Footnotes
 
-.. .. [#f1] The situation may be slightly different in RF cavities depending on the model used. 
+.. .. [#f1] The situation may be slightly different in RF cavities depending on the model used.
