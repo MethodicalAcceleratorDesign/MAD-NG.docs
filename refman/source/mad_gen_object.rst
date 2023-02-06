@@ -112,7 +112,7 @@ An object used as a prototype to create new objects becomes a *class*, and a cla
 Identification
 """"""""""""""
 
-The ``object`` module extends the :doc:`typeid <types>` module with the ``is_object(a)`` *function*, which returns ``true`` if its argument ``a`` is an object, ``false`` otherwise:
+The ``object`` module extends the :doc:`typeid <mad_mod_types>` module with the ``is_object(a)`` *function*, which returns ``true`` if its argument ``a`` is an object, ``false`` otherwise:
 
 .. code-block::
 	
@@ -135,7 +135,7 @@ During the creation process of objects, the metamethod ``__init(self)`` is invok
 Inheritance
 -----------
 
-The object model allows to build tree-like inheritance hierarchy by creating objects from classes, themselves created from other classes, and so on until the desired hierarchy is modeled. The example below shows an excerpt of the taxonomy of the elements as implemented by the :doc:`element <elements>` module, with their corresponding depth levels in comment:
+The object model allows to build tree-like inheritance hierarchy by creating objects from classes, themselves created from other classes, and so on until the desired hierarchy is modeled. The example below shows an excerpt of the taxonomy of the elements as implemented by the :doc:`element <mad_gen_elements>` module, with their corresponding depth levels in comment:
 
 .. code-block::
 	
@@ -244,7 +244,7 @@ Examples
 	print(qf1.k1, qf1.l)             -- display: 0.06 2.1 (lookup)
 	print(#element:get_varkeys())    -- display: 33 (may vary)
 
-The element ``quadrupole`` provided by the :doc:`element <elements>` module is the father of the objects created on its left. The *black arrows* show the user defined hierarchy of object created from and linked to the ``quadrupole``. The main quadrupole ``mq`` is a user class representing the physical element, e.g. defining a length, and used to create two new classes, a focusing quadrupole ``qf`` and a defocusing quadrupole ``qd`` to model the circuits, e.g. hold the strength of elements connected in series, and finally the real individual elements ``qf1``, ``qd1``, ``qf2`` and ``qd2`` that will populate the sequence. A tracking command will request various attributes when crossing an element, like its length or its strength, leading to lookup of different depths in the hierarchy along the *red arrow*. A user may also write or overwrite an attribute at different level in the hierarchy by accessing directly to an element, as shown by the *purple arrows*, and mask an attribute of the parent with the new definitions in the children. The construction shown in this example follows the *separation of concern* principle and it is still highly reconfigurable despite that is does not contain any deferred expression or lambda function.
+The element ``quadrupole`` provided by the :doc:`element <mad_gen_elements>` module is the father of the objects created on its left. The *black arrows* show the user defined hierarchy of object created from and linked to the ``quadrupole``. The main quadrupole ``mq`` is a user class representing the physical element, e.g. defining a length, and used to create two new classes, a focusing quadrupole ``qf`` and a defocusing quadrupole ``qd`` to model the circuits, e.g. hold the strength of elements connected in series, and finally the real individual elements ``qf1``, ``qd1``, ``qf2`` and ``qd2`` that will populate the sequence. A tracking command will request various attributes when crossing an element, like its length or its strength, leading to lookup of different depths in the hierarchy along the *red arrow*. A user may also write or overwrite an attribute at different level in the hierarchy by accessing directly to an element, as shown by the *purple arrows*, and mask an attribute of the parent with the new definitions in the children. The construction shown in this example follows the *separation of concern* principle and it is still highly reconfigurable despite that is does not contain any deferred expression or lambda function.
 
 Attributes
 ----------
@@ -551,7 +551,7 @@ The MADX environment is an object that relies on this powerful feature to load M
 	MADX.MQ_K1 = 0.02
 	print(mq.k1)                     -- display: 0.02
 
-Note that MAD-X workspace is case insensitive and everything is "global" (no scope, namespaces), hence the ``quadrupole`` element has to be directly available inside the MADX environment. Moreover, the MADX object adds the method ``load`` to extend ``load_env`` and ease the conversion of MAD-X lattices. For more details see chapter :doc:`MADX <madx>`
+Note that MAD-X workspace is case insensitive and everything is "global" (no scope, namespaces), hence the ``quadrupole`` element has to be directly available inside the MADX environment. Moreover, the MADX object adds the method ``load`` to extend ``load_env`` and ease the conversion of MAD-X lattices. For more details see chapter :doc:`MADX <mad_gen_madx>`
 
 .. rubric:: Footnotes
 

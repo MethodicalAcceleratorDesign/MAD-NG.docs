@@ -478,7 +478,7 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 		Example: ``bisec = 9``.
 
 	**rcond** 
-		A *number* specifying ( :ref:`LSopt <sec.match.lsopt>` methods only) how to determine the effective rank of the Jacobian while solving the least squares system (see ``ssolve`` from the :doc:`Linear Algebra <linalg>` module). This attribute can be updated between iterations, e.g. through ``env.objective.rcond``. (default: ``eps`` ). 
+		A *number* specifying ( :ref:`LSopt <sec.match.lsopt>` methods only) how to determine the effective rank of the Jacobian while solving the least squares system (see ``ssolve`` from the :doc:`Linear Algebra <mad_mod_linalg>` module). This attribute can be updated between iterations, e.g. through ``env.objective.rcond``. (default: ``eps`` ). 
 		Example: ``rcond = 1e- 14``.
 
 	**jtol**
@@ -975,7 +975,7 @@ The following example hereafter shows how to squeeze the beam 1 of the LHC to :m
 """""""""""""""""""""""""""""""""""""""""""""
 
 .. [#f1] Here, the function (i.e. the deferred expression) ignores the matching environment passed as first argument.
-.. [#f2] The function ``mchklost`` is provided by the :doc:`GPhys module. <gphys>` 
+.. [#f2] The function ``mchklost`` is provided by the :doc:`GPhys module. <mad_mod_gphys>` 
 .. [#f3] MAD-X matching corresponds to ``bstra=0``.
 .. [#f4] MAD-X ``JACOBIAN`` with ``strategy=3`` corresponds to ``jstra=3``.
 .. [#f5] The `LSopt <sec.match.lsopt>`_ module sets the values of valid inequalities to zero, i.e. :math:`\vec{c}^{\leq} = 0` if :math:`\vec{c}^{\leq} \leq\vec{c}^{\leq}_{\text{tol}}`.

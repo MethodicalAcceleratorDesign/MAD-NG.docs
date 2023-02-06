@@ -2,7 +2,7 @@ Track
 =====
 .. _ch.cmd.track:
 
-The ``track`` command provides a simple interface to the *dynamic* tracking code. [#f1]_ The dynamic tracking can be used to track the particles in the *local reference system* (missing link) while running through the elements of a sequence. The particles coordinates can be expressed in the  while running through the elements of a sequence. The particles coordinates can be expressed in the *global reference system* (missing link) by changing from the local to the global frames using the information delivered by the  by changing from the local to the global frames using the information delivered by the :doc:`survey <survey>` command.
+The ``track`` command provides a simple interface to the *dynamic* tracking code. [#f1]_ The dynamic tracking can be used to track the particles in the *local reference system* (missing link) while running through the elements of a sequence. The particles coordinates can be expressed in the  while running through the elements of a sequence. The particles coordinates can be expressed in the *global reference system* (missing link) by changing from the local to the global frames using the information delivered by the  by changing from the local to the global frames using the information delivered by the :doc:`survey <mad_cmd_survey>` command.
 
 
 .. code-block:: lua
@@ -102,7 +102,7 @@ The ``track`` command supports the following attributes:
 	 Example: :expr:`nslice = 5`.
 
 	**mapdef** 
-	 A *logical* or a *damap* specification as defined by the :doc:`DAmap <diffmap>` module to track DA maps instead of particles coordinates. A value of ``true`` is equivalent to invoke the *damap* constructor with ``{}`` as argument. This attribute allows to track DA maps instead of particles. (default: ``nil``). 
+	 A *logical* or a *damap* specification as defined by the :doc:`DAmap <mad_mod_diffmap>` module to track DA maps instead of particles coordinates. A value of ``true`` is equivalent to invoke the *damap* constructor with ``{}`` as argument. This attribute allows to track DA maps instead of particles. (default: ``nil``). 
 	 Example: :expr:`mapdef = { xy=2, pt=5 }`.
 
 	**method** 

@@ -7,7 +7,7 @@ MTables
 
 The ``mtable`` object is the *root object* of the TFS tables that store information relative to tables.
 
-The ``mtable`` module extends the :doc:`typeid <types>` module with the ``is_mtable`` function, which returns ``true`` if its argument is a ``mtable`` object, ``false`` otherwise.
+The ``mtable`` module extends the :doc:`typeid <mad_mod_types>` module with the ``is_mtable`` function, which returns ``true`` if its argument is a ``mtable`` object, ``false`` otherwise.
 
 Attributes
 ----------
@@ -40,7 +40,7 @@ The ``mtable`` object provides the following attributes:
 	 A *list* specifying the augmented columns names (and their order) used by default for the columns when writing the mtable to files. Augmented meaning that the *list* is concatenated to the *list* held by the parent mtable during initialization. (default: ``nil``).
 
 **novector**
-	 A *logical* specifying to not convert (``novector == true``) columns containing only numbers to vectors during the insertion of the second row. The attribute can also be a *list* specifying the columns names to remove from the specialization. If the *list* is empty or ``novector ~= true``, all numeric columns will be converted to vectors, and support all methods and operations from the :doc:`linear algebra <linalg>` module. (default: ``nil``).
+	 A *logical* specifying to not convert (``novector == true``) columns containing only numbers to vectors during the insertion of the second row. The attribute can also be a *list* specifying the columns names to remove from the specialization. If the *list* is empty or ``novector ~= true``, all numeric columns will be converted to vectors, and support all methods and operations from the :doc:`linear algebra <mad_mod_linalg>` module. (default: ``nil``).
 
 **owner**
 	 A *logical* specifying if an *empty* mtable is a view with no data (``owner ~= true``), or a mtable holding data (``owner == true``). (default: ``nil``).
@@ -148,7 +148,7 @@ The ``mtable`` object provides the following methods:
 	 A *method*	``([rng], [ntrn], [dir])`` returning an iterator over the mtable rows. The optional range is determined by ``:range_of([rng], [dir])``, optionally including ``ntrn`` turns (default: ``0``). The optional direction ``dir`` specifies the forward ``1`` or the backward ``- 1`` direction of the iterator. If ``rng`` is not provided and the mtable is cycled, the *start* and *end* indexes are determined by ``:index_of(self.__cycle)``. When used with a generic :literal:`for` loop, the iterator returns at each rows the index and the row *mappable* (proxy).
 
 **foreach**
-	 A *method*	``(act, [rng], [sel], [not])`` returning the mtable itself after applying the action ``act`` on the selected rows. If ``act`` is a *set* representing the arguments in the packed form, the missing arguments will be extracted from the attributes ``action``, ``range``, ``select`` and ``default``. The action ``act`` must be a *callable* ``(row, idx)`` applied to a row passed as first argument and its index as second argument. The optional range is used to generate the loop iterator ``:iter([rng])``. The optional selector ``sel`` is a *callable* ``(row, idx)`` predicate selecting eligible rows for the action from the row itself passed as first argument and its index as second argument. The selector ``sel`` can be specified in other ways, see :doc:`row selections <numrange>` for details. The optional *logical* ``not`` (default: ``false``) indicates how to interpret default selection, as *all* or *none*, depending on the semantic of the action. [#f2]_ method needs remove all rows if no selector is provided.}
+	 A *method*	``(act, [rng], [sel], [not])`` returning the mtable itself after applying the action ``act`` on the selected rows. If ``act`` is a *set* representing the arguments in the packed form, the missing arguments will be extracted from the attributes ``action``, ``range``, ``select`` and ``default``. The action ``act`` must be a *callable* ``(row, idx)`` applied to a row passed as first argument and its index as second argument. The optional range is used to generate the loop iterator ``:iter([rng])``. The optional selector ``sel`` is a *callable* ``(row, idx)`` predicate selecting eligible rows for the action from the row itself passed as first argument and its index as second argument. The selector ``sel`` can be specified in other ways, see :doc:`row selections <mad_mod_numrange>` for details. The optional *logical* ``not`` (default: ``false``) indicates how to interpret default selection, as *all* or *none*, depending on the semantic of the action. [#f2]_ method needs remove all rows if no selector is provided.}
 
 **select**
 	 A *method*	``([rng], [sel], [not])`` returning the mtable itself after selecting the rows using ``:foreach(sel_act, [rng], [sel], [not])``. By default mtable have all their rows deselected, the selection being stored as *boolean* in the column at index ``0`` and named ``is_selected``.
@@ -166,7 +166,7 @@ The ``mtable`` object provides the following methods:
 	 A *method*	``([rng], [sel])`` returning the mtable itself after removing the rows determined by ``:filter([rng], [sel], true)``.
 
 **sort**
-	 A *method*	``(cmp, [rng], [sel])`` returning the mtable itself after sorting the rows at the indexes determined by ``:filter([rng], [sel], true)`` using the ordering *callable* ``cmp(row1, row2)``. The arguments ``row1`` and ``row2`` are *mappable* (proxies) referring to the current rows being compared and providing access to the columns values for the comparison. [#f3]_ The argument ``cmp`` can be specified in a compact ordering form as a *string* that will be converted to an ordering *callable* by the function ``str2cmp`` from the :doc:`utility <numrange>` module. For example, the *string* "-y,x" will be converted by the method to the following *lambda* :literal:`\r1,r2 -> r1.y > r2.y or r1.y == r2.y and r1.x < r2.x`, where ``y`` and ``x`` are the columns used to sort the mtable in descending (``-``) and ascending (``+``) order respectively. The compact ordering form is not limited in the number of columns and avoids making mistakes in the comparison logic when many columns are involved.
+	 A *method*	``(cmp, [rng], [sel])`` returning the mtable itself after sorting the rows at the indexes determined by ``:filter([rng], [sel], true)`` using the ordering *callable* ``cmp(row1, row2)``. The arguments ``row1`` and ``row2`` are *mappable* (proxies) referring to the current rows being compared and providing access to the columns values for the comparison. [#f3]_ The argument ``cmp`` can be specified in a compact ordering form as a *string* that will be converted to an ordering *callable* by the function ``str2cmp`` from the :doc:`utility <mad_mod_numrange>` module. For example, the *string* "-y,x" will be converted by the method to the following *lambda* :literal:`\r1,r2 -> r1.y > r2.y or r1.y == r2.y and r1.x < r2.x`, where ``y`` and ``x`` are the columns used to sort the mtable in descending (``-``) and ascending (``+``) order respectively. The compact ordering form is not limited in the number of columns and avoids making mistakes in the comparison logic when many columns are involved.
 
 **cycle**
 	 A *method*	``(a)`` returning the mtable itself after checking that ``a`` is a valid reference using ``:index_of(a)``, and storing it in the ``__cycle`` attribute, itself erased by the methods editing the mtable like ``:insert``, ``:remove`` or ``:sort``.
@@ -181,10 +181,10 @@ The ``mtable`` object provides the following methods:
 	 Set the mtable as read-only, including the columns and the rows proxies.
 
 **read**
-	 A *method*	``([filname])`` returning a new instance of ``self`` filled with the data read from the file determined by ``openfile(filename, 'r', {'.tfs','.txt','.dat'})`` from the :doc:`utility <miscfuns>` module. This method can read columns containing the data types *nil*, *boolean*, *number*, *complex number*, (numerical) *range*, and (quoted) *string*. The header can also contain tables saved as *string* and decoded with *function* ``str2tbl`` from the :doc:`utility <miscfuns>` module.
+	 A *method*	``([filname])`` returning a new instance of ``self`` filled with the data read from the file determined by ``openfile(filename, 'r', {'.tfs','.txt','.dat'})`` from the :doc:`utility <mad_mod_miscfuns>` module. This method can read columns containing the data types *nil*, *boolean*, *number*, *complex number*, (numerical) *range*, and (quoted) *string*. The header can also contain tables saved as *string* and decoded with *function* ``str2tbl`` from the :doc:`utility <mad_mod_miscfuns>` module.
 
 **write**
-	 A *method*	``([filname], [clst], [hlst], [rsel])`` returning the mtable itself after writing its content to the file determined by ``openfile(filename, 'w', {'.tfs', '.txt', '.dat'})`` from the :doc:`utility <miscfuns>` module. The columns to write and their order is determined by ``clst`` or ``self.column`` (default: ``nil`` :math:`\equiv` all columns). The attributes to write in the header and their order is determined by ``hlst`` or ``self.header``. The *logical* ``rsel`` indicates to save all rows or only rows selected by the ``:select`` method (``rsel == true``). This method can write columns containing the data types *nil*, *boolean*, *number*, *complex number*, (numerical) *range*, and (quoted) *string*. The header can also contain tables saved as *string* and encoded with *function* ``tbl2str`` from the :doc:`utility <miscfuns>` module.
+	 A *method*	``([filname], [clst], [hlst], [rsel])`` returning the mtable itself after writing its content to the file determined by ``openfile(filename, 'w', {'.tfs', '.txt', '.dat'})`` from the :doc:`utility <mad_mod_miscfuns>` module. The columns to write and their order is determined by ``clst`` or ``self.column`` (default: ``nil`` :math:`\equiv` all columns). The attributes to write in the header and their order is determined by ``hlst`` or ``self.header``. The *logical* ``rsel`` indicates to save all rows or only rows selected by the ``:select`` method (``rsel == true``). This method can write columns containing the data types *nil*, *boolean*, *number*, *complex number*, (numerical) *range*, and (quoted) *string*. The header can also contain tables saved as *string* and encoded with *function* ``tbl2str`` from the :doc:`utility <mad_mod_miscfuns>` module.
 
 **print**
 	 A *method*	``([clst], [hlst], [rsel])`` equivalent to ``:write(nil, [clst], [hlst], [rsel])``.
@@ -305,7 +305,7 @@ If a row exists but its *value* is not unique in the reference column, an *itera
 
 
 
-**Note:** Compared to the sequence, the indexing operator ``[]`` and the method ``:index_of`` of the mtable always interprets a *number* as a (relative) row index. To find a row from a :math:`s`-position [m] in the mtable if the column exists, use the functions ``lsearch`` or ``bsearch`` (if they are monotonic) from the :doc:`utility <miscfuns>` module.
+**Note:** Compared to the sequence, the indexing operator ``[]`` and the method ``:index_of`` of the mtable always interprets a *number* as a (relative) row index. To find a row from a :math:`s`-position [m] in the mtable if the column exists, use the functions ``lsearch`` or ``bsearch`` (if they are monotonic) from the :doc:`utility <mad_mod_miscfuns>` module.
 
 
 
@@ -440,7 +440,7 @@ The following example shows how to extend the MTable created by a ``twiss`` comm
 	
 	tws:write("twiss", cols) -- write header and columns to file twiss.tfs
 
-Hopefully, the :doc:`physics <gphys>` module provides the *function* ``melmcol(mtbl, cols)`` to achieve the same task easily:
+Hopefully, the :doc:`physics <mad_mod_gphys>` module provides the *function* ``melmcol(mtbl, cols)`` to achieve the same task easily:
 
 .. code-block::
 	

@@ -6,7 +6,7 @@ Beta0 Blocks
 
 The ``beta0`` object is the *root object* of beta0 blocks that store information relative to the phase space at given positions, e.g. initial conditions, Poincaré section.
 
-The ``beta0`` module extends the :doc:`typeid <types>` module with the ``is_beta0`` *function*, which returns ``true`` if its argument is a ``beta0`` object, ``false`` otherwise.
+The ``beta0`` module extends the :doc:`typeid <mad_mod_types>` module with the ``is_beta0`` *function*, which returns ``true`` if its argument is a ``beta0`` object, ``false`` otherwise.
 
 Attributes
 ----------

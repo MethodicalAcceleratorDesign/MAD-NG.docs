@@ -131,7 +131,7 @@ To run MAD-NG in batch mode, just run it in the shell with files as arguments on
 	$ ./mad [mad options] myscript1.mad myscript2.mad ...
 
 
-where the scripts contains programs written in the MAD-NG programming language (see :doc:`Scripting <script>`).
+where the scripts contains programs written in the MAD-NG programming language (see :doc:`Scripting <mad_gen_script>`).
 
 Online Help
 -----------

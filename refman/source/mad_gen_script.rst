@@ -208,7 +208,7 @@ The deferred expression operator :literal:`:=` is semantically equivalent to a *
 	var = 20
 	print(tbl.v1(), tbl.v2(), tbl.v3, fun()) -- display: 20 20 10 20
 
-The deferred expressions hereabove have to be explicitly called to retrieve their values, because they are defined in a *table*. It is a feature of the object model making the deferred expressions behaving like values. Still, it is possible to support deferred expressions as values in a raw *table*, i.e. a table without metatable, using the ``deferred`` function from the :doc:`typeid <types>` module:
+The deferred expressions hereabove have to be explicitly called to retrieve their values, because they are defined in a *table*. It is a feature of the object model making the deferred expressions behaving like values. Still, it is possible to support deferred expressions as values in a raw *table*, i.e. a table without metatable, using the ``deferred`` function from the :doc:`typeid <mad_mod_types>` module:
 
 .. code-block::
 	
@@ -244,7 +244,7 @@ Ranges are *iterable* and *lengthable* so the following code excerpt is valid:
 	print(#rng) -- display: 11
 	for i,v in ipairs(rng) do print(i,v) end
 
-More details on ranges can be found in the :doc:`Range <numrange>` module, especially about the ``range`` and ``logrange`` constructors that may adjust ``step`` to ensure precise loops and iterators behaviors with floating-point numbers.
+More details on ranges can be found in the :doc:`Range <mad_mod_numrange>` module, especially about the ``range`` and ``logrange`` constructors that may adjust ``step`` to ensure precise loops and iterators behaviors with floating-point numbers.
 
 Lua syntax and extensions
 """""""""""""""""""""""""
