@@ -22,7 +22,10 @@ The :var:`sequence` object provides the following attributes:
    A *number* holding one of :const:`1` (forward) or :const:`-1` (backward) and specifying the direction of the sequence. [#f1]_ (default:~ :const:`1`)
 
 **refer** 
-   A *string* holding one of :literal:`"entry"`, :literal:`"centre"` or return true :literal:`"exit"` to specify the default reference position in the elements to use for their placement. An element can override it with its :literal:`refpos` attribute, see `element positions`_ for details. (default: :const:`nil` :math:`\equiv` :literal:`"centre"`).
+   A *string* holding one of :literal:`"entry"`, :literal:`"centre"` or :literal:`"exit"` to specify the default reference position in the elements to use for their placement. An element can override it with its :literal:`refpos` attribute, see `element positions`_ for details. (default: :const:`nil` :math:`\equiv` :literal:`"centre"`).
+
+.. **owner**
+..     A *logical* specifying if an *empty* sequence is a view with no data (:expr:`owner~=true`), or a sequence holding data (:expr:`owner==true`). (default: :const:`nil`)
 
 **minlen**
    A *number* specifying the minimal length :literal:`[m]` when checking for negative drifts or when generating *implicit* drifts between elements in :math:`s`-iterators returned by the method :literal:`:siter`. This attribute is automatically set to :math:`10^{-6}` m when a sequence is created within the MADX environment. (default: :math:`10^{-6}`)
@@ -96,7 +99,7 @@ The :var:`sequence` object provides the following methods:
 **iter**
    A *method* :literal:`([rng], [ntrn], [dir])` returning an iterator over the sequence elements. The optional range is determined by 
    :meth:`:range_of(rng, [dir])`, optionally including :literal:`ntrn` turns (default: :const:`0`). The optional direction :literal:`dir` specifies the forward :const:`1` 
-   or the backward :const:`-1` direction of the iterator. If :literal:`rng` is not provided and the ?sequence? is cycled, the *start* and *end* indexes are 
+   or the backward :const:`-1` direction of the iterator. If :literal:`rng` is not provided and the mtable is cycled, the *start* and *end* indexes are 
    determined by :literal:`:index_of(self.__cycle)`. When used with a generic :literal:`for` loop, the iterator returns at each element: its index, 
    the element itself, its :math:`s`-position over the running loop and its signed length depending on the direction.
 
@@ -127,7 +130,7 @@ The :var:`sequence` object provides the following methods:
    using :literal:`:foreach(act, [rng], [sel], [not])`. By default sequence have all their elements deselected with only the :literal:`$end` marker :literal:`observed`.
 
 **filter**
-   A *method* :literal:`([rng], [sel], [not])` returning a *list* containing the positive indexes of the elements determined by :literal:`:foreach(act, [rng], [sel], [not])`,
+   A *method* :literal:`([rng], [sel], [not])` returning a *list* containing the positive indexes of the elements determined by :literal:`:foreach(filt_act, [rng], [sel], [not])`,
    and its size. The *logical* :literal:`sel.subelem` specifies to select sub-elements too, and the *list* may contain non-integer indexes encoding their main element 
    index added to their relative position, i.e. :literal:`midx.sat`. The builtin *function* :literal:`math.modf(num)` allows to retrieve easily the main element :literal:`midx` and
    the sub-element :literal:`sat`, e.g. :literal:`midx,sat = math.modf(val)`.
@@ -217,28 +220,28 @@ Metamethods
 The :var:`sequence` object provides the following metamethods:
 
 **__len** 
-   A *method* () called by the length operator :literal:`#` to return the size of the sequence, i.e. the number of elements stored including the :literal:`"\$start"` and 
+   A *metamethod* () called by the length operator :literal:`#` to return the size of the sequence, i.e. the number of elements stored including the :literal:`"\$start"` and 
    :literal:`"\$end"` markers.
 
 **__index** 
-   A *method* :literal:`(key)` called by the indexing operator :literal:`[key]` to return the *value* of an attribute determined by *key*. The *key* is interpreted differently depending 
-   on its type with the following precedence:
-   1. A *number* is interpreted as an element index and returns the element or :const:`nil`.
+   A *metamethod* :literal:`(key)` called by the indexing operator :literal:`[key]` to return the *value* of an attribute determined by *key*. The *key* is interpreted differently depending on its type with the following precedence:
+
+   #. A *number* is interpreted as an element index and returns the element or :const:`nil`.
    #. Other *key* types are interpreted as *object* attributes subject to object model lookup.
    #. If the *value* associated with *key* is :const:`nil`, then *key* is interpreted as an element name and returns either the element or an *iterable* on the elements with the same name. [#f4]_
    #. Otherwise returns :const:`nil`.
 
 **__newindex**
-   A *method* :literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*). 
+   A *metamethod* :literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*). 
    If *key* is a *number* specifying the index or a *string* specifying the name of an existing element, the following error is raised:
    :literal:`"invalid sequence write access (use replace method)"`
 
 
 **__init**
-   A *method* () called by the constructor to compute the elements positions.
+   A *metamethod* () called by the constructor to compute the elements positions. [#f5]_
 
 **__copy**
-   A *method* () similar to the :literal:`:copy` *method*.
+   A *metamethod* () similar to the :meth:`:copy` *method*.
 
 The following attribute is stored with metamethods in the metatable, but has different purpose:
 
@@ -361,7 +364,7 @@ i.e. :const:`-1` is the :literal:`$end` marker. Non- *number* will be interprete
 then as an element name if nothing was found.
 
 If an element exists but its name is not unique in the sequence, an *iterable* is returned. An *iterable* supports the length :literal:`#` operator to retrieve the 
-number of elements with the same name, the indexing operator :literal:`[]` waiting for a count $n$ to retrieve the :math:`n`-th element from the start with that name,
+number of elements with the same name, the indexing operator :literal:`[]` waiting for a count :math:`n` to retrieve the :math:`n`-th element from the start with that name,
 and the iterator :literal:`ipairs` to use with generic :literal:`for` loops.
 
 The returned *iterable* is in practice a proxy, i.e. a fake intermediate object that emulates the expected behavior, and any attempt to access the proxy in 
@@ -378,8 +381,8 @@ The following example shows how to access to the elements through indexing and t
    drift 'df' { id=3 }, marker 'mk' { id=4 },
    drift 'df' { id=5 }, marker 'mk' { id=6 },
    }
-   print(seq[ 1].name) -- display: (*\$start*) (start marker)
-   print(seq[-1].name) -- display: (*\$end*)   (end   marker)
+   print(seq[ 1].name) -- display: $start (start marker)
+   print(seq[-1].name) -- display: $end   (end   marker)
 
    print(#seq.df, seq.df[3].id)                        -- display: 3   5
    for _,e in ipairs(seq.df) do io.write(e.id," ") end -- display: 1 3 5
@@ -433,28 +436,30 @@ The following example shows how to access to the elements with the :literal:`:fo
 
    seq:foreach{action=act, range="df[2]/mk[3]", class=marker}
    -- display: markers at ids 4 and 6
-   seq:foreach{action=act, pattern=(*\verb+"^[^$]"+*)}
-   -- display: all elements except (*\verb+$start and $end+*) markers
+   seq:foreach{action=act, pattern="^[^$]"}
+   -- display: all elements except $start and $end markers
    seq:foreach{action=\e -> e:select(observed), pattern="mk"}
    -- same as: seq:select(observed, {pattern="mk"})
 
    local act = \e -> print(e.name, e.id, e:is_observed())
-   seq:foreach{action=act, range=(*\verb+"#s/#e"+*)}
+   seq:foreach{action=act, range="#s/#e"}
    -- display:
-   (*\$start*)   nil  false
+   $start   nil  false
    df       1    false
    mk       2    true
    df       3    false
    mk       4    true
    df       5    false
    mk       6    true
-   (*\$end*)     nil  true
+   $end     nil  true
 
 Examples
 ========
 
 FODO cell
 ---------
+
+The following example shows how to build a very simple FODO cell and an arc made of 10 FODO cells.
 
 .. code-block::
    
@@ -534,7 +539,8 @@ The elements are zero-length, so the lattice is too. ::
 Installing elements I
 ---------------------
 
-The following example shows how to install elements and subsequences in an empty initial sequence:::
+The following example shows how to install elements and subsequences in an empty initial sequence:
+::
 
    local sequence, drift in MAD.element
    local seq   = sequence "seq" { l=16, refer="entry", owner=true }
@@ -576,7 +582,8 @@ Display:
 Installing elements II
 ----------------------
 
-The following more complex example shows how to install elements and subsequences in a sequence using a selection and the packed form for arguments:::
+The following more complex example shows how to install elements and subsequences in a sequence using a selection and the packed form for arguments:
+::
 
    local mk   = marker   "mk"  { }
    local seq  = sequence "seq" { l = 10, refer="entry",

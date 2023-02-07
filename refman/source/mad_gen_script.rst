@@ -16,7 +16,7 @@ The easiest way to shortly describe these choices is to cite their authors.
 
 Lua and LuaJIT are free open-source software, distributed under the very liberal MIT license.
 
-MAD-NG embeds a patched version of LuaJIT 2.1, a very efficient implementation of Lua 5.2. [#f3]_ Hence, the scripting language of MAD-NG is Lua 5.2 with some extensions detailed in the next section, and used for both, the development of most parts of the application, and as the user scripting language. There is no strong frontier between these two aspects of the application, giving full access and high flexibility to the experienced users. The filename extension of MAD-NG scripts is :literal:`.mad`.
+MAD-NG embeds a patched version of LuaJIT 2.1, a very efficient implementation of Lua 5.2.\ [#f3]_ Hence, the scripting language of MAD-NG is Lua 5.2 with some extensions detailed in the next section, and used for both, the development of most parts of the application, and as the user scripting language. There is no strong frontier between these two aspects of the application, giving full access and high flexibility to the experienced users. The filename extension of MAD-NG scripts is :literal:`.mad`.
 
 
 Learning Lua is easy and can be achieved within a few hours. The following links should help to quickly become familiar with Lua and LuaJIT:
@@ -33,7 +33,7 @@ Learning Lua is easy and can be achieved within a few hours. The following links
 Lua primer
 ----------
 
-The next subsections introduce the basics of the Lua programming language with syntax highlights, namely variables, control flow, functions, tables and methods. [#f4]_ 
+The next subsections introduce the basics of the Lua programming language with syntax highlights, namely variables, control flow, functions, tables and methods.\ [#f4]_ 
 
 Variables
 """""""""
@@ -82,7 +82,7 @@ Bending and extending a programming language like Lua to embed a DSL is more gen
 Line comment
 """"""""""""
 
-The line comment operator :literal:`!` is valid in MAD-NG, but does not exists in Lua: [#f5]_:
+The line comment operator :literal:`!` is valid in MAD-NG, but does not exists in Lua:\ [#f5]_
 
 .. code-block::
 	
@@ -93,7 +93,7 @@ The line comment operator :literal:`!` is valid in MAD-NG, but does not exists i
 Unary plus
 """"""""""
 
-The unary plus operator :literal:`+` is valid in MAD-NG, but does not exists in Lua: [#f5]_
+The unary plus operator :literal:`+` is valid in MAD-NG, but does not exists in Lua:\ [#f5]_
 
 .. code-block::
 	
@@ -355,7 +355,7 @@ The types *nil*, *boolean* and *number* have a semantic by *value*, meaning that
 
 The types *string*, *function*, *table*, *thread*, *userdata* and *cdata* have a semantic by *reference*, meaning that variables, arguments, return values, etc., do not store their instances directly but a *reference* to them. As a consequence, any assignment makes a copy of the *reference* and the instance becomes shared, i.e. references have a semantic by *value* but changing the content of the value does change the copy. [#f12]_ 
 
-The types *string*, *function* [#f13]_, *thread*, :var:`cpx` *cdata* and numeric (:literal:`log`):literal:`range` *cdata* have a hybrid semantic. In practice these types have a semantic by *reference*, but they behave like types with semantic by *value* because their instances are immutable, and therefore sharing them is safe.
+The types *string*, *function* [#f13]_, *thread*, :var:`cpx` *cdata* and numeric (:literal:`log`)\ :literal:`range` *cdata* have a hybrid semantic. In practice these types have a semantic by *reference*, but they behave like types with semantic by *value* because their instances are immutable, and therefore sharing them is safe.
 
 
 Concepts

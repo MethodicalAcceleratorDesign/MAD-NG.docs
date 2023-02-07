@@ -7,7 +7,7 @@ Presentation
 
 The Methodical Accelerator Design -- Next Generation application is an all-in-one standalone versatile tool for particle accelerator design, modeling, and optimization, and for beam dynamics and optics studies. Its general purpose scripting language is based on the simple yet powerful Lua programming language (with a few extensions) and embeds the state-of-art Just-In-Time compiler LuaJIT. Its physics is based on symplectic integration of differential maps made out of GTPSA (Generalized Truncated Power Series). The physics of the transport maps and the normal form analysis were both strongly inspired by the PTC/FPP library from E. Forest. MAD-NG development started in 2016 by the author as a side project of MAD-X, hence MAD-X users should quickly become familiar with its ecosystem, e.g. lattices definition.
 
-MAD-NG is free open-source software, distributed under the GNU General Public License v3 [#f1]_. The source code, units tests, [#f5]_ integration tests, and examples are all available on its Github `repository <https://github.com/MethodicalAcceleratorDesign/MAD>`_, including the `documentation <https://github.com/MethodicalAcceleratorDesign/MADdocs>`_ and its LaTeX source. For convenience, the binaries and few examples are also made available from the `releases repository <http://cern.ch/mad/releases/madng/>`_ located on the AFS shared file system at CERN.
+MAD-NG is free open-source software, distributed under the GNU General Public License v3.\ [#f1]_ The source code, units tests\ [#f5]_, integration tests, and examples are all available on its Github `repository <https://github.com/MethodicalAcceleratorDesign/MAD>`_, including the `documentation <https://github.com/MethodicalAcceleratorDesign/MADdocs>`_ and its LaTeX source. For convenience, the binaries and few examples are also made available from the `releases repository <http://cern.ch/mad/releases/madng/>`_ located on the AFS shared file system at CERN.
 
 Installation
 ------------
@@ -82,7 +82,7 @@ Typing the character ':literal:`=`' right after the 1st level prompt is equivale
 	% -.10g
 
 
-To quit the application typewrite :literal:`Crtl+D` to send :literal:`EOF` (end-of-file) on the input, [#f2]_ :literal:`Crtl+\` to send the :literal:`SIGQUIT` (quit) signal, or :literal:`Crtl+C` to send the stronger :literal:`SIGINT` (interrupt) signal. If the application is stalled or looping for ever, typewriting a single :literal:`Crtl+\` or :literal:`Crtl+C` twice will stop it:
+To quit the application typewrite :literal:`Crtl+D` to send :literal:`EOF` (end-of-file) on the input, [#f2]_ :literal:`Crtl+\\` to send the :literal:`SIGQUIT` (quit) signal, or :literal:`Crtl+C` to send the stronger :literal:`SIGINT` (interrupt) signal. If the application is stalled or looping for ever, typewriting a single :literal:`Crtl+\\` or :literal:`Crtl+C` twice will stop it:
 
 .. code-block::  
 	
@@ -94,7 +94,7 @@ To quit the application typewrite :literal:`Crtl+D` to send :literal:`EOF` (end-
 	Quit: 3                -- Signal 3 caught, application stopped
 
 
-In interactive mode, each line input is run in its own *chunk* [#f3]_, which also rules variables scopes. Hence :literal:`local`, variables are not visible between chunks, i.e. input lines. The simple solutions are either to use global variables or to enclose local statements into the same chunk delimited by the :literal:`do ... end` keywords:
+In interactive mode, each line input is run in its own *chunk*\ [#f3]_, which also rules variables scopes. Hence :literal:`local`, variables are not visible between chunks, i.e. input lines. The simple solutions are either to use global variables or to enclose local statements into the same chunk delimited by the :literal:`do ... end` keywords:
 
 .. code-block::
 	
@@ -132,7 +132,7 @@ where the scripts contains programs written in the MAD-NG programming language (
 Online Help
 -----------
 
-MAD-NG is equipped with an online help system [#f4]_ useful in interactive mode to quickly search for information displayed in the :literal:`man`-like Unix format :
+MAD-NG is equipped with an online help system\ [#f4]_ useful in interactive mode to quickly search for information displayed in the :literal:`man`-like Unix format :
 
 .. code-block:: console
 

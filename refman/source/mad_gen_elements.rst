@@ -154,22 +154,23 @@ The :var:`element` *object* provides the following attributes:
 
 **misalign**
 	 A *mappable* specifying misalignment attributes, see :ref:`Misalignment <sec.elm.misalign>` for details. \\
+	 (default: :const:`nil`)
 
 
 
 The :var:`thick_element` *object* adds the following multipolar and fringe fields attributes:
 
 **knl, ksl**
-	 A *list* specifying respectively the **multipolar** and skew integrated strengths of the element [m\ :math:`^{-i+1}`]. (default: ).
+	 A *list* specifying respectively the **multipolar** and skew integrated strengths of the element [m\ :math:`^{-i+1}`]. (default: :const:`{}`).
 
 **dknl, dksl**
-	 A *list* specifying respectively the multipolar and skew integrated strengths errors of the element [m\ :math:`^{-i+1}`]. (default: ).
+	 A *list* specifying respectively the multipolar and skew integrated strengths errors of the element [m\ :math:`^{-i+1}`]. (default: :const:`{}`).
 
 **e1, e2**
-	 A *number* specifying respectively the horizontal angle of the pole faces at entry and exit of the element [rad]. A positive angle goes toward inside the element, see Figures :numref:`figsbend` and :numref:`figrbend`. (default: :const:`0`).
+	 A *number* specifying respectively the horizontal angle of the pole faces at entry and exit of the element [rad]. A positive angle goes toward inside the element, see :numref:`figsbend` and :numref:`figrbend`. (default: :const:`0`).
 
 **h1, h2**
-	 A *number* specifying respectively the horizontal curvature of the pole faces at entry and exit of the element [m\ :math:`^{-1}`]. A positive curvature goes toward inside the element. (default: ).
+	 A *number* specifying respectively the horizontal curvature of the pole faces at entry and exit of the element [m\ :math:`^{-1}`]. A positive curvature goes toward inside the element. (default: :const:`0`).
 
 **hgap**
 	 A *number* specifying half of the vertical gap at the center of the pole faces of the element [m]. (default: :const:`0`).
@@ -187,10 +188,10 @@ The :var:`thick_element` *object* adds the following multipolar and fringe field
 	 A *number* specifying the maximum order for multipolar fringe fields of the element. (default: :const:`2`).
 
 **kill_ent_fringe**
-	 A *log* specifying to kill the entry fringe fields of the element. (default: :const:`false`).
+	 A *logical* specifying to kill the entry fringe fields of the element. (default: :const:`false`).
 
 **kill_exi_fringe**
-	 A *log* specifying to kill the entry fringe fields of the element. (default: :const:`false`).
+	 A *logical* specifying to kill the entry fringe fields of the element. (default: :const:`false`).
 
 **f1, f2**
 	 A *number* specifying quadrupolar fringe field first and second parameter of SAD. (default: :const:`0`).
@@ -223,10 +224,10 @@ The :var:`element` object provides the following methods:
 The :var:`drift_element` and :var:`thick_element` objects provide the following extra methods, see :ref:`sub-elements <sec.elm.subelm>` for details about the :literal:`sat` attribute:
 
 **index_sat**
-	 A *method*	:literal:`(sat, [cmp])` returning the lowest index :var:`idx` (starting from 1) of the first sub-element with a relative position from the element entry that compares :const:`true` with the *number* :literal:`sat` using the optional \CALBLA{cmp(sat, self[idx].sat)} (default: :literal:`"=="`), or :expr:`#self+1`. In the presence of multiple equal positions, :literal:`"<="` (resp. :literal:`">="`) will return the lowest index of the position while :literal:`"<"` (resp. :literal:`">"`) the lowest index next to the position for ascending (resp. descending) order.
+	 A *method*	:literal:`(sat, [cmp])` returning the lowest index :var:`idx` (starting from 1) of the first sub-element with a relative position from the element entry that compares :const:`true` with the *number* :literal:`sat` using the optional *callable* :literal:`cmp(sat, self[idx].sat)` (default: :literal:`"=="`), or :expr:`#self+1`. In the presence of multiple equal positions, :literal:`"<="` (resp. :literal:`">="`) will return the lowest index of the position while :literal:`"<"` (resp. :literal:`">"`) the lowest index next to the position for ascending (resp. descending) order.
 
 **insert_sat**
-	 A *method*	:literal:`(elm, [cmp])` returning the element after inserting the sub-element :var:`elm` at the index determined by :literal:`:index_sat(elm.sat, [cmp])` using the optional \CALBLA{cmp} (default: :literal:`"<"`).
+	 A *method*	:literal:`(elm, [cmp])` returning the element after inserting the sub-element :var:`elm` at the index determined by :literal:`:index_sat(elm.sat, [cmp])` using the optional *callable* :literal:`cmp` (default: :literal:`"<"`).
 
 **replace_sat**
 	 A *method*	:literal:`(elm)` returning the replaced sub-element found at the index determined by :literal:`:index_sat(elm.sat)` by the new sub-element :literal:`elm`, or :const:`nil`.
@@ -258,7 +259,7 @@ The :var:`element` object provides the following metamethods:
 
 The operators overloading of elements allows to unify sequence and beamline definitions in a consistent and simple way, noting that :var:`sequence` and :var:`bline` are (external) elements too.
 
-
+The following attribute is stored with metamethods in the metatable, but has different purpose:
 
 **__elem**
 	 A unique private *reference* that characterizes elements.
@@ -267,7 +268,7 @@ The operators overloading of elements allows to unify sequence and beamline defi
 Elements
 --------
 
-Some elements define new attributes or override the default values provided by the *root object* :var:`element`. The following subsections describe the elements supported by \MAD.
+Some elements define new attributes or override the default values provided by the *root object* :var:`element`. The following subsections describe the elements supported by MAD-NG.
 
 SBend
 """""
@@ -318,7 +319,7 @@ The :var:`rbend` element is a rectangular bending magnet with a straight referen
 	 Set to flag :literal:`fringe.bend` to activate the fringe fields by default, see :ref:`Flags <sec.elm.flgs>` for details.
 
 **true_rbend**
-	 A *log* specifying if this :var:`rbend` element behaves like (:const:`false`) a :var:`sbend` element with parallel pole faces, i.e. :math:`e_1=e_2=\alpha/2` in :numref:`figsbend` , or like (:const:`true`) a rectangular bending magnet with a straight reference system as shown in :numref:`figrbend`. (default: :const:`false`). [#f6]_
+	 A *logical* specifying if this :var:`rbend` element behaves like (:const:`false`) a :var:`sbend` element with parallel pole faces, i.e. :math:`e_1=e_2=\alpha/2` in :numref:`figsbend` , or like (:const:`true`) a rectangular bending magnet with a straight reference system as shown in :numref:`figrbend`. (default: :const:`false`). [#f6]_
 
 .. figure:: fig/elm_refsys_rbend.jpg
 	:name: figrbend
@@ -437,7 +438,7 @@ The :var:`monitor` element is the root object of monitors involved in the orbit 
 	 A *number* specifying respectively the readout :math:`x`\ , :math:`y`\ -offset error of the element [m]. The offset is added to the beam position during orbit correction (after scaling). (default: :const:`0`).
 
 **mresx, mresy**
-	 A *number* specifying respectively the readout :math:`x`\ ,:math:`y`\ -scaling error of the element. The scale factor multiplies the beam position by :expr:`1+mres` (before offset) during orbit correction. [#f7]_ (default: :const:`0`).
+	 A *number* specifying respectively the readout :math:`x`\ , :math:`y`\ -scaling error of the element. The scale factor multiplies the beam position by :expr:`1+mres` (before offset) during orbit correction. [#f7]_ (default: :const:`0`).
 
 
 The :var:`hmonitor` (horizontal monitor) and :var:`vmonitor` (vertical monitor) elements are specialisations inheriting from the :var:`monitor` element.
@@ -463,7 +464,7 @@ The :var:`rfcavity` element defines the following attributes:
 	 A *number* specifying the transverse focussing effects order of the element. (default: :const:`0`).
 
 **totalpath**
-	 A *log* specifying if the totalpath must be used in the element. (default: :const:`true`).
+	 A *logical* specifying if the totalpath must be used in the element. (default: :const:`true`).
 
 
 RFMultipole
@@ -633,14 +634,14 @@ The :var:`element` module exposes the following flags through :literal:`MAD.elem
 **combqs**
 	 Control the element fringe fields for combined bending and multipolar fields with extra terms for quadrupolar fields for compatibility with SAD.
 
-The :var:`thick_element` provides a dozen of attributes to parametrize the aforementionned fringe fields. Note that in some future, part of these attributes may be grouped into a *mappable* to ensure a better consistency of their parametrization.
+The *element* :var:`thick_element` provides a dozen of attributes to parametrize the aforementionned fringe fields. Note that in some future, part of these attributes may be grouped into a *mappable* to ensure a better consistency of their parametrization.
 
 .. _sec.elm.subelm:
 
 Sub-elements
 ------------
 
-An element can have thin or thick sub-elements stored in its *list* part, hence the length operator :literal:`#` returns the number of them. The attribute :literal:`sat` of sub-elements, i.e. read :literal:`s`\ ub-\ :literal:`at`\ , is interpreted as their relative position from the entry of their enclosing main element, that is a fractional of its length. The positions of the sub-elements can be made absolute by dividing their :literal:`sat` attribute by the length of their main element using lambda expressions. The sub-elements are only considered and valid in the :literal:`drift_element` and :literal:`thick_element` kinds that implement the methods :literal:`:index_sat`, :literal:`:insert_sat`, :literal:`:remove_sat`, and :literal:`:replace_sat` to manage sub-elements from their :literal:`sat` attribute. The sequence method :literal:`:install` updates the :literal:`sat` attribute of the elements installed as sub-elements if the *log* :literal:`elements.subelem` of the packed form is enabled, i.e. when the :math:`s`-position determined by the :literal:`at`, :literal:`from` and :literal:`refpos` attributes falls inside a non-zero length element already installed in the sequence that is not an *implicit* drift. The physics of thick sub-elements will shield the physics of their enclosing main element along their length, unless they combine their attributes with those of their main element using lambda expressions to select some combined function physics.
+An element can have thin or thick sub-elements stored in its *list* part, hence the length operator :literal:`#` returns the number of them. The attribute :literal:`sat` of sub-elements, i.e. read :literal:`s`\ ub-\ :literal:`at`\ , is interpreted as their relative position from the entry of their enclosing main element, that is a fractional of its length. The positions of the sub-elements can be made absolute by dividing their :literal:`sat` attribute by the length of their main element using lambda expressions. The sub-elements are only considered and valid in the :literal:`drift_element` and :literal:`thick_element` kinds that implement the methods :literal:`:index_sat`, :literal:`:insert_sat`, :literal:`:remove_sat`, and :literal:`:replace_sat` to manage sub-elements from their :literal:`sat` attribute. The sequence method :literal:`:install` updates the :literal:`sat` attribute of the elements installed as sub-elements if the *logical* :literal:`elements.subelem` of the packed form is enabled, i.e. when the :math:`s`-position determined by the :literal:`at`, :literal:`from` and :literal:`refpos` attributes falls inside a non-zero length element already installed in the sequence that is not an *implicit* drift. The physics of thick sub-elements will shield the physics of their enclosing main element along their length, unless they combine their attributes with those of their main element using lambda expressions to select some combined function physics.
 
 .. _sec.elm.aper:
 
@@ -695,7 +696,7 @@ The supported aperture shapes are listed hereafter. The parameters defining the 
 	 A 6D bounding box with six parameters defining the upper limits of the absolute values of the six coordinates.
 
 
-
+The following example defines new classes with three different aperture definitions:
 
 .. code-block:: lua
 	

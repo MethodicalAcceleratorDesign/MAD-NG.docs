@@ -347,7 +347,7 @@ The root :literal:`object` provides the following methods:
 	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes set to the pairs (*key*, *value*) contained in :literal:`set`. If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated.
 
 **copy_variables**
-	 A *method*	:literal:`(set, [lst], [override])` returning :literal:`self` with the attributes listed in :literal:`lst` set to the pairs (*key*, *value*) contained in :literal:`set`. If :literal:`lst` is not provided, it is replaced by :literal:`self.__attr`. If :literal:`set` is an *object* and :literal:`lst.noeval` exists, it is used as the list of attributes to copy without function evaluation. [#f3] If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated. Shortcut :literal:`cpyvar`.
+	 A *method*	:literal:`(set, [lst], [override])` returning :literal:`self` with the attributes listed in :literal:`lst` set to the pairs (*key*, *value*) contained in :literal:`set`. If :literal:`lst` is not provided, it is replaced by :literal:`self.__attr`. If :literal:`set` is an *object* and :literal:`lst.noeval` exists, it is used as the list of attributes to copy without function evaluation.\ [#f3]_ If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated. Shortcut :literal:`cpyvar`.
 
 **wrap_variables**
 	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes wrapped by the pairs (*key*, *value*) contained in :literal:`set`, where the *value* must be a *callable* :literal:`(a)` that takes the attribute (as a callable) and returns the wrapped *value*. If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated.
@@ -378,7 +378,7 @@ The method converts non-\ *callable* attributes into callables automatically to 
 	 A *method*	:literal:`()` returning :literal:`self` after clearing the object except its private attributes.
 
 **set_methods**
-	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the methods set to the pairs (*key*, *value*) contained in :literal:`set`, where *key* must be a *string* (the method's name) and *value* must be a *callable*(the method itself). If :literal:`override ~= true`, the read-only methods (with *key* starting by :literal:`"__"`) cannot be updated. Classes cannot update their methods.
+	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the methods set to the pairs (*key*, *value*) contained in :literal:`set`, where *key* must be a *string* (the method's name) and *value* must be a *callable* (the method itself). If :literal:`override ~= true`, the read-only methods (with *key* starting by :literal:`"__"`) cannot be updated. Classes cannot update their methods.
 
 **set_metamethods**
 	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes set to the pairs (*key*, *value*) contained in :literal:`set`, where *key* must be a *string* (the metamethod's name) and *value* must be a *callable*\ (the metamethod itself). If :literal:`override == false`, the metamethods cannot be updated. Classes cannot update their metamethods.
@@ -444,7 +444,7 @@ The method converts non-\ *callable* attributes into callables automatically to 
 	 A *method*	:literal:`(key, val)` returning the *value* :var:`val` of the attribute :var:`key` with *lambda* evaluation. This method is the complementary of :literal:`var_get`, i.e. :literal:`__index` :math:`\equiv` :literal:`var_val` :math:`\circ` :literal:`var_get`.
 
 **dumpobj**
-	 A *method*	:literal:`([fname], [cls], [patt], [noeval])` return :literal:`self` after dumping its non-private attributes in file :literal:`fname` (default: :literal:`stdout`) in a hierarchical form down to :literal:`cls`. If the *string* :literal:`patt` is provided, it filters the names of the attributes to dump. If :literal:`fname == '-'`, the dump is returned as a *string* in place of :literal:`self`. The *log* :literal:`noeval` prevents the evaluatation the deferred expressions and reports the functions addresses instead. In the output, :literal:`self` and its parents are displayed indented according to their inheritance level, and preceeded by a :literal:`+` sign. The attributes overridden through the inheritance are tagged with :math:`n` :literal:`*` signs, where :math:`n` corresponds to the number of overrides since the first definition.
+	 A *method*	:literal:`([fname], [cls], [patt], [noeval])` return :literal:`self` after dumping its non-private attributes in file :literal:`fname` (default: :literal:`stdout`) in a hierarchical form down to :literal:`cls`. If the *string* :literal:`patt` is provided, it filters the names of the attributes to dump. If :literal:`fname == '-'`, the dump is returned as a *string* in place of :literal:`self`. The *logical* :literal:`noeval` prevents the evaluatation the deferred expressions and reports the functions addresses instead. In the output, :literal:`self` and its parents are displayed indented according to their inheritance level, and preceeded by a :literal:`+` sign. The attributes overridden through the inheritance are tagged with :math:`n` :literal:`*` signs, where :math:`n` corresponds to the number of overrides since the first definition.
 
 
 Metamethods
@@ -469,10 +469,10 @@ The root :literal:`object` provides the following metamethods:
 	 A *metamethod*	:literal:`()` called to finalize :literal:`self` before returning from the constructor.
 
 **__same**
-	 A *metamethod*	:literal:`()` similar to the :literal:`same`.
+	 A *metamethod*	:literal:`()` similar to the *method* :literal:`same`.
 
 **__copy**
-	 A *metamethod*	:literal:`()` similar to the :literal:`copy`.
+	 A *metamethod*	:literal:`()` similar to the *method* :literal:`copy`.
 
 **__len**
 	 A *metamethod*	:literal:`()` called by the length operator :literal:`#` to return the size of the *list* part of :literal:`self`.

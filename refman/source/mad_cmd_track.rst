@@ -40,8 +40,8 @@ The :var:`track` command provides a simple interface to the *dynamic* tracking c
 		 atexit=fnil,  	-- action called when exiting an element 
 		 ataper=fnil,  	-- action called when checking for aperture 
 		 atsave=fnil,  	-- action called when saving in mtable 
-    	 atdebug=fnil,  	-- action called when debugging the element maps 
-    	 info=nil,  	-- information level (output on terminal) 
+		 atdebug=fnil,  -- action called when debugging the element maps 
+		 info=nil,  	-- information level (output on terminal) 
 		 debug=nil, 	-- debug information level (output on terminal) 
 		 usrdef=nil,  	-- user defined data attached to the mflow 
 		 mflow=nil,  	-- mflow, exclusive with other attributes except nstep 

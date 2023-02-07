@@ -92,7 +92,7 @@ The :var:`correct` command supports the following attributes:
 	 Example: :expr:`units = 1e- 3` [m], i.e. [mm].
 
 	**corcnd** 
-	 A *log* or a *string* specifying the method to use among :literal:`svdcnd` and :literal:`pcacnd` from the :doc:`linear algebra <mad_mod_linalg>` module for the preconditioning of the system. A :const:`true` value corresponds to . (default: :const:`false`). 
+	 A *logical* or a *string* specifying the method to use among :literal:`svdcnd` and :literal:`pcacnd` from the :doc:`linear algebra <mad_mod_linalg>` module for the preconditioning of the system. A :const:`true` value corresponds to . (default: :const:`false`). 
 	 Example: :expr:`corcnd = 'pcacnd'`.
 
 	**corcut** 
@@ -104,7 +104,7 @@ The :var:`correct` command supports the following attributes:
 	 Example: :expr:`cortol = 1e- 8`.
 
 	**corset**
-	 A *log* specifying to update the correctors strengths for the corrected orbit. (default: :const:`true`). 
+	 A *logical* specifying to update the correctors strengths for the corrected orbit. (default: :const:`true`). 
 	 Example: :expr:`corset = false`.
 
 	**monon**
@@ -192,7 +192,7 @@ The :var:`correct` command returns a *mtable* where the information described he
 	**vkick**
 	 The predicted local vertical kick at the :math:`s`-position after correction.
 	**shared**
-	 A *log* indicating if the element is shared with another sequence.
+	 A *logical* indicating if the element is shared with another sequence.
 	**eidx**
 	 The index of the element in the sequence.
 

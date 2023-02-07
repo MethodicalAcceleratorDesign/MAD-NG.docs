@@ -2,8 +2,7 @@ MTables
 =======
 .. _ch.gen.mtbl:
 
-
-
+The MAD Tables (MTables) --- also named Table File System (TFS) --- are objects convenient to store, read and write a large amount of heterogeneous information organized as columns and header. The MTables are also containers that provide fast access to their rows, columns, and cells by referring to their indexes, or some values of the designated reference column, or by running iterators constrained with ranges and predicates.
 
 The :literal:`mtable` object is the *root object* of the TFS tables that store information relative to tables.
 
@@ -148,7 +147,7 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`([rng], [ntrn], [dir])` returning an iterator over the mtable rows. The optional range is determined by :literal:`:range_of([rng], [dir])`, optionally including :literal:`ntrn` turns (default: :const:`0`). The optional direction :literal:`dir` specifies the forward :const:`1` or the backward :literal:`- 1` direction of the iterator. If :literal:`rng` is not provided and the mtable is cycled, the *start* and *end* indexes are determined by :literal:`:index_of(self.__cycle)`. When used with a generic :literal:`for` loop, the iterator returns at each rows the index and the row *mappable* (proxy).
 
 **foreach**
-	 A *method*	:literal:`(act, [rng], [sel], [not])` returning the mtable itself after applying the action :literal:`act` on the selected rows. If :literal:`act` is a *set* representing the arguments in the packed form, the missing arguments will be extracted from the attributes :literal:`action`, :literal:`range`, :literal:`select` and :literal:`default`. The action :literal:`act` must be a *callable* :literal:`(row, idx)` applied to a row passed as first argument and its index as second argument. The optional range is used to generate the loop iterator :literal:`:iter([rng])`. The optional selector :literal:`sel` is a *callable* :literal:`(row, idx)` predicate selecting eligible rows for the action from the row itself passed as first argument and its index as second argument. The selector :literal:`sel` can be specified in other ways, see :doc:`row selections <mad_mod_numrange>` for details. The optional *logical* :literal:`not` (default: :const:`false`) indicates how to interpret default selection, as *all* or *none*, depending on the semantic of the action. [#f2]_ method needs remove all rows if no selector is provided.}
+	 A *method*	:literal:`(act, [rng], [sel], [not])` returning the mtable itself after applying the action :literal:`act` on the selected rows. If :literal:`act` is a *set* representing the arguments in the packed form, the missing arguments will be extracted from the attributes :literal:`action`, :literal:`range`, :literal:`select` and :literal:`default`. The action :literal:`act` must be a *callable* :literal:`(row, idx)` applied to a row passed as first argument and its index as second argument. The optional range is used to generate the loop iterator :literal:`:iter([rng])`. The optional selector :literal:`sel` is a *callable* :literal:`(row, idx)` predicate selecting eligible rows for the action from the row itself passed as first argument and its index as second argument. The selector :literal:`sel` can be specified in other ways, see :doc:`row selections <mad_mod_numrange>` for details. The optional *logical* :literal:`not` (default: :const:`false`) indicates how to interpret default selection, as *all* or *none*, depending on the semantic of the action. [#f2]_
 
 **select**
 	 A *method*	:literal:`([rng], [sel], [not])` returning the mtable itself after selecting the rows using :literal:`:foreach(sel_act, [rng], [sel], [not])`. By default mtable have all their rows deselected, the selection being stored as *boolean* in the column at index :const:`0` and named :func:`is_selected`.
@@ -220,7 +219,7 @@ The :literal:`mtable` object provides the following metamethods:
 		#. A *number* is interpreted as a row index and returns an *iterable* on the row (proxy) or :const:`nil`.
 		#. Other *key* types are interpreted as *object* attributes subject to object model lookup.
 		#. If the *value* associated with *key* is :const:`nil`, then *key* is interpreted as a column name and returns the column if it exists, otherwise...
-		#. If *key* is not a column name, then *key* is interpreted as a value in the reference column and returns either an *iterable* on the row (proxy) determined by this value or an *iterable* on the rows (proxies) holding this non-unique value. 
+		#. If *key* is not a column name, then *key* is interpreted as a value in the reference column and returns either an *iterable* on the row (proxy) determined by this value or an *iterable* on the rows (proxies) holding this non-unique value. [#f4]_
 		#. Otherwise returns :const:`nil`.
 
 **__newindex**
@@ -235,10 +234,9 @@ The :literal:`mtable` object provides the following metamethods:
 	 A *metamethod*	:literal:`()` called by the constructor to build the mtable from the column names stored in its *list* part and some attributes, like :literal:`owner`, :literal:`reserve` and :literal:`novector`.
 
 **__copy**
-	 A *metamethod*	:literal:`()` similar to the :literal:`copy`.
+	 A *metamethod*	:literal:`()` similar to the *method* :literal:`copy`.
 
-
-
+The following attribute is stored with metamethods in the metatable, but has different purpose:
 
 **__mtbl**
 	 A unique private *reference* that characterizes mtables.
@@ -248,12 +246,11 @@ MTables creation
 ----------------
 .. _sec.tbl.create:
 
+During its creation as an *object*, an mtable can defined its attributes as any object, and the *list* of its column names, which will be cleared after its initialization. Any column name in the *list* that is enclosed by braces is designated as the refererence column for the dictionnary that provides fast row indexing, and the attribute :literal:`refcol` is set accordingly.
 
-Any column name in the *list* that is enclosed by braces is designated as the refererence column for the dictionnary that provides fast row indexing, and the attribute :literal:`refcol` is set accordingly.
+Some attributes are considered during the creation by the *metamethod* :literal:`__init`, like :literal:`owner`, :literal:`reserve` and :literal:`novector`, and some others are initialized with defined values like :literal:`type`, :literal:`title`, :literal:`origin`, :literal:`date`, :literal:`time`, and :literal:`refcol`. The attributes :literal:`header` and :literal:`column` are concatenated with the the parent ones to build incrementing *list* of attributes names and columns names used by default when writing the mtable to files, and these lists are not provided as arguments.
 
-Some attributes are considered during the creation by the :literal:`__init`, like :literal:`owner`, :literal:`reserve` and :literal:`novector`, and some others are initialized with defined values like :literal:`type`, :literal:`title`, :literal:`origin`, :literal:`date`, :literal:`time`, and :literal:`refcol`. The attributes :literal:`header` and :literal:`column` are concatenated with the the parent ones to build incrementing *list* of attributes names and columns names used by default when writing the mtable to files, and these lists are not provided as arguments.
-
-
+The following example shows how to create a mtable form a *list* of column names add rows:
 
 .. code-block::
 	
@@ -280,7 +277,7 @@ The row selection in mtable use predicates in combination with iterators. The mt
 	 A *boolean* compared to the rows selection stored in column :literal:`'is_selected'`.
 
 **pattern**
-	 A *string* interpreted as a pattern to match the *string* in the reference column, which must exist, using :literal:`string.match` from the standard library, see `Lua 5.2 <http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf>`_ §6.4 for details. If the reference column does not exist, it can be built using the method.
+	 A *string* interpreted as a pattern to match the *string* in the reference column, which must exist, using :literal:`string.match` from the standard library, see `Lua 5.2 <http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf>`_ §6.4 for details. If the reference column does not exist, it can be built using the :meth:`make_dict` method.
 
 **list**
 	 An *iterable* interpreted as a *list* used to build a *set* and select the rows by their name, i.e. the built predicate will use :literal:`tbl[row.name]` as a *logical*, meaning that column :literal:`name` must exists. An alternate column name can be provided through the key :literal:`colname`, i.e. used as :literal:`tbl[row[colname]]`. If the *iterable* is a single item, e.g. a *string*, it will be converted first to a *list*.
@@ -294,7 +291,7 @@ The row selection in mtable use predicates in combination with iterators. The mt
 **select**
 	 A *callable* interpreted as the selector itself, which allows to build any kind of predicate or to complete the restrictions already built above.
 
-All these attributes are used in the aforementioned order to incrementally build predicates that are combined with logical conjunctions, i.e. :literal:`and`'ed, to give the final predicate used by the :literal:`:foreach` method. If only one of these attributes is needed, it is possible to pass it directly in :literal:`sel`, not as an attribute in a *set*, and its type will be used to determine the kind of predicate to build. For example, :literal:`tbl:foreach(act, "\POW MB")` is equivalent to :literal:`tbl:foreach{action=act, pattern="\POW MB"}`.
+All these attributes are used in the aforementioned order to incrementally build predicates that are combined with logical conjunctions, i.e. :literal:`and`'ed, to give the final predicate used by the :literal:`:foreach` method. If only one of these attributes is needed, it is possible to pass it directly in :literal:`sel`, not as an attribute in a *set*, and its type will be used to determine the kind of predicate to build. For example, :literal:`tbl:foreach(act, "^ MB")` is equivalent to :literal:`tbl:foreach{action=act, pattern="^ MB"}`.
 
 Indexes, names and counts
 -------------------------
@@ -303,11 +300,11 @@ Indexing a mtable triggers a complex look up mechanism where the arguments will 
 
 If a row exists but its *value* is not unique in the reference column, an *iterable* is returned. An *iterable* supports the length :literal:`#` operator to retrieve the number of rows with the same *value*, the indexing operator :literal:`[]` waiting for a count :math:`n` to retrieve the :math:`n`-th row from the start with that *value*, and the iterator :literal:`ipairs` to use with generic :literal:`for` loops.
 
-
+The returned *iterable* is in practice a proxy, i.e.~a fake intermediate object that emulates the expected behavior, and any attempt to access the proxy in another manner should raise a runtime error.
 
 **Note:** Compared to the sequence, the indexing operator :literal:`[]` and the method :literal:`:index_of` of the mtable always interprets a *number* as a (relative) row index. To find a row from a :math:`s`-position [m] in the mtable if the column exists, use the functions :literal:`lsearch` or :literal:`bsearch` (if they are monotonic) from the :doc:`utility <mad_mod_miscfuns>` module.
 
-
+The following example shows how to access to the rows through indexing and the *iterable*:
 
 .. code-block::
 	
@@ -328,7 +325,7 @@ If a row exists but its *value* is not unique in the reference column, an *itera
 	print(tbl:name_of(4))       -- display: p11[2]  (2nd p11 from start)
 	print(tbl:name_of(1, -2))   -- display: p11{-1} (1st p11 before p13)
 
-
+The last two lines of code display the name of the same row but mangled with absolute and relative counts.
 
 Iterators and ranges
 --------------------
@@ -363,7 +360,7 @@ The following example shows how to access to the rows with the :literal:`:foreac
 	-- display:  p11   1.2
 	!            p12   2.2
 	!            p13   3.2
-	tbl:foreach{action=act, pattern="[^1](*\$*)"}
+	tbl:foreach{action=act, pattern="[^1]$"}
 	-- display:  p12   2.2
 	!            p13   3.2
 	local act = \r -> print(r.name, r.y, r.is_selected)
@@ -387,14 +384,14 @@ The following example shows how the :var:`track` command, i.e. :literal:`self` h
 	local header = { -- extra attributes to save in track headers
 	  'direction', 'observe', 'implicit', 'misalign', 'deltap', 'lost' }
 	
-	local function make_mtable (self, (*range*), nosave)
+	local function make_mtable (self, range, nosave)
 	  local title, dir, observe, implicit, misalign, deltap, savemap in self
 	  local sequ, nrow = self.sequence, nosave and 0 or 16
 	
 	  return mtable(sequ.name, { -- keep column order!
-	    (*type*)='track', title=title, header=header,
+	    type='track', title=title, header=header,
 	    direction=dir, observe=observe, implicit=implicit, misalign=misalign,
-	    deltap=deltap, lost=0, (*range*)=(*range*), reserve=nrow, __seq=sequ,
+	    deltap=deltap, lost=0, range=range, reserve=nrow, __seq=sequ,
 	    {'name'}, 'kind', 's', 'l', 'id', 'x', 'px', 'y', 'py', 't', 'pt',
 	    'slc', 'turn', 'tdir', 'eidx', 'status', savemap and '__map' or nil })
 	end
@@ -418,7 +415,7 @@ The following example shows how to extend the MTable created by a :var:`twiss` c
 	      local idx = tws[ri].eidx
 	      return is_integer(idx) and tws.__seq[idx].tilt or 0 end)
 	
-	for i=1,6 do -- add k(*\IT{i}*)l and k(*\IT{i}*)sl columns
+	for i=1,6 do -- add kil and kisl columns
 	tws:addcol('k'..i-1..'l', \ri =>
 	      local idx = tws[ri].eidx
 	      if not is_integer(idx) then return 0 end -- implicit drift

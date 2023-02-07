@@ -35,7 +35,7 @@ The :var:`beta0` object provides the following metamethods:
 	 A *metamethod*	:literal:`()` returning :literal:`self` after having processed the attributes with the special protect-and-update mechanism, where the order of the updates is undefined. It also creates new particle on-the-fly if the :var:`mass` and the :var:`charge` are defined, and then select it.
 
 
-
+The following attribute is stored with metamethods in the metatable, but has different purpose:
 
 **__beta0**
 	 A unique private *reference* that characterizes beta0 blocks.
