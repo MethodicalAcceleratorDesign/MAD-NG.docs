@@ -28,7 +28,7 @@ The :var:`correct` command (i.e. orbit correction) provides a simple interface t
 		monon=false,  	-- fraction (0<?<=1) of randomly available monitors 
 		moncut=false,  	-- cut monitors above moncut sigmas 
 		monerr=false,  	-- 1:use mrex and mrey alignment errors of monitors 
-						-- 2:use msex and msey scaling errors of monitors 
+				-- 2:use msex and msey scaling errors of monitors 
 		info=nil,  	-- information level (output on terminal) 
 		debug=nil, 	-- debug information level (output on terminal) 
 	}
@@ -164,17 +164,17 @@ The :var:`correct` command returns a *mtable* where the information described he
 The header of the *mtable* contains the fields in the default order:
 
 	**name**
-	 The name of the command that created the :literal:`"correct"`.
+	 The name of the command that created the *mtable*, e.g. :literal:`"correct"`.
 	**type**
-	 The type of the :literal:`"correct"`.
+	 The type of the *mtable*, i.e. :literal:`"correct"`.
 	**title**
 	 The value of the command attribute :literal:`title`.
 	**origin**
-	 The origin of the application that created the :literal:`"MAD 1.0.0 OSX 64"`.
+	 The origin of the application that created the *mtable*, e.g. :literal:`"MAD 1.0.0 OSX 64"`.
 	**date**
-	 The date of the creation of the :literal:`"27/05/20"`.
+	 The date of the creation of the *mtable*, e.g. :literal:`"27/05/20"`.
 	**time**
-	 The time of the creation of the :literal:`"19:18:36"`.
+	 The time of the creation of the *mtable*, e.g. :literal:`"19:18:36"`.
 	**refcol**
 	 The reference *column* for the *mtable* dictionnary, e.g. :literal:`"name"`.
 	**range**
@@ -217,7 +217,7 @@ The core of the *mtable* contains the columns in the default order:
 	**eidx**
 	 The index of the element in the sequence.
 
-Note that :var:`correct` does not take into account the particles and damaps :literal:`id`s present in the (augmented) :var:`track` *mtable*, hence the provided tables should contain single particle or damap information.
+Note that :var:`correct` does not take into account the particles and damaps :literal:`id`\ s present in the (augmented) :var:`track` *mtable*, hence the provided tables should contain single particle or damap information.
 
 Examples
 --------

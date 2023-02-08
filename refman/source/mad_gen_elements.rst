@@ -124,7 +124,7 @@ The :var:`element` *object* provides the following attributes:
 	 A *number* specifying the physical length of the element on the design orbit [m]. (default: :const:`0`).
 
 **lrad**
-	 A *number* specifying the field length of the element on the design orbit considered by the radiation [m]. (default: :expr:`lrad = \s -> s.l`).
+	 A *number* specifying the field length of the element on the design orbit considered by the radiation [m]. (default: :expr:`lrad = \\s -> s.l`).
 
 **angle**
 	 A *number* specifying the bending angle :math:`\alpha` of the element [rad]. A positive angle represents a bend to the right, i.e. a :math:`-y`-rotation towards negative x values. (default: :const:`0`).
@@ -145,15 +145,15 @@ The :var:`element` *object* provides the following attributes:
 	 A *string* holding one of :literal:`"entry"`, :literal:`"centre"` or :literal:`"exit"`, or a *number* specifying a position in [m] from the start of the element, all of them resulting in an offset to substract to the :literal:`at` attribute to find the :math:`s`-position of the element entry when inserted in a sequence, see :ref:`element positions <elpos>` for details. (default: :const:`nil` :math:`\equiv` :literal:`seq.refer`).
 
 **aperture**
-	 A *mappable* specifying aperture attributes, see :ref:`Aperture <sec.elm.aper>` for details. \\
+	 A *mappable* specifying aperture attributes, see :ref:`Aperture <sec.elm.aper>` for details. 
 	 (default: :expr:`{kind='circle', 1}`).
 
 **apertype**
-	 A *string* specifying the aperture type, see :ref:`Aperture <sec.elm.aper>` for details. \\
-	 (default: :expr:`\s -> s.aperture.kind or 'circle'`). [#f4]_ 
+	 A *string* specifying the aperture type, see :ref:`Aperture <sec.elm.aper>` for details. 
+	 (default: :expr:`\\s -> s.aperture.kind or 'circle'`). [#f4]_ 
 
 **misalign**
-	 A *mappable* specifying misalignment attributes, see :ref:`Misalignment <sec.elm.misalign>` for details. \\
+	 A *mappable* specifying misalignment attributes, see :ref:`Misalignment <sec.elm.misalign>` for details. 
 	 (default: :const:`nil`)
 
 
@@ -254,7 +254,7 @@ The :var:`element` object provides the following metamethods:
 	 A *metamethod*	:literal:`(n)` overloading the unary operator :literal:`-` to build a :var:`bline` object from the turning of an element, i.e. reflect the element.
 
 **__tostring**
-	 A *metamethod*	:literal:`()` returning a *string* built from the element information, e.g. :literal:`print(monitor 'bpm' {})` display the *string* :literal:`":monitor: 'bpm' memory-address`
+	 A *metamethod*	:literal:`()` returning a *string* built from the element information, e.g. :literal:`print(monitor 'bpm' {})` display the *string* :literal:`":monitor: 'bpm' memory-address"`.
 
 
 The operators overloading of elements allows to unify sequence and beamline definitions in a consistent and simple way, noting that :var:`sequence` and :var:`bline` are (external) elements too.
@@ -277,7 +277,7 @@ The :var:`sbend` element is a sector bending magnet with a curved reference syst
 
 **k0**
 	A :literal:`number` specifying the dipolar strength of the element [:math:`\mathrm{m}^{-1}`].
-	(default: :expr:`k0 = \s -> s.angle/s.l`). [#f5]_ [#f6]_
+	(default: :expr:`k0 = \\s -> s.angle/s.l`). [#f5]_ [#f6]_
 
 **k0s**
 	 A *number* specifying the dipolar skew strength of the element [m\ :math:`^{-1}`]. (default: :const:`0`).
@@ -304,7 +304,7 @@ The :var:`rbend` element is a rectangular bending magnet with a straight referen
 
 **k0**
 	A :literal:`number` specifying the dipolar strength of the element [:math:`\mathrm{m}^{-1}`].
-	(default: :expr:`k0 = \s -> s.angle/s.l`). [#f5]_ [#f6]_
+	(default: :expr:`k0 = \\s -> s.angle/s.l`). [#f5]_ [#f6]_
 
 **k0s**
 	 A *number* specifying the dipolar skew strength of the element [m\ :math:`^{-1}`]. (default: :const:`0`).
@@ -740,7 +740,7 @@ Two kinds of misalignments are available for an element and summed beforehand:
 
 *	 The *absolute* misalignments of the element versus its local reference frame, and specified by its :literal:`misalign` attribute. These misalignments are always considered.
 
-*	 The *relative* misalignments of the element versus a given sequence, and specified by the :literal:`:misalign` of :var:`sequence`. These misalignments can be considered or not depending of command settings.
+*	 The *relative* misalignments of the element versus a given sequence, and specified by the *method* :meth:`:misalign` of :var:`sequence`. These misalignments can be considered or not depending of command settings.
 
 .. figure:: fig/elm_dsplmnt_xs.jpg
 	:name: fig-gen-dispxs

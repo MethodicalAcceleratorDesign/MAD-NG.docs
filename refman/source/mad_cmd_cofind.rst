@@ -216,9 +216,9 @@ The :var:`cofind` command supports the following attributes:
 		Example: :expr:`atdebug = myaction`.
 
 	**codiff**
-		A *number* specifying the finite difference step to approximate the Jacobian when damaps are disabled. If :literal:`codiff` is larger than :math:`100\times`\ :literal:`cotol`, it will be adjusted to :literal:`cotol` :math:`/100` and a warning will be emitted. (default: :const:`1e-10`). 
+		A *number* specifying the finite difference step to approximate the Jacobian when damaps are disabled. If :literal:`codiff` is larger than :math:`100\times`\ :literal:`cotol`, it will be adjusted to :literal:`cotol` :math:`/100` and a warning will be emitted. (default: :const:`1e-8`). 
 
-		Example: :expr:`codiff = 1e-8`.
+		Example: :expr:`codiff = 1e-10`.
 
 	**coiter**
 		A *number* specifying the maximum number of iteration. If this threshold is reached, all the remaining tracked objects are tagged as :literal:`"unstable"`. (default: 20). 

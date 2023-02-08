@@ -26,12 +26,12 @@ The :var:`beam` *object* provides the following attributes:
 **emrad**
 	 A *lambda* returning the electromagnetic radius of the particle [m], 
 
-	 :math:`\mathrm{emrad} = \mathrm{krad\_GeV}\times\mathrm{charge}^2/\mathrm{mass}` where :math:`\mathrm{krad\_GeV} = 10^{-9} (4 \pi\varepsilon_0)^{-1} q`.
+	 :math:`\mathrm{emrad} = \mathrm{krad_GeV}\times\mathrm{charge}^2/\mathrm{mass}` where :math:`\mathrm{krad_GeV} = 10^{-9} (4 \pi\varepsilon_0)^{-1} q`.
 
 **aphot**
 	 A *lambda* returning the average number of photon emitted per bending unit, 
 
-	 :math:`\mathrm{aphot} = \mathrm{kpht\_GeV}\times\mathrm{charge}^2\times\mathrm{betgam}` where :math:`\mathrm{kpht\_GeV}` :math:`= \frac{5}{2\sqrt{3}}`.
+	 :math:`\mathrm{aphot} = \mathrm{kpht_GeV}\times\mathrm{charge}^2\times\mathrm{betgam}` where :math:`\mathrm{kpht_GeV}` :math:`= \frac{5}{2\sqrt{3}}` :math:`\mathrm{krad_GeV}` :math:`(\hbar c)^{-1}`.
 
 **energy**
 	 A *number* specifying the particle energy [GeV]. (default: :const:`1`).

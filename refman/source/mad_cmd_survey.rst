@@ -273,7 +273,7 @@ The slicing can take three different forms:
 
 	*	 A *number* of the form :literal:`nslice=`:math:`N` that specifies the number of slices with indexes :literal:`0..N`. This defines a uniform slicing with slice length :math:`l_{\text{slice}} = l_{\text{elem}}/N`.
 
-	*	 An *iterable* of the form :literal:`nslice={lw_1,lw_2,..lw_N}` with :math:`\sum_i lw_i=1` that specifies the fraction of length of each slice with indexes :literal:`0..N` where :math:`N=`\ :literal:`#nslice`. This defines a non-uniform slicing with a slice length of :math:`l_i = lw_i\times l_{\text{elem}}`.
+	*	 An *iterable* of the form :literal:`nslice={lw_1,lw_2,..,lw_N}` with :math:`\sum_i lw_i=1` that specifies the fraction of length of each slice with indexes :literal:`0..N` where :math:`N=`\ :literal:`#nslice`. This defines a non-uniform slicing with a slice length of :math:`l_i = lw_i\times l_{\text{elem}}`.
 
 	*	 A *callable* :literal:`(elm, mflw, lw)` returning one of the two previous forms of slicing. The arguments are in order, the current element, the tracked map flow, and the length weight of the step, which should allow to return a user-defined element-specific slicing. 
 

@@ -133,7 +133,7 @@ The :var:`track` command supports the following attributes:
 	 Example: :expr:`ptcmodel = true`.
 
 	**implicit**
-	 A *logical* indicating that implicit elements must be sliced too, e.g. for smooth plotting. (default: :const:`true`). 
+	 A *logical* indicating that implicit elements must be sliced too, e.g. for smooth plotting. (default: :const:`false`). 
 
 	 Example: :expr:`implicit = true`.
 
@@ -175,7 +175,7 @@ The :var:`track` command supports the following attributes:
 	**savesel**
 	 A *callable* :literal:`(elm, mflw, lw, islc)` acting as a predicate on selected elements for observation, i.e. the element is discarded if the predicate returns :const:`false`. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`) 
 
-	 Example: :expr:`savesel = \\e -> mylist ~= nil`.
+	 Example: :expr:`savesel = \\e -> mylist[e.name] ~= nil`.
 
 	**savemap** 
 	 A *logical* indicating to save the damap in the column :literal:`__map` of the *mtable*. (default: :const:`false`). 
@@ -208,7 +208,7 @@ The :var:`track` command supports the following attributes:
 	 Example: :expr:`atsave = myaction`.
 
 	**atdebug** 
-	 A *callable* :literal:`(elm, mflw, lw, [msg], [...])` invoked at the entry and exit of element maps during the integration steps, i.e. within the slices. The arguments are in order, the current element, the tracked map flow, the length weight of the integration step and a *string* specifying a debugging message, e.g. :literal:`map_name:0` for entry and :literal:`":1"` for exit. If the level :literal:`debug` :math:`\geq 4` and :literal:`atdebug` is not specified, the default *function* :literal:`mdump` is used. In some cases, extra arguments could be passed to the method. (default: :literal:`fnil`). 
+	 A *callable* :literal:`(elm, mflw, lw, [msg], [...])` invoked at the entry and exit of element maps during the integration steps, i.e. within the slices. The arguments are in order, the current element, the tracked map flow, the length weight of the integration step and a *string* specifying a debugging message, e.g. :literal:`"map_name:0"` for entry and :literal:`":1"` for exit. If the level :literal:`debug` :math:`\geq 4` and :literal:`atdebug` is not specified, the default *function* :literal:`mdump` is used. In some cases, extra arguments could be passed to the method. (default: :literal:`fnil`). 
 
 	 Example: :expr:`atdebug = myaction`.
 
@@ -355,7 +355,7 @@ The surrounding :math:`P` and :math:`P^{-1}` maps represent the patches applied 
 
 	*	 The tilt of the element to move from the element frame to the *titled frame* if the element attribute :literal:`tilt` is non-zero. The :literal:`atslice` actions take place in this frame.
 
-The *map frame* is specific to some maps while tracking through the body of the element. In principle, the map frame is not visible to the user, only to the integrator. For example, a quadrupole with both :literal:`k1` and :literal:`k1s` defined will have a *map frame* tilted by the angle :math:`\alpha=-\frac{1}{2}\tan^{-1}\frac{k1s}{k1}` attached to its thick map, i.e. the focusing matrix handling only :math:`\tilde{k}_1 = \sqrt{k1^2+k1s^2}`, but not to its thin map, i.e. the kick from all multipoles (minus :literal:`k1` and :literal:`k1s`) expressed in the *tilted frame* , during the integration steps.
+The *map frame* is specific to some maps while tracking through the body of the element. In principle, the map frame is not visible to the user, only to the integrator. For example, a quadrupole with both :literal:`k1` and :literal:`k1s` defined will have a *map frame* tilted by the angle :math:`\alpha=-\frac{1}{2}\tan^{-1}\frac{k1s}{k1}` attached to its thick map, i.e. the focusing matrix handling only :math:`\tilde{k}_1 = \sqrt{k1^2+k1s^2}`, but not to its thin map, i.e. the kick from all multipoles (minus :literal:`k1` and :literal:`k1s`) expressed in the *tilted frame*\ , during the integration steps.
 
 Sub-elements
 """"""""""""

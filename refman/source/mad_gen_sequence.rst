@@ -271,13 +271,13 @@ The following example shows how to create a sequence form a *list* of elements a
    df 'df2' {}, mk 'mk2' {},
    } :dumpseq()
 
-Displays
+Displays:
 
 .. code-block:: text
 
    sequence: seq, l=3
    idx  kind     name         l          dl       spos       upos    uds
-   001  marker   (*$start*)   0.000       0       0.000      0.000   0.000
+   001  marker   start        0.000       0       0.000      0.000   0.000
    002  drift    df1          1.000       0       0.000      0.500   0.500
    003  marker   mk1          0.000       0       1.000      1.000   0.000
    004  marker   mk0          0.000       0       1.000      1.000   0.000
@@ -285,7 +285,7 @@ Displays
    006  marker   mk.s         0.000       0       2.000      2.000   0.000
    007  drift    df2          1.000       0       2.000      2.500   0.500
    008  marker   mk2          0.000       0       3.000      3.000   0.000
-   009  marker   (*$end*)     0.000       0       3.000      3.000   0.000
+   009  marker   end          0.000       0       3.000      3.000   0.000
 
 .. _elpos:
 
@@ -360,7 +360,7 @@ Indexes, names and counts
 
 Indexing a sequence triggers a complex look up mechanism where the arguments will be interpreted in various ways as described in the :literal:`:__index` metamethod. 
 A *number* will be interpreted as a relative slot index in the list of elements, and a negative index will be considered as relative to the end of the sequence, 
-i.e. :const:`-1` is the :literal:`$end` marker. Non- *number* will be interpreted first as an object key (can be anything), looking for sequence methods or attributes;
+i.e. :const:`-1` is the :literal:`$end` marker. Non-\ *number* will be interpreted first as an object key (can be anything), looking for sequence methods or attributes;
 then as an element name if nothing was found.
 
 If an element exists but its name is not unique in the sequence, an *iterable* is returned. An *iterable* supports the length :literal:`#` operator to retrieve the 
@@ -410,8 +410,8 @@ The :literal:`:siter` differs from the :literal:`:iter` by its loop, which retur
 The method :literal:`:foreach` uses the iterator returned by :literal:`:iter` with a range as its sole argument to loop over the elements where to apply the predicate before 
 executing the action. The methods :literal:`:select`, :literal:`:deselect`, :literal:`:filter`, :literal:`:install`, :literal:`:replace`, :literal:`:remove`, :literal:`:move`, and :literal:`:misalign` are all based
 directly or indirectly on the :literal:`:foreach` method. Hence, to iterate backward over a sequence range, these methods have to use either its *list* form or a numerical range.
-For example the invocation :literal:`seq:foreach(\e -> print(e.name), {2, 2, 'idx', -1)` will iterate backward over the entire sequence :literal:`seq` excluding the :literal:`$start`
-and :literal:`$end` markers, while the invocation :literal:`seq:foreach(\e -> print(e.name), 5..2..-1)` will iterate backward over the elements with :math:`s`-positions sitting in the
+For example the invocation :literal:`seq:foreach(\\e -> print(e.name), {2, 2, 'idx', -1)` will iterate backward over the entire sequence :literal:`seq` excluding the :literal:`$start`
+and :literal:`$end` markers, while the invocation :literal:`seq:foreach(\\e -> print(e.name), 5..2..-1)` will iterate backward over the elements with :math:`s`-positions sitting in the
 interval :math:`[2,5]` m.
 
 The tracking commands :literal:`survey` and :var:`track` use the iterator returned by :literal:`:siter` for their main loop, with their :literal:`range`, :literal:`nturn` and :literal:`dir` attributes as arguments. These commands also save the iterator states in their :literal:`mflw` to allow the users to run them :literal:`nstep` by :literal:`nstep`, see commands :doc:`survey <mad_cmd_survey>` and :doc:`track <mad_cmd_track>` for details.
@@ -539,8 +539,7 @@ The elements are zero-length, so the lattice is too. ::
 Installing elements I
 ---------------------
 
-The following example shows how to install elements and subsequences in an empty initial sequence:
-::
+The following example shows how to install elements and subsequences in an empty initial sequence::
 
    local sequence, drift in MAD.element
    local seq   = sequence "seq" { l=16, refer="entry", owner=true }
@@ -582,8 +581,7 @@ Display:
 Installing elements II
 ----------------------
 
-The following more complex example shows how to install elements and subsequences in a sequence using a selection and the packed form for arguments:
-::
+The following more complex example shows how to install elements and subsequences in a sequence using a selection and the packed form for arguments::
 
    local mk   = marker   "mk"  { }
    local seq  = sequence "seq" { l = 10, refer="entry",

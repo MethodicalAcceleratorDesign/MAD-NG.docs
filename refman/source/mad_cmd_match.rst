@@ -61,12 +61,12 @@ The :literal:`match` command supports the following attributes:
 :ref:`equalities <sec.match.cst>`
 	An *mappable* of single equality specification that can be combined with a *set* of specifications for all equalities. (default: :literal:`{}`). 
 
-	Example: :expr:`equalities = {{  expr=\t -> t.q1-64.295, name='q1' }}`.
+	Example: :expr:`equalities = {{  expr=\\t -> t.q1-64.295, name='q1' }}`.
 
 :ref:`inequalities <sec.match.cst>`
 	An *mappable* of single inequality specification that can be combined with a *set* of specifications for all inequalities. (default: :literal:`{}`). 
 
-	Example: :expr:`inequalities = {{  expr=\t -> t.mq4.beta11-50 }}`.
+	Example: :expr:`inequalities = {{  expr=\\t -> t.mq4.beta11-50 }}`.
 
 :ref:`weights <sec.match.cst>`
 	A *mappable* of weights specification that can be used in the :literal:`kind` attribute of the constraints specifications. (default: :literal:`{}`). 
@@ -116,7 +116,7 @@ The :literal:`match` command returns the following values in this order:
 **ncall**
 	 The *number* of calls of the :literal:`command` function or the :literal:`objective` function.
 
-.. table:: List of :var:`status` (*string*) returned by the :mod:`match`
+.. table:: List of :var:`status` (*string*) returned by the :mod:`match` command.
 	:name: tbl.match.status
 	:align: center
 	
@@ -270,7 +270,7 @@ The *variable-attributes* is a set of attributes that specify a single variable:
 **set** 
 	A *callable* :literal:`(v, e)` updating the variable value with the *number* passed as first argument, optionally using the matching environment passed as second argument.This attribute is required if the variable is *local* or an *upvalue* to avoid a significant slowdown of the code. (default: :const:`nil`). 
 
-	Example: :expr:`set = \v,e => lhcb1.mqxa_1l5.k1 = v*e.usrdef.xon end`.
+	Example: :expr:`set = \\v,e => lhcb1.mqxa_1l5.k1 = v*e.usrdef.xon end`.
 
 
 The *variables-attributes* is a set of attributes that specify all variables together, but with a lower precedence than the single variable specification of the same name unless otherwise specified:
@@ -327,7 +327,7 @@ The attributes :literal:`equalities` (default: :literal:`{}`) and :literal:`ineq
 .. code-block:: 
 
 
-	Equalities = { constraints-attributes,
+	equalities = { constraints-attributes,
 			{ constraint-attributes } , 
 			... more equality definitions ... 
 			{ constraint-attributes } },
@@ -389,7 +389,7 @@ The *constraints-attributes* is a set of attributes that specify all equalities 
 		local function myinequ (x, c, cjac) 
 	  		c:fill { 8*x[1]^3 - x[2] ; (1 - x[1])^3 - x[2] } 
 		 	if cjac then -- fill [2x2] matrix if present 
-				cjac:fill { 24*x[1]^2, - 1 ; - 3*(1 - x[1])^ 2, - 1 }
+				cjac:fill { 24*x[1]^2, - 1 ; - 3*(1 - x[1])^2, - 1 }
 	  		end
 
 		End
@@ -405,7 +405,7 @@ The *constraints-attributes* is a set of attributes that specify all equalities 
 The *weights-list* is a set of attributes that specify weights for kinds used by constraints. It allows to override the default weights of the supported kinds summarized in :numref:`tbl.match.wght`, or to extend this list with new kinds and weights. The default weight for any undefined :literal:`kind` is :const:`1`. 
 Example: :expr:`weights = { q1=100, q2=100, mykind=3 }`.
 
-.. table:: List of supported kinds *string* and their default weights (*number*).
+.. table:: List of supported kinds (*string*) and their default weights (*number*).
 	:name: tbl.match.wght
 	:align: center
 
@@ -413,6 +413,8 @@ Example: :expr:`weights = { q1=100, q2=100, mykind=3 }`.
 	|Name           |Weight       |Name         |Weight       |Name         |Weight       |Generic name    |	
 	+===============+=============+=============+=============+=============+=============+================+
 	|:var:`x`       |:const:`10`  |:var:`y`     |:const:`10`  |:var:`t`     |:const:`10`  |                |   
+	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
+	|:var:`px`      |:const:`100` |:var:`py`    |:const:`100` |:var:`pt`    |:const:`100` |                |   
 	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
 	|:var:`dx`      |:const:`10`  |:var:`dy`    |:const:`10`  |:var:`dt`    |:const:`10`  |:var:`d`        |   
 	+---------------+-------------+-------------+-------------+-------------+-------------+----------------+
@@ -463,7 +465,7 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 		Example: :expr:`method = "LD_LMDIF"`.
 
 	**submethod** 
-		A *string* specifying the algorithm from NLopt module to use for solving the problem locally when the method is an augmented algorithm, see Tables :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd` (default: :literal:`"LN_COBYLA"`). 
+		A *string* specifying the algorithm from NLopt module to use for solving the problem locally when the method is an augmented algorithm, see :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd` (default: :literal:`"LN_COBYLA"`). 
 
 		Example: :expr:`method = "AUGLAG", submethod = "LD_SLSQP"`.
 
@@ -478,7 +480,7 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 		Example: :expr:`tol = 1e-10`.
 
 	**rtol** 
-		A *number* specifying the relative tolerance on the objective function step. If an update is smaller than :literal:`rtol` relative to its step value, the command will return the status :literal:`"FTOL"` (default: :const:`nil`). 
+		A *number* specifying the relative tolerance on the objective function step. If an update is smaller than :literal:`rtol` relative to its step value, the command will return the status :literal:`"FTOL"` (default: :const:`0`). 
 
 		Example: :expr:`tol = 1e-8`.
 
@@ -505,12 +507,12 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 .. code-block::
 
 		local function myfun(x, fgrd) 
-			if =fgrd then -- fill [2x1] vector if present
+			if fgrd then -- fill [2x1] vector if present
 				fgrd:fill { 0, 0.5/sqrt(x[2]) }
 		 	end
 			return sqrt(x[2])
 
-		End
+		end
 
 \
 
@@ -559,7 +561,7 @@ jstra    Strategy for reducing variables of least squares system.
 Algorithms
 ----------
 
-The :literal:`match` command supports local and global optimization algorithms through the :literal:`method` attribute, as well as combinations of them with the :literal:`submethod` attribute (see :ref:`objective<sec.match.obj>`). The method should be selected according to the kind of problem that will add a prefix to the method name: local (:literal:`L`) or global (:literal:`G`), with (:literal:`D`) or without (:literal:`N`) derivatives, and least squares or nonlinear function minimization. When the method requires the derivatives (:literal:`D`) and no :literal:`objective.exec` function is defined or the attribute :literal:`grad` is set to :const:`false`, the :literal:`match` command will approximate the derivatives, i.e. gradient and Jacobian, by the finite difference method (see :ref:`derivatives <sec.match.der>`}).
+The :literal:`match` command supports local and global optimization algorithms through the :literal:`method` attribute, as well as combinations of them with the :literal:`submethod` attribute (see :ref:`objective<sec.match.obj>`). The method should be selected according to the kind of problem that will add a prefix to the method name: local (:literal:`L`) or global (:literal:`G`), with (:literal:`D`) or without (:literal:`N`) derivatives, and least squares or nonlinear function minimization. When the method requires the derivatives (:literal:`D`) and no :literal:`objective.exec` function is defined or the attribute :literal:`grad` is set to :const:`false`, the :literal:`match` command will approximate the derivatives, i.e. gradient and Jacobian, by the finite difference method (see :ref:`derivatives <sec.match.der>`).
 
 Most global optimization algorithms explore the variables domain with methods belonging to stochastic sampling, deterministic scanning, and splitting strategies, or a mix of them. Hence, all global methods require *boundaries* to define the searching region, which may or may not be internally scaled to a hypercube. Some global methods allow to specify with the :literal:`submethod` attribute, the local method to use for searching local minima. If this is not the case, it is wise to refine the global solution with a local method afterward, as global methods put more effort on finding global solutions than precise local minima. The global (:literal:`G`) optimization algorithms, with (:literal:`D`) or without (:literal:`N`) derivatives, are listed in :numref:`tbl.match.gmthd`.
 
@@ -688,27 +690,29 @@ The update of the :math:`i`-th column of the Jacobian by the Broyden approximati
 Console output
 --------------
 
-The verbosity of the output of the :literal:`match` command on the console (e.g. terminal) is controlled by the :literal:`info` level, where the level :literal:`info=0` means a completely silent command as usual. The first verbose level :literal:`info=1` displays the *final summary* at the end of the matching, as shown in the :ref:`summary output <sec.match.info1>` block and the next level :literal:`info=2` adds *intermediate summary* for each evaluation of the objective function, as shown in the :ref:`intermediate output <sec.match.info2>` block. The columns of these tables are self-explanatory, and the sign :literal:`>` on the right of the constraints marks those failing.
+The verbosity of the output of the :literal:`match` command on the console (e.g. terminal) is controlled by the :literal:`info` level, where the level :literal:`info=0` means a completely silent command as usual. The first verbose level :literal:`info=1` displays the *final summary* at the end of the matching, as shown in :numref:`code.match.info1` and the next level :literal:`info=2` adds *intermediate summary* for each evaluation of the objective function, as shown in :numref:`code.match.info2`. The columns of these tables are self-explanatory, and the sign :literal:`>` on the right of the constraints marks those failing.
 
 The bottom line of the *intermediate summary* displays in order:
 
-	#. the number of evaluation of the objective function so far,
-	#. the elapsed time in second (in square brackets) so far,
-	#. the current objective function value,
-	#. the current objective function step,
-	#. the current number of constraint that failed :math:`c_{\text{fail}}`.
+	* the number of evaluation of the objective function so far,
+	* the elapsed time in second (in square brackets) so far,
+	* the current objective function value,
+	* the current objective function step,
+	* the current number of constraint that failed :math:`c_{\text{fail}}`.
 
 The bottom line of the *final summary* displays the same information but for the best case found, as well as the final status returned by the :literal:`match` command. The number in square brackets right after :literal:`fbst` is the evaluation number of the best case.
 
 The :ref:`LSopt <sec.match.lsopt>` module adds the sign :literal:`#` to mark the *adjusted* variables and the sign :literal:`*` to mark the *rejected* variables and constraints on the right of the *intermediate summary* tables to qualify the behavior of the constraints and the variables during the optimization process. If these signs appear in the *final summary* too, it means that they were always adjusted or rejected during the matching, which is useful to tune your study e.g. by removing the useless constraints.
 
-.. _sec.match.info1:
 
-Match command summary output (info=1).
-""""""""""""""""""""""""""""""""""""""
 
+Match command output
+""""""""""""""""""""
+
+.. _code.match.info1:
 
 .. code-block:: console
+	:caption: **Match command summary output (info=1).**
 
 	Constraints                Type        Kind        Weight     Penalty Value
 	-----------------------------------------------------------------------------
@@ -752,13 +756,10 @@ Match command summary output (info=1).
 
 	ncall=381 [4.1s], fbst[381]=8.80207e-12, fstp=-3.13047e-08, status=FMIN.
 
-.. _sec.match.info2:
-
-Match command intermediate output (info=2).
-"""""""""""""""""""""""""""""""""""""""""""
-
+.. _code.match.info2:
 
 .. code-block:: console
+	:caption: **Match command intermediate output (info=2).**
 
 	 Constraints                Type        Kind        Weight     Penalty Value
 	-----------------------------------------------------------------------------
@@ -950,7 +951,7 @@ The following example below shows how to match the betatron tunes of the LHC bea
 	local status, fmin, ncall = match { 
 	  command    := twiss { sequence=lhcb1, cofind=true, 
 	                       method=4, observe=1 }, 
-	  variables  = { rtol=1e- 6, -- 1 ppm 
+	  variables  = { rtol=1e-6, -- 1 ppm 
 	                { var='MADX.kqtf_b1' }, 
 	                { var='MADX.kqtd_b1' }}, 
 	  equalities = {{ expr=\t -> t.q1- 64.295, name='q1' }, 
@@ -965,15 +966,15 @@ The following example below shows how to match the betatron tunes of the LHC bea
 	                 { var='MADX.ksf_b1' }, 
 	                 { var='MADX.ksd_b1' }}, 
 	  equalities = {{ expr= \t -> t.dq1-15, name='dq1' }, 
-	                { expr= t -> t.dq2-15, name='dq2' }}, 
-	  objective  = { fmin=1e- 8, broyden=true }, 
+	                { expr= \t -> t.dq2-15, name='dq2' }}, 
+	  objective  = { fmin=1e-8, broyden=true }, 
 	  maxcall=100, info=2 
 	}
 
 Matching interaction point
 """"""""""""""""""""""""""
 
-The following example hereafter shows how to squeeze the beam 1 of the LHC to :math:`\beta^*=\mathrm{beta_ip8}\times0.6^2`  at the IP8 while enforcing the required constraints at the interaction point and the final dispersion suppressor (i.e. at makers :literal:`"IP8"` and :literal:`"E.DS.R8.B1"`) in two iterations, using the 20 quadrupoles strengths from :literal:`kq4` to :literal:`kqt13` on left and right sides of the IP. The boundary conditions are specified by the beta0 blocks :literal:`bir8b1` for the initial conditions and :literal:`eir8b1` for the final conditions. The final summary and an instance of the intermediate summary of this :literal:`match` example are shown in the :ref:`summary output <sec.match.info1>` block and :ref:`intermediate output <sec.match.info2>` block.
+The following example hereafter shows how to squeeze the beam 1 of the LHC to :math:`\beta^*=\mathrm{beta_ip8}\times0.6^2`  at the IP8 while enforcing the required constraints at the interaction point and the final dispersion suppressor (i.e. at makers :literal:`"IP8"` and :literal:`"E.DS.R8.B1"`) in two iterations, using the 20 quadrupoles strengths from :literal:`kq4` to :literal:`kqt13` on left and right sides of the IP. The boundary conditions are specified by the beta0 blocks :literal:`bir8b1` for the initial conditions and :literal:`eir8b1` for the final conditions. The final summary and an instance of the intermediate summary of this :literal:`match` example are shown in :numref:`code.match.info1` and :ref:`code.match.info2`.
 
 .. code-block::
 
@@ -1026,13 +1027,134 @@ The following example hereafter shows how to squeeze the beam 1 of the LHC to :m
 		} 
 		MADX.n, MADX.tar = n, fmin 
 
-	End 
+	end 
 
-**Should all examples be included?!?!?!?!?!**
-"""""""""""""""""""""""""""""""""""""""""""""
+Fitting data
+""""""""""""
+
+The following example shows how to fit data with a non-linear model using the least squares methods. The "measurements" are generated by the data function:
+
+.. math:: 
+
+	d(x) = a \sin(x f_1) \cos(x f_2), \quad \text{with} \quad a=5, f1=3, f2=7, \text{ and } x\in[0,\pi).
+
+
+The least squares minimization is performed by the small code below starting from the arbitrary values :math:`a=1`, :math:`f_1=1`, and :math:`f_2=1`. The :literal:`'LD_JACOBIAN'` 
+methods finds the values :math:`a=5\pm 10^{-10}`, :math:`f_1=3\pm 10^{-11}`, and :math:`f_2=7\pm 10^{-11}` in :math:`2574` iterations and :math:`0.1`\,s. The :literal:`'LD_LMDIF'` method finds similar values in :math:`2539` iterations. The data and the model are plotted in the :numref:`fig.match.fit`.
+
+.. _fig.match.fit:
+
+.. figure:: fig/match-fitjac.png
+	:align: center
+	:width: 90%
+	
+	Fitting data using the Jacobian or Levenberg-Marquardt methods.}
+	
+.. code-block:: 
+
+	local n, k, a, f1, f2 = 1000, pi/1000, 5, 3, 7 
+	local d = vector(n):seq():map \i -> a*sin(i*k*f1)*cos(i*k*f2) -- data 
+	if noise then d=d:map \x -> x+randtn(noise) end -- add noise if any 
+	local m, p = vector(n), { a=1, f1=1, f2=1 } -- model parameters 
+	local status, fmin, ncall = match { 
+		 command	:= m:seq():map \i -> p.a*sin(i*k*p.f1)*cos(i*k*p.f2), 
+		 variables 	= { { var='p.a' }, 
+					{ var='p.f1' }, 
+					{ var='p.f2' }, min=1, max=10 }, 
+		 equalities 	= { { expr=\m -> ((d-m):norm()) } }, 
+		 objective 	= { fmin=1e-9, bisec=noise and 5 }, 
+		 maxcall=3000, info=1 
+	}
+
+The same least squares minimization can be achieved on noisy data by adding a gaussian RNG truncated at :math:`2\sigma` to the data generator, i.e.~:literal:`noise=2`, and by increasing the attribute :literal:`bisec=5`. Of course, the penalty tolerance :literal:`fmin` must be moved to variables tolerance :literal:`tol` or :literal:`rtol`.
+The :literal:`'LD_JACOBIAN'` methods finds the values :math:`a=4.98470, f_1=3.00369`, and :math:`f_2=6.99932` in :math:`704` iterations (:math:`404` for :literal:`'LD_LMDIF'`). The data and the model are plotted in :numref:`fig.match.fitnoise`.
+
+.. _fig.match.fitnoise:
+
+.. figure:: fig/match-fitjacnoise.png
+	:align: center
+	:width: 90%
+	
+	Fitting data with noise using Jacobian or Levenberg-Marquardt methods.
+	
+	
+Fitting data with derivatives
+"""""""""""""""""""""""""""""
+
+The following example shows how to fit data with a non-linear model and its derivatives using the least squares methods. The least squares minimization is performed by the small code below starting from the arbitrary values :math:`v=0.9` and :math:`k=0.2`. The :literal:`'LD_JACOBIAN'` methods finds the values :math:`v=0.362\pm 10^{-3}` and :math:`k=0.556\pm 10^{-3}` in :math:`6` iterations. The :literal:`'LD_LMDIF'` method finds similar values in :math:`6` iterations too. The data (points) and the model (curve) are plotted in the :numref:`fig.match.fit2`, where the latter has been smoothed using cubic splines.
+
+.. _fig.match.fit2:
+
+.. figure:: fig/match-fit2jac.png
+	:align: center
+	:width: 90%
+
+	Fitting data with derivatives using the Jacobian or Levenberg-Marquardt methods.
+
+.. code-block:: 
+
+	local x = vector{0.038, 0.194, 0.425, 0.626 , 1.253 , 2.500 , 3.740 } 
+	local y = vector{0.050, 0.127, 0.094, 0.2122, 0.2729, 0.2665, 0.3317} 
+	local p = { v=0.9, k=0.2 } 
+	local n = #x 
+	local function eqfun (_, r, jac) 
+		local v, k in p 
+		for i=1,n do 
+			r[i] = y[i] - v*x[i]/(k+x[i]) 
+			jac[2*i-1] = -x[i]/(k+x[i]) 
+			jac[2*i] = v*x[i]/(k+x[i])^2 
+		end 
+	end 
+	local status, fmin, ncall = match { 
+		variables	= { tol=5e-3, min=0.1, max=2, 
+					{ var='p.v' }, 
+					{ var='p.k' } }, 
+		equalities 	= { nequ=n, exec=eqfun, disp=false }, 
+		maxcall=20 
+
+Minimizing function
+"""""""""""""""""""
+
+The following example [#f6]_ hereafter shows how to find the minimum of the function:
+
+.. math:: 
+
+	\min_{\vec{x}\in\mathbb{R}^2} \sqrt{x_2}, \quad \text{subject to the constraints} \quad
+	\begin{cases}
+	x_2 \geq 0, \\
+	x_2\geq (a_1 x_1 + b_1)^3, \\
+	x_2 \geq (a_2 x_1 + b_2)^3,
+	\end{cases}
+
+for the parameters :math:`a_1=2, b_1=0, a_2=-1` and :math:`b_2=1`. The minimum of the function is :math:`f_{\min} = \sqrt{\frac{8}{27}}` at the point :math:`\vec{x} = (\frac{1}{3}, \frac{8}{27})`, and found by the method :literal:`LD_MMA` in 11 evaluations for a relative tolerance of :math:`10^{-4}` on the variables, starting at the arbitrary point :math:`\vec{x}_0=(1.234, 5.678)`.
+
+.. code-block:: 
+	
+		local function testFuncFn (x, grd) 
+			 if grd then x:fill{ 0, 0.5/sqrt(x[2]) } end 
+			 return sqrt(x[2]) 
+		end 
+		local function testFuncLe (x, r, jac) 
+			 if jac then jac:fill{ 24*x[1]^2, -1, -3*(1-x[1])^2, -1 } end 
+			 r:fill{ 8*x[1]^3-x[2], (1-x[1])^3-x[2] } 
+		end 
+		local x = vector{1.234, 5.678} -- start point 
+		local status, fmin, ncall = match { 
+			 variables	= { rtol=1e-4, 
+					 	{ var='x[1]', min=-inf }, 
+					 	{ var='x[2]', min=0   } }, 
+			 inequalities	= { exec=testFuncLe, nequ=2, tol=1e-8 }, 
+			 objective	= { exec=testFuncFn, method='LD_MMA' }, 
+			 maxcall=100, info=2 
+		}
+
+
+This example can also be solved with least squares methods, where the :literal:`LD_JACOBIAN` method finds the minimum in 8 iterations with a precision of :math:`\pm 10^{-16}`, and the :literal:`LD_LMDIF` method finds the minimum in 10 iterations with a precision of :math:`\pm 10^{-11}`.
+
 
 .. [#f1] Here, the function (i.e. the deferred expression) ignores the matching environment passed as first argument.
 .. [#f2] The function :literal:`mchklost` is provided by the :doc:`GPhys module. <mad_mod_gphys>` 
 .. [#f3] MAD-X matching corresponds to :literal:`bstra=0`.
 .. [#f4] MAD-X :literal:`JACOBIAN` with :literal:`strategy=3` corresponds to :literal:`jstra=3`.
 .. [#f5] The `LSopt <sec.match.lsopt>`_ module sets the values of valid inequalities to zero, i.e. :math:`\vec{c}^{\leq} = 0` if :math:`\vec{c}^{\leq} \leq\vec{c}^{\leq}_{\text{tol}}`.
+.. [#f6] This example is taken from the NLopt `documentation <https://nlopt.readthedocs.io/en/latest/NLopt_Tutorial>`_.

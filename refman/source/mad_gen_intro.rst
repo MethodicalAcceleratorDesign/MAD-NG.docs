@@ -38,14 +38,10 @@ Releases version
 
 MAD-NG releases are tagged on the Github repository and use mangled binary names on the releases repository, i.e. :literal:`mad-arch-v.m.n` where:
 
-**arch**
-	 is the platform architecture for binaries among :literal:`linux`, :literal:`macos` and :literal:`windows`.
-**v**
-	 is the **v**\ ersion number, :const:`0` meaning beta-version under active development.
-**m**
-	 is the **m**\ ajor release number corresponding to features completeness.
-**n**
-	 is the mi\ **n**\ or release number corresponding to bug fixes.
+:arch: is the platform architecture for binaries among :literal:`linux`, :literal:`macos` and :literal:`windows`.
+:v: is the **v**\ ersion number, :const:`0` meaning beta-version under active development.
+:m: is the **m**\ ajor release number corresponding to features completeness.
+:n: is the mi\ **n**\ or release number corresponding to bug fixes.
 
 
 Interactive Mode
@@ -82,7 +78,7 @@ Typing the character ':literal:`=`' right after the 1st level prompt is equivale
 	% -.10g
 
 
-To quit the application typewrite :literal:`Crtl+D` to send :literal:`EOF` (end-of-file) on the input, [#f2]_ :literal:`Crtl+\\` to send the :literal:`SIGQUIT` (quit) signal, or :literal:`Crtl+C` to send the stronger :literal:`SIGINT` (interrupt) signal. If the application is stalled or looping for ever, typewriting a single :literal:`Crtl+\\` or :literal:`Crtl+C` twice will stop it:
+To quit the application typewrite :literal:`Crtl+D` to send :literal:`EOF` (end-of-file) on the input, [#f2]_ or :literal:`Crtl+\\` to send the :literal:`SIGQUIT` (quit) signal, or :literal:`Crtl+C` to send the stronger :literal:`SIGINT` (interrupt) signal. If the application is stalled or looping for ever, typewriting a single :literal:`Crtl+\\` or :literal:`Crtl+C` twice will stop it:
 
 .. code-block::  
 	
