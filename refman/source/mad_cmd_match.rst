@@ -25,7 +25,8 @@ The :literal:`match` command format is summarized in :numref:`fig-match-synop`. 
 					{ variable-attributes }, 
 					..., more variable definitions, ... 
 					{ variable-attributes }, 
-		equalities 	= { constraints-attributes}, 
+
+		Equalities 	= { constraints-attributes}, 
 					{ constraint-attributes }, 
 					..., more equality definitions, ... 
 					{ constraint-attributes }, 
@@ -48,35 +49,43 @@ The :literal:`match` command supports the following attributes:
 .. _match.attr:
 
 :ref:`command <sec.match.cmd>`
-	A *callable*\ :literal:`(e)` that will be invoked during the optimization process at each iteration. (default: :const:`nil`). 
-	Example: :expr:`command := twiss { twiss-attributes } }`.
+	A *callable* :literal:`(e)` that will be invoked during the optimization process at each iteration. (default: :const:`nil`). 
+
+	Example: :expr:`command := twiss { twiss-attributes }`.
 
 :ref:`variables <sec.match.var>`
 	An *mappable* of single :ref:`variable <sec.match.var>` specification that can be combined with a *set* of specifications for all variables. (no default, required). 
+
 	Example: :expr:`variables = {{ var="seq.knobs.mq_k1" }}`.
 
 :ref:`equalities <sec.match.cst>`
 	An *mappable* of single equality specification that can be combined with a *set* of specifications for all equalities. (default: :literal:`{}`). 
-	Example: :expr:`equalities = {{  expr=\t -> t.q1- 64.295, name='q1' }}`.
+
+	Example: :expr:`equalities = {{  expr=\t -> t.q1-64.295, name='q1' }}`.
 
 :ref:`inequalities <sec.match.cst>`
 	An *mappable* of single inequality specification that can be combined with a *set* of specifications for all inequalities. (default: :literal:`{}`). 
-	Example: :expr:`inequalities = {{  expr=\t -> t.mq4.beta11- 50 }}`.
+
+	Example: :expr:`inequalities = {{  expr=\t -> t.mq4.beta11-50 }}`.
 
 :ref:`weights <sec.match.cst>`
 	A *mappable* of weights specification that can be used in the :literal:`kind` attribute of the constraints specifications. (default: :literal:`{}`). 
+
 	Example: :expr:`weights = { px=10 }`.
 
 :ref:`objective <sec.match.obj>`
 	A *mappable* of specifications for the objective to minimize. (default: :literal:`{}`). 
-	Example: :expr:`objective = { method="LD_LMDIF", fmin=1e- 10 }`.
+
+	Example: :expr:`objective = { method="LD_LMDIF", fmin=1e-10 }`.
 
 **maxcall**
 	A *number* specifying the maximum allowed calls of the :literal:`command` function or the :literal:`objective` function. (default: :const:`nil`).
+
 	Example: :expr:`maxcall = 100`.
 
 **maxtime**
 	A *number* specifying the maximum allowed time in seconds. (default: :const:`nil`).
+
 	Example: :expr:`maxtime = 60`.
 
 **info**	
@@ -87,10 +96,12 @@ The :literal:`match` command supports the following attributes:
 
 **debug** 
 	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the :ref:`console <sec.match.conso>`. (default: :const:`nil`). 
+
 	Example: :expr:`debug = 2`.
 
 **usrdef** 
 	Any user defined data that will be attached to the matching environment, which is passed as extra argument to all user defined functions in the :literal:`match` command. (default: :const:`nil`). 
+
 	Example: :expr:`usrdef = { var=vector(15) }`.
 
 
@@ -213,68 +224,79 @@ The *variable-attributes* is a set of attributes that specify a single variable:
 
 **var**
 	A *string* specifying the identifier (and indirection) needed to reach the variable from the user's scope where the :literal:`match` command is defined. (default: :const:`nil`). 
+
 	Example: :expr:`var = "lhcb1.mq_12l4_b1.k1"`.
 
 **name**
 	A *string* specifying the name of the variable to display when the :var:`info` level is positive. (default: :literal:`var`). 
+
 	Example: :expr:`name = "MQ.12L4.B1->k1"`.
 
 **min**
 	A *number* specifying the lower bound for the variable. (default: :literal:`-inf` ). 
-	Example: :expr:`min = - 4`.
+
+	Example: :expr:`min = -4`.
 
 **max**
 	A *number* specifying the upper bound for the variable. (default: :literal:`+inf` ). 
+
 	Example: :expr:`max = 10`.
 
 **sign** 
 	A *logical* enforcing the sign of the variable by moving :var:`min` or :var:`max` to zero depending on the sign of its initial value. (default: :const:`false`). 
+
 	Example: :expr:`sign = true`.
 
 **slope** 
-	A *number* enforcing ( :ref:`LSopt <sec.match.lsopt>` methods only) with its sign the variation direction of the variable, i.e. positive will only increase and negative will only decrease. (default: :const:`0` ). 
-	Example: :expr:`slope = - 1`.
+	A *number* enforcing (:ref:`LSopt <sec.match.lsopt>` methods only) with its sign the variation direction of the variable, i.e. positive will only increase and negative will only decrease. (default: :const:`0` ). 
+
+	Example: :expr:`slope = -1`.
 
 **step** 
 	A small positive *number* used to approximate the derivatives using the :ref:`sec.match.der` method. If the value is not provided, the command will use some heuristic. (default: :const:`nil`). 
-	Example: :expr:`step = 1e- 6`.
+
+	Example: :expr:`step = 1e-6`.
 
 **tol** 
 	A *number* specifying the tolerance on the variable step. If an update is smaller than :literal:`tol`, the command will return the status :literal:`"XTOL"`. (default: :const:`0`). 
-	Example: :expr:`tol = 1e- 8`.
+
+	Example: :expr:`tol = 1e-8`.
 
 **get** 
 	A *callable* :literal:`(e)` returning the variable value as a *number*, optionally using the matching environment passed as first argument. This attribute is required if the variable is *local* or an *upvalue* to avoid a significant slowdown of the code. (default: :const:`nil`). 
+
 	Example: :expr:`get := lhcb1.mq_12l4_b1.k1`.
 
 **set** 
 	A *callable* :literal:`(v, e)` updating the variable value with the *number* passed as first argument, optionally using the matching environment passed as second argument.This attribute is required if the variable is *local* or an *upvalue* to avoid a significant slowdown of the code. (default: :const:`nil`). 
+
 	Example: :expr:`set = \v,e => lhcb1.mqxa_1l5.k1 = v*e.usrdef.xon end`.
 
 
 The *variables-attributes* is a set of attributes that specify all variables together, but with a lower precedence than the single variable specification of the same name unless otherwise specified:
 
 **min**
-	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>`, but for all variables with no local override.
 
 **max**
-	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>`, but for all variables with no local override.
 
 **sign**
-	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>`, but for all variables with no local override.
 
 **slope**
-	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>`, but for all variables with no local override.
 
 **step**
-	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>`, but for all variables with no local override.
 
 **tol**
-	 Idem :ref:`variable-attributes <par.match.var>` but for all variables with no local override.
+	 Idem :ref:`variable-attributes <par.match.var>`, but for all variables with no local override.
 
 **rtol** 
 	A *number* specifying the relative tolerance on all variable steps. If an update is smaller than :literal:`rtol` relative to its variable value, the command will return the status :literal:`"XTOL"`\ . (default: :const:`eps`). 
-	Example: :expr:`tol = 1e- 8`.
+
+	Example: :expr:`tol = 1e-8`.
 
 **nvar**
 	A *number* specifying the number of variables of the problem. It is useful when the problem is made abstract with functions and it is not possible to deduce this count from single variable definitions, or one needs to override it. (default: :const:`nil`). 
@@ -282,14 +304,17 @@ The *variables-attributes* is a set of attributes that specify all variables tog
 
 **get**
 	A *callable* :literal:`(x, e)` updating a *vector* passed as first argument with the values of all variables, optionally using the matching environment passed as second argument. This attribute supersedes all single variable :literal:`get` and may be useful when it is better to read all the variables together, or when they are all *local*\ s or *upvalue*\ s. (default: :const:`nil`). 
-	Example: :expr:`get = \x,e -> e.usrdef.var:copy(x)`.
+
+	Example: :expr:`get = \\x,e -> e.usrdef.var:copy(x)`.
 
 **set**
-	A *callable* :literal:`(x, e)` updating all the variables with the values passed as first argument in a *vector*, optionally using the matching environment passed as second argument. This attribute supersedes all single variable :literal:`get` and may be useful when it is better to read all the variables together, or when they are all *local*\ s or *upvalue*\ s.(default: :const:`nil`). 
-	Example: :expr:`set = \x,e -> x:copy(e.usrdef.var)`.
+	A *callable* :literal:`(x, e)` updating all the variables with the values passed as first argument in a *vector*, optionally using the matching environment passed as second argument. This attribute supersedes all single variable :literal:`set` and may be useful when it is better to update all the variables together, or when they are all *local*\ s or *upvalue*\ s.(default: :const:`nil`). 
+
+	Example: :expr:`set = \\x,e -> x:copy(e.usrdef.var)`.
 
 **nowarn**
 	A *logical* disabling a warning emitted when the definition of :literal:`get` and :literal:`set` are advised but not defined. It is safe to not define :literal:`get` and :literal:`set` in such case, but it will significantly slowdown the code. (default: :const:`nil`). 
+
 	Example: :expr:`nowarn = true`.
 
 .. _sec.match.cst:
@@ -301,7 +326,8 @@ The attributes :literal:`equalities` (default: :literal:`{}`) and :literal:`ineq
 
 .. code-block:: 
 
-	equalities = { constraints-attributes,
+
+	Equalities = { constraints-attributes,
 			{ constraint-attributes } , 
 			... more equality definitions ... 
 			{ constraint-attributes } },
@@ -319,23 +345,28 @@ The *constraint-attributes* is a set of attributes that specify a single constra
 
 	**expr** 
 		A *callable* :literal:`(r, e)` returning the constraint value as a *number*, optionally using the result of :literal:`command` passed as first argument, and the matching environment passed as second argument. (default: :const:`nil`)
-		Example: :expr:`expr = \t -> t.IP8.beta11 - beta_ip8`.
+
+		Example: :expr:`expr = \\t -> t.IP8.beta11-beta_ip8`.
 
 	**name**
 	 	A *string* specifying the name of the constraint to display when the :literal:`info` level is positive. (default: :const:`nil`). 
+
 		Example: :expr:`name = "betx@IP8"`.
 
 	**kind** 	
 		A *string* specifying the kind to refer to for the weight of the constraint, taken either in the user-defined or in the default :ref:`weights-list<par.match.wght>`\ . (default: :const:`nil`). 
+
 		Example: :expr:`kind = "dq1"`.
 
 	**weight**
 		A *number* used to override the weight of the constraint. (default: :const:`nil`). 
+
 		Example: :expr:`weight = 100`.
 
 	**tol** 
-		A *number* specifying the tolerance to apply on the constraint when checking for its fulfillment. (default: ). 
-		Example: :expr:`tol = 1e- 6`.
+		A *number* specifying the tolerance to apply on the constraint when checking for its fulfillment. (default: :const:`1e-8` ). 
+
+		Example: :expr:`tol = 1e-6`.
 
 
 The *constraints-attributes* is a set of attributes that specify all equalities or inequalities constraints together, but with a lower precedence than the single constraint specification of the same name unless otherwise specified:
@@ -345,29 +376,33 @@ The *constraints-attributes* is a set of attributes that specify all equalities 
 
 	**nequ**
 		A *number* specifying the number of equations (i.e. number of equalities or inequalities) of the problem. It is useful when the problem is made abstract with functions and it is not possible to deduce this count from single constraint definitions, or one needs to override it. (default: :const:`nil`). 
+
 		Example: :expr:`nequ = 15`.
 
 	**exec**
 		A *callable* :literal:`(x, c, cjac)` updating a *vector* passed as second argument with the values of all constraints, and updating an optional *matrix* passed as third argument with the Jacobian of all constraints (if not :const:`nil`), using the variables values passed in a *vector* as first argument. This attribute supersedes all constraints :literal:`expr` and may be useful when it is better to update all the constraints together. (default: :const:`nil`). 
+
 		Example: :expr:`exec = myinequ`, where (:literal:`nvar=2` and :literal:`nequ=2`)
 
 .. code::
 
 		local function myinequ (x, c, cjac) 
-	  		c:fill { 8*x[1] ^ 3 - x[2] ; (1 - x[1])^3 - x[2] } 
+	  		c:fill { 8*x[1]^3 - x[2] ; (1 - x[1])^3 - x[2] } 
 		 	if cjac then -- fill [2x2] matrix if present 
 				cjac:fill { 24*x[1]^2, - 1 ; - 3*(1 - x[1])^ 2, - 1 }
 	  		end
-		end
+
+		End
 
 \
 	**disp** 
 		A *logical* disabling the display of the equalities in the summary if it is explicitly set to :const:`false`. This is useful for fitting data where equalities are used to compute the residuals. (default: :const:`nil`). 
+
 		Example: :expr:`disp = false`.
 
 .. _par.match.wght:
 
-The *weights-list* is a set of attributes that specify weights for kinds used by constraints. It allows to override the default weights of the supported kinds summarized in the :numref:`tbl.match.wght`, or to extend this list with new kinds and weights. The default weight for any undefined :literal:`kind` is :const:`1`. 
+The *weights-list* is a set of attributes that specify weights for kinds used by constraints. It allows to override the default weights of the supported kinds summarized in :numref:`tbl.match.wght`, or to extend this list with new kinds and weights. The default weight for any undefined :literal:`kind` is :const:`1`. 
 Example: :expr:`weights = { q1=100, q2=100, mykind=3 }`.
 
 .. table:: List of supported kinds *string* and their default weights (*number*).
@@ -423,39 +458,48 @@ The attribute :literal:`objective` (default: :literal:`{}`) defines the objectiv
 The *objective-attributes* is a set of attributes that specify the objective to fulfill:
 
 	**method** 
-		A *string* specifying the algorithm to use for solving the problem, see Tables :numref:`tbl.match.mthd`, :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd`. (default: :literal:`"LN_COBYLA"` if :literal:`objective.exec` is defined, :literal:`"LD_JACOBIAN"` otherwise). 
+		A *string* specifying the algorithm to use for solving the problem, see :numref:`tbl.match.mthd`, :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd`. (default: :literal:`"LN_COBYLA"` if :literal:`objective.exec` is defined, :literal:`"LD_JACOBIAN"` otherwise). 
+
 		Example: :expr:`method = "LD_LMDIF"`.
 
 	**submethod** 
 		A *string* specifying the algorithm from NLopt module to use for solving the problem locally when the method is an augmented algorithm, see Tables :numref:`tbl.match.lmthd` and :numref:`tbl.match.gmthd` (default: :literal:`"LN_COBYLA"`). 
+
 		Example: :expr:`method = "AUGLAG", submethod = "LD_SLSQP"`.
 
 	**fmin** 
 		A *number* corresponding to the minimum to reach during the optimization. For least squares problems, it corresponds to the tolerance on the :ref:`penalty function <sec.match.fun>`. If an iteration finds a value smaller than :literal:`fmin` and all the constraints are fulfilled, the command will return the status :literal:`"FMIN"` . (default: :const:`nil`). 
-		Example: :expr:`fmin = 1e- 12`.
+
+		Example: :expr:`fmin = 1e-12`.
 
 	**tol** 
 		A *number* specifying the tolerance on the objective function step. If an update is smaller than :literal:`tol`, the command will return the status :literal:`"FTOL"`. (default: :const:`0`). 
-		Example: :expr:`tol = 1e- 10`.
+
+		Example: :expr:`tol = 1e-10`.
 
 	**rtol** 
 		A *number* specifying the relative tolerance on the objective function step. If an update is smaller than :literal:`rtol` relative to its step value, the command will return the status :literal:`"FTOL"` (default: :const:`nil`). 
-		Example: :expr:`tol = 1e- 8`.
+
+		Example: :expr:`tol = 1e-8`.
 
 	**bstra** 
 		A *number* specifying the strategy to select the *best case* of the :ref:`objective <sec.match.fun>` function. (default: :const:`nil`). 
+
 		Example: :expr:`bstra = 0`. [#f3]_
 
 	**broyden** 
 		A *logical* allowing the Jacobian approximation by finite difference to update its columns with a *Broyden's rank one* estimates when the step of the corresponding variable is almost collinear with the variables step vector. This option may save some expensive calls to :literal:`command`, e.g. save Twiss calculations, when it does not degrade the rate of convergence of the selected method. (default: :const:`nil`).
+
 		Example: :expr:`broyden = true`.
 
 	**reset** 
 		A *logical* specifying to the :literal:`match` command to restore the initial state of the variables before returning. This is useful to attempt an optimization without changing the state of the variables. Note that if any function amongst :literal:`command`, variables :literal:`get` and :literal:`set`, constraints :literal:`expr` or :literal:`exec`, or objective :literal:`exec` have side effects on the environment, these will be persistent. (default: :const:`nil`). 
+
 		Example: :expr:`reset = true`.
 
 	**exec** 
 		A *callable* :literal:`(x, fgrd)` returning the value of the objective function as a *number*, and updating a *vector* passed as second argument with its gradient, using the variables values passed in a *vector* as first argument. (default: :const:`nil`). 
+
 		Example: :expr:`exec = myfun`, where (:literal:`nvar=2`)
 	
 .. code-block::
@@ -465,32 +509,39 @@ The *objective-attributes* is a set of attributes that specify the objective to 
 				fgrd:fill { 0, 0.5/sqrt(x[2]) }
 		 	end
 			return sqrt(x[2])
-		end
+
+		End
 
 \
 
 	**grad** 
 		A *logical* enabling (:const:`true`) or disabling (:const:`false`) the approximation by finite difference of the gradient of the objective function or the Jacobian of the constraints. A :const:`nil` value will be converted to :const:`true` if no :literal:`exec` function is defined and the selected :literal:`method` requires derivatives (:literal:`D`), otherwise it will be converted to :const:`false`. (default: :const:`nil`). 
+
 		Example: :expr:`grad = false`.
 
 	**bisec**
-		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the maximum number of attempt to minimize an increasing objective function by reducing the variables steps by half, i.e. that is a :ref:`line search <ref.algo.linesearch>` using :math:`\alpha=0.5^k` where :math:`k=0..\text{bisec}`. (default: :literal:`3`)
+		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the maximum number of attempt to minimize an increasing objective function by reducing the variables steps by half, i.e. that is a :ref:`line search <ref.algo.linesearch>` using :math:`\alpha=0.5^k` where :math:`k=0..\text{bisec}`. (default: :literal:`3` if :attr:`objective.exec` is undefined, :const:`0` otherwise).
+
 		Example: :expr:`bisec = 9`.
 
 	**rcond** 
 		A *number* specifying ( :ref:`LSopt <sec.match.lsopt>` methods only) how to determine the effective rank of the Jacobian while solving the least squares system (see :literal:`ssolve` from the :doc:`Linear Algebra <mad_mod_linalg>` module). This attribute can be updated between iterations, e.g. through :literal:`env.objective.rcond`. (default: :literal:`eps` ). 
-		Example: :expr:`rcond = 1e- 14`.
+
+		Example: :expr:`rcond = 1e-14`.
 
 	**jtol**
 		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the tolerance on the norm of the Jacobian rows to reject useless constraints. This attribute can be updated between iterations, e.g. through :literal:`env.objective.jtol`. (default: :literal:`eps`). 
-		Example: :expr:`tol = 1e- 14`.
+
+		Example: :expr:`tol = 1e-14`.
 
 	**jiter**
 		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the maximum allowed attempts to solve the least squares system when variables are rejected, e.g. wrong slope or out-of-bound values. (default: :const:`10`). 
+
 		Example: :expr:`jiter = 15`.
 
 	**jstra**
-		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the strategy to use for reducing the variables of the least squares system. (default: ). 
+		A *number* specifying (:ref:`LSopt <sec.match.lsopt>` methods only) the strategy to use for reducing the variables of the least squares system. (default: :const:`1`). 
+
 		Example: :expr:`jstra = 3`. [#f4]_
 
 
@@ -513,6 +564,7 @@ The :literal:`match` command supports local and global optimization algorithms t
 Most global optimization algorithms explore the variables domain with methods belonging to stochastic sampling, deterministic scanning, and splitting strategies, or a mix of them. Hence, all global methods require *boundaries* to define the searching region, which may or may not be internally scaled to a hypercube. Some global methods allow to specify with the :literal:`submethod` attribute, the local method to use for searching local minima. If this is not the case, it is wise to refine the global solution with a local method afterward, as global methods put more effort on finding global solutions than precise local minima. The global (:literal:`G`) optimization algorithms, with (:literal:`D`) or without (:literal:`N`) derivatives, are listed in :numref:`tbl.match.gmthd`.
 
 .. _ref.iteration.step:
+
 .. _ref.algo.linesearch:
 
 Most local optimization algorithms with derivatives are variants of the Newton iterative method suitable for finding local minima of nonlinear vector-valued function :math:`\vec{f}(\vec{x})`, i.e. searching for stationary points. The iteration steps :math:`\vec{h}` are given by the minimization :math:`\vec{h}=-\alpha(\nabla^2\vec{f})^{-1}\nabla\vec{f}`, coming from the local approximation of the function at the point :math:`\vec{x}+\vec{h}` by its Taylor series truncated at second order :math:`\vec{f}(\vec{x}+\vec{h})\approx \vec{f}(\vec{x})+\vec{h}^T\nabla\vec{f}(\vec{x})+\frac{1}{2}\vec{h}^T\nabla^2\vec{f}(\vec{x})\vec{h}`,
@@ -610,7 +662,7 @@ The objective function is the key point of the :literal:`match` command, special
 Derivatives
 """""""""""
 
-The derivatives are approximated by the finite difference methods when the selected algorithm requires them (:literal:`D`) and the function :literal:`objective.exec` is undefined or the attribute :literal:`grad=false`. The difficulty of the finite difference methods is to choose the small step :math:`h` for the difference. The :literal:`match` command uses the *forward difference method* with a step :math:`h = 10^{-4}\,\}\vec{h}\}`, where :math:`\vec{h}` is the last `iteration steps <sec.match.algo>`, unless it is overridden by the user with the variable attribute :literal:`step`. In order to avoid zero step size, which would be problematic for the calculation of the Jacobian, the choice of :math:`h` is a bit more subtle:
+The derivatives are approximated by the finite difference methods when the selected algorithm requires them (:literal:`D`) and the function :literal:`objective.exec` is undefined or the attribute :literal:`grad=false`. The difficulty of the finite difference methods is to choose the small step :math:`h` for the difference. The :literal:`match` command uses the *forward difference method* with a step :math:`h = 10^{-4}\,\|\vec{h}\|`, where :math:`\vec{h}` is the last :ref:`iteration steps <ref.iteration.step>`, unless it is overridden by the user with the variable attribute :literal:`step`. In order to avoid zero step size, which would be problematic for the calculation of the Jacobian, the choice of :math:`h` is a bit more subtle:
 
 
 .. math:: 
@@ -771,9 +823,9 @@ The LSopt (Least Squares optimization) module implements custom variant of the N
 	+---------------------+-----+-----+------------------------------------------+
 	| :var:`method`       | Equ | Iqu | Description                              |
 	+=====================+=====+=====+==========================================+
-	|| :var:`LD_JACOBIAN` || y  || y  || Modified Newton-Raphson algorithm.      |
+	|  :var:`LD_JACOBIAN` | y   | y   | Modified Newton-Raphson algorithm.       |
 	+---------------------+-----+-----+------------------------------------------+
-	|| :var:`LD_LMDIF`    || y  || y  || Modified Levenberg-Marquardt algorithm. |
+	| :var:`LD_LMDIF`     | y   | y   | Modified Levenberg-Marquardt algorithm.  |
 	+---------------------+-----+-----+------------------------------------------+
 
 .. _sec.match.nlopt:
@@ -837,44 +889,48 @@ The NLopt (Non-Linear optimization) module provides a simple interface to the al
 	:align: center
 
 
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`method`            | Equ | Iqu | Description                                                                                                                |
-	+==========================+=====+=====+============================================================================================================================+
-	| :var:`GN_CRS2_LM`        | n   | n   | Variant of the Controlled Random Search algorithm with Local Mutation (mixed stochastic and genetic method).               |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GN_DIRECT`         | n   | n   | DIviding RECTangles algorithm (deterministic method).                                                                      |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GN_DIRECT_L`       | n   | n   | Idem :var:`GN_DIRECT` with locally biased optimization.                                                                    |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GN_DIRECT_L_RAND`  | n   | n   | Idem :var:`GN_DIRECT_L` with some randomization in the selection of the dimension to reduce next.                          |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GN_DIRECT*_NOSCAL` | n   | n   | Variants of above :var:`GN_DIRECT*` without scaling the problem to a unit hypercube to preserve dimension weights.         |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GN_ESCH`           | n   | n   | Modified Evolutionary algorithm (genetic method).                                                                          |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GN_ISRES`          | y   | y   | Improved Stochastic Ranking Evolution Strategy algorithm (mixed genetic and variational method).                           |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GN_MLSL`           | n   | n   | Multi-Level Single-Linkage algorithm (stochastic method).                                                                  |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GN_MLSL_LDS`       | n   | n   | Idem :var:`GN_MLSL` with low-discrepancy scan sequence.                                                                    |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GD_MLSL`           | n   | n   | Multi-Level Single-Linkage algorithm (stochastic method).                                                                  |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GD_MLSL_LDS`       | n   | n   | Idem :var:`GL_MLSL` with low-discrepancy scan sequence.                                                                    |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GD_STOGO`          | n   | n   | Branch-and-bound algorithm (deterministic method).                                                                         |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`GD_STOGO_RAND`     | n   | n   | Variant of :var:`GD_STOGO` (deterministic and stochastic method).                                                          |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`AUGLAG`            | y   | y   | Augmented Lagrangian algorithm, combines objective function and nonlinear constraints into a single "penalty" function.    |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`AUGLAG_EQ`         | y   | n   | Idem :var:`AUGLAG` but handles only equality constraints and pass inequality constraints to :var:`submethod`.              |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`G_MLSL`            | n   | n   | MLSL with user-specified local algorithm using :var:`submethod`.                                                           |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-	| :var:`G_MLSL_LDS`        | n   | n   | Idem :var:`G_MLSL` with low-discrepancy scan sequence.                                                                     |
-	+--------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
-
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`method`             | Equ | Iqu | Description                                                                                                                |
+	+===========================+=====+=====+============================================================================================================================+
+	| *Global optimizers without derivative* (:var:`GN_`)                                                                                                                |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_CRS2_LM`         | n   | n   | Variant of the Controlled Random Search algorithm with Local Mutation (mixed stochastic and genetic method).               |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_DIRECT`          | n   | n   | DIviding RECTangles algorithm (deterministic method).                                                                      |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_DIRECT_L`        | n   | n   | Idem :var:`GN_DIRECT` with locally biased optimization.                                                                    |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_DIRECT_L_RAND`   | n   | n   | Idem :var:`GN_DIRECT_L` with some randomization in the selection of the dimension to reduce next.                          |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_DIRECT*_NOSCAL`  | n   | n   | Variants of above :var:`GN_DIRECT*` without scaling the problem to a unit hypercube to preserve dimension weights.         |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_ESCH`            | n   | n   | Modified Evolutionary algorithm (genetic method).                                                                          |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_ISRES`           | y   | y   | Improved Stochastic Ranking Evolution Strategy algorithm (mixed genetic and variational method).                           |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_MLSL`            | n   | n   | Multi-Level Single-Linkage algorithm (stochastic method).                                                                  |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GN_MLSL_LDS`        | n   | n   | Idem :var:`GN_MLSL` with low-discrepancy scan sequence.                                                                    |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| *Global optimizers with derivative* (:var:`GD_`)                                                                                                                   | 
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GD_MLSL`            | n   | n   | Multi-Level Single-Linkage algorithm (stochastic method).                                                                  |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GD_MLSL_LDS`        | n   | n   | Idem :var:`GL_MLSL` with low-discrepancy scan sequence.                                                                    |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GD_STOGO`           | n   | n   | Branch-and-bound algorithm (deterministic method).                                                                         |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`GD_STOGO_RAND`      | n   | n   | Variant of :var:`GD_STOGO` (deterministic and stochastic method).                                                          |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`AUGLAG`             | y   | y   | Augmented Lagrangian algorithm, combines objective function and nonlinear constraints into a single "penalty" function.    |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`AUGLAG_EQ`          | y   | n   | Idem :var:`AUGLAG` but handles only equality constraints and pass inequality constraints to :var:`submethod`.              |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`G_MLSL`             | n   | n   | MLSL with user-specified local algorithm using :var:`submethod`.                                                           |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+	| :var:`G_MLSL_LDS`         | n   | n   | Idem :var:`G_MLSL` with low-discrepancy scan sequence.                                                                     |
+	+---------------------------+-----+-----+----------------------------------------------------------------------------------------------------------------------------+
+ 
 .. _sec.match.xmp:
 
 Examples
@@ -969,7 +1025,8 @@ The following example hereafter shows how to squeeze the beam 1 of the LHC to :m
 			maxcall=1000, info=2 
 		} 
 		MADX.n, MADX.tar = n, fmin 
-	end 
+
+	End 
 
 **Should all examples be included?!?!?!?!?!**
 """""""""""""""""""""""""""""""""""""""""""""
