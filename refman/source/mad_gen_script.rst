@@ -12,11 +12,11 @@ The easiest way to shortly describe these choices is to cite their authors.
 
 *"Lua is a powerful, efficient, lightweight, embeddable scripting language. It supports procedural programming, object-oriented programming, functional programming, data-driven programming, and data description. Lua combines simple procedural syntax with powerful data description constructs based on associative arrays and extensible semantics. Lua is dynamically typed and has automatic memory management with incremental garbage collection, making it ideal for configuration, scripting, and rapid prototyping."* [#f1]_ 
 
-*"LuaJIT\index{LuaJIT} is widely considered to be one of the fastest dynamic language implementations. It has outperformed other dynamic languages on many cross-language benchmarks since its first release in 2005 --- often by a substantial margin --- and breaks into the performance range traditionally reserved for offline, static language compilers."* [#f2]_ 
+*"LuaJIT is widely considered to be one of the fastest dynamic language implementations. It has outperformed other dynamic languages on many cross-language benchmarks since its first release in 2005 --- often by a substantial margin --- and breaks into the performance range traditionally reserved for offline, static language compilers."* [#f2]_ 
 
 Lua and LuaJIT are free open-source software, distributed under the very liberal MIT license.
 
-MAD-NG embeds a patched version of LuaJIT 2.1, a very efficient implementation of Lua 5.2. [#f3]_ Hence, the scripting language of MAD-NG is Lua 5.2 with some extensions detailed in the next section, and used for both, the development of most parts of the application, and as the user scripting language. There is no strong frontier between these two aspects of the application, giving full access and high flexibility to the experienced users. The filename extension of MAD-NG scripts is ``.mad``.
+MAD-NG embeds a patched version of LuaJIT 2.1, a very efficient implementation of Lua 5.2.\ [#f3]_ Hence, the scripting language of MAD-NG is Lua 5.2 with some extensions detailed in the next section, and used for both, the development of most parts of the application, and as the user scripting language. There is no strong frontier between these two aspects of the application, giving full access and high flexibility to the experienced users. The filename extension of MAD-NG scripts is :literal:`.mad`.
 
 
 Learning Lua is easy and can be achieved within a few hours. The following links should help to quickly become familiar with Lua and LuaJIT:
@@ -33,7 +33,7 @@ Learning Lua is easy and can be achieved within a few hours. The following links
 Lua primer
 ----------
 
-The next subsections introduce the basics of the Lua programming language with syntax highlights, namely variables, control flow, functions, tables and methods. [#f4]_ 
+The next subsections introduce the basics of the Lua programming language with syntax highlights, namely variables, control flow, functions, tables and methods.\ [#f4]_ 
 
 Variables
 """""""""
@@ -82,7 +82,7 @@ Bending and extending a programming language like Lua to embed a DSL is more gen
 Line comment
 """"""""""""
 
-The line comment operator :literal:`!` is valid in MAD-NG, but does not exists in Lua: [#f5]_:
+The line comment operator :literal:`!` is valid in MAD-NG, but does not exists in Lua:\ [#f5]_
 
 .. code-block::
 	
@@ -93,7 +93,7 @@ The line comment operator :literal:`!` is valid in MAD-NG, but does not exists i
 Unary plus
 """"""""""
 
-The unary plus operator :literal:`+` is valid in MAD-NG, but does not exists in Lua: [#f5]_
+The unary plus operator :literal:`+` is valid in MAD-NG, but does not exists in Lua:\ [#f5]_
 
 .. code-block::
 	
@@ -179,7 +179,7 @@ It is worth understanding the error message that invalid syntaxes above would re
 	file:line: attempt to perform arithmetic on a function value. }
 
 
-as it is a bit subtle and needs some explanations: the *lambda* is syntactically closed at the end of the returned expression :literal:`(x+y)`, and the following operations :literal:`/` or :literal:`*` are considered as being outside the *lambda* definition, that is applied to the freshly created function itself...
+as it is a bit subtle and needs some explanations: the *lambda* is syntactically closed at the end of the returned expression :expr:`(x+y)`, and the following operations :literal:`/` or :literal:`*` are considered as being outside the *lambda* definition, that is applied to the freshly created function itself...
 
 Finally, the *lambda* function syntax supports full function syntax (for consistency) using the *fat* arrow operator :literal:`=>` in place of the arrow operator:
 
@@ -208,7 +208,7 @@ The deferred expression operator :literal:`:=` is semantically equivalent to a *
 	var = 20
 	print(tbl.v1(), tbl.v2(), tbl.v3, fun()) -- display: 20 20 10 20
 
-The deferred expressions hereabove have to be explicitly called to retrieve their values, because they are defined in a *table*. It is a feature of the object model making the deferred expressions behaving like values. Still, it is possible to support deferred expressions as values in a raw *table*, i.e. a table without metatable, using the ``deferred`` function from the :doc:`typeid <mad_mod_types>` module:
+The deferred expressions hereabove have to be explicitly called to retrieve their values, because they are defined in a *table*. It is a feature of the object model making the deferred expressions behaving like values. Still, it is possible to support deferred expressions as values in a raw *table*, i.e. a table without metatable, using the :func:`deferred` function from the :doc:`typeid <mad_mod_types>` module:
 
 .. code-block::
 	
@@ -234,7 +234,7 @@ The ranges are created from pairs or triplets of concatenated numbers: [#f6]_
 	4..3..-0.1          -- negative steps are handled
 	stop..start..-step  -- operator precedence
 
-The default value for unspecified ``step`` is ``1``. The Lua syntax has been modified to accept concatenation operator without surrounding spaces for convenience.
+The default value for unspecified :var:`step` is :const:`1`. The Lua syntax has been modified to accept concatenation operator without surrounding spaces for convenience.
 
 Ranges are *iterable* and *lengthable* so the following code excerpt is valid:
 
@@ -244,7 +244,7 @@ Ranges are *iterable* and *lengthable* so the following code excerpt is valid:
 	print(#rng) -- display: 11
 	for i,v in ipairs(rng) do print(i,v) end
 
-More details on ranges can be found in the :doc:`Range <mad_mod_numrange>` module, especially about the ``range`` and ``logrange`` constructors that may adjust ``step`` to ensure precise loops and iterators behaviors with floating-point numbers.
+More details on ranges can be found in the :doc:`Range <mad_mod_numrange>` module, especially about the :mod:`range` and :mod:`logrange` constructors that may adjust :var:`step` to ensure precise loops and iterators behaviors with floating-point numbers.
 
 Lua syntax and extensions
 """""""""""""""""""""""""
@@ -270,7 +270,7 @@ The operator precedence (see `Lua 5.2`_ §3.4.7) is recapped and extended in :nu
 	+--+-----------------------------------------------+------------------+
 	|7:| 	not   #  -  + (unary)                      |  left            |
 	+--+-----------------------------------------------+------------------+
-	|8:| 	\POW                                       |  right           |
+	|8:| 	^                                          |  right           |
 	+--+-----------------------------------------------+------------------+
 	|9:| 	.  []  () (call)                           |  left            |
 	+--+-----------------------------------------------+------------------+
@@ -297,38 +297,38 @@ Types
 MAD-NG is based on Lua, a dynamically typed programming language that provides the following *basic types* often italicized in this textbook:
 
 *nil*
-	The type of the value ``nil``. Uninitialized variables, unset attributes, mismatched arguments, mismatched return values etc, have ``nil`` values.
+	The type of the value :const:`nil`. Uninitialized variables, unset attributes, mismatched arguments, mismatched return values etc, have :const:`nil` values.
 
 *boolean*
-	The type of the values ``true`` and ``false``.
+	The type of the values :const:`true` and :const:`false`.
 
 *number*
-	The type of IEEE 754 double precision floating point numbers. They are exact for integers up to :math:`\pm 2^{53}` (:math:`\approx \pm 10^{16}`). Values like ``0``, ``1``, ``1e3``, ``1e-3`` are numbers.
+	The type of IEEE 754 double precision floating point numbers. They are exact for integers up to :math:`\pm 2^{53}` (:math:`\approx \pm 10^{16}`). Values like :const:`0`, :const:`1`, :const:`1e3`, :const:`1e-3` are numbers.
 
 *string*
 	The type of character strings. Strings are "internalized" meaning that two strings with the same content compare equal and share the same memory address:
-	:literal:`a="hello"; b="hello"; print(a==b) -- display: true`.
+	:expr:`a="hello"; b="hello"; print(a==b) -- display: true`.
 
 *table*
 	The type of tables, see `Lua 5.2`_ §3.4.8 for details. In this textbook, the following qualified types are used to distinguish between two kinds of special use of tables:
 
-    *	 A *list* is a table used as an array, that is a table indexed by a *continuous* sequence of integers starting from ``1`` where the length operator ``#`` has defined behavior. [#f7]_
+    *	 A *list* is a table used as an array, that is a table indexed by a *continuous* sequence of integers starting from :const:`1` where the length operator :literal:`#` has defined behavior. [#f7]_
 
-    *	 A *set* is a table used as a dictionary, that is a table indexed by keys --- strings or other types --- or a *sparse* sequence of integers where the length operator ``#`` has undefined behavior.
+    *	 A *set* is a table used as a dictionary, that is a table indexed by keys --- strings or other types --- or a *sparse* sequence of integers where the length operator :literal:`#` has undefined behavior.
 
 
 *function*
 	The type of functions, see `Lua 5.2`_ §3.4.10 for details. In this textbook, the following qualified types are used to distinguish between few kinds of special use of functions:
 
-    *	 A *lambda* is a function defined with the ``\`` syntax.
+    *	 A *lambda* is a function defined with the :literal:`\\` syntax.
 
     *	 A *functor* is an object [#f8]_ that behaves like a function.
 
-    *	 A *method* is a function called with the ``:`` syntax and its owner as first argument. A *method* defined with the ``:`` syntax has an implicit first argument named ``self`` [#f10]_
+    *	 A *method* is a function called with the :literal:`:` syntax and its owner as first argument. A *method* defined with the :literal:`:` syntax has an implicit first argument named :literal:`self` [#f10]_
 
 
 *thread* 
-	See `Lua 5.2`_ §2.6 for details.
+	 The type of coroutines, see `Lua 5.2`_ §2.6 for details.
 
 *userdata*
 	The type of raw pointers with memory managed by Lua, and its companion *lightuserdata* with memory managed by the host language, usually C. They are mainly useful for interfacing Lua with its C API, but MAD-NG favors the faster FFI [#f11]_ extension of LuaJIT.
@@ -345,7 +345,7 @@ This textbook uses also some extra terms in place of types:
 *reference*
 	A valid memory location storing some *value*.
 *logical*
-	A *value* used by control flow, where ``nil`` :math:`\equiv` ``false`` and *anything-else* :math:`\equiv` ``true``.
+	A *value* used by control flow, where :const:`nil` :math:`\equiv` :const:`false` and *anything-else* :math:`\equiv` :const:`true`.
 
 
 Value vs reference
@@ -355,28 +355,27 @@ The types *nil*, *boolean* and *number* have a semantic by *value*, meaning that
 
 The types *string*, *function*, *table*, *thread*, *userdata* and *cdata* have a semantic by *reference*, meaning that variables, arguments, return values, etc., do not store their instances directly but a *reference* to them. As a consequence, any assignment makes a copy of the *reference* and the instance becomes shared, i.e. references have a semantic by *value* but changing the content of the value does change the copy. [#f12]_ 
 
-The types *string*, *function* [#f13]_, *thread* , ``complex`` *cdata* and numeric (``log``)``range`` *cdata* have a hybrid semantic. In practice these types have a semantic by *reference*, but they behave like types with semantic by *value* because their instances are immutable, and therefore sharing them is safe.
-
+The types *string*, *function* [#f13]_, *thread*, :var:`cpx` *cdata* and numeric (:literal:`log`)\ :literal:`range` *cdata* have a hybrid semantic. In practice these types have a semantic by *reference*, but they behave like types with semantic by *value* because their instances are immutable, and therefore sharing them is safe.
 
 
 Concepts
 --------
 
-The concepts are natural extensions of types that concentrate more on behavior of objects [#f8]_than on types. MAD-NG introduces many concepts to validate objects passed as argument before using them. The main concepts used in this textbook are listed below, see the \hyperref[ch:mod:types]{\TT{typeid} module for more concepts:
+The concepts are natural extensions of types that concentrate more on behavior of objects [#f8]_ than on types. MAD-NG introduces many concepts to validate objects passed as argument before using them. The main concepts used in this textbook are listed below, see the :doc:`typeid </mad_mod_types>` module for more concepts:
 
 *lengthable*
-	An object that can be sized using the length operator ``#``. Strings, lists, vectors and ranges are examples of *lengthable* objects.
+	An object that can be sized using the length operator :literal:`#`. Strings, lists, vectors and ranges are examples of *lengthable* objects.
 
 *indexable*
-	An object that can be indexed using the square bracket operator ``[]``. Tables, vectors and ranges are examples of *indexable* objects.
+	An object that can be indexed using the square bracket operator :literal:`[]`. Tables, vectors and ranges are examples of *indexable* objects.
 
 *iterable*
-	An object that can be iterated with a loop over indexes or a generic ``for`` with the ``ipairs`` iterator. Lists, vectors and ranges are examples of *iterable* objects.
+	An object that can be iterated with a loop over indexes or a generic :literal:`for` with the :literal:`ipairs` iterator. Lists, vectors and ranges are examples of *iterable* objects.
 
 *mappable*
-	An object that can be iterated with a loop over keys or a generic ``for`` with the ``pairs`` iterator. Sets and objects (from the object model) are examples of *mappable* objects.
+	An object that can be iterated with a loop over keys or a generic :literal:`for` with the :literal:`pairs` iterator. Sets and objects (from the object model) are examples of *mappable* objects.
 
-*callable* An object that can be called using the call operator ``()``. Functions and functors are examples of *callable* objects.
+*callable* An object that can be called using the call operator :literal:`()`. Functions and functors are examples of *callable* objects.
 
 
 Ecosystem
@@ -395,13 +394,13 @@ Ecosystem
 
 .. [#f1] This text is taken from the "What is Lua?" section of the Lua website.
 .. [#f2] This text is taken from the "Overview" section of the LuaJIT website.
-.. [#f3] The ``ENV`` feature of Lua 5.2 is not supported and will never be according to M. Pall.
+.. [#f3] The :literal:`ENV` feature of Lua 5.2 is not supported and will never be according to M. Pall.
 .. [#f4] This primer was adapted from the blog "Learn Lua in 15 minutes" by T. Neylon.
 .. [#f5] This feature was introduced to ease the automatic translation of lattices from MAD-X to MAD-NG.
 .. [#f6] This is the only feature of MAD-NG that is incompatible with the semantic of Lua.
 .. [#f7] The Lua community uses the term *sequence* instead of *list*, which is confusing is the context of MAD-NG.
 .. [#f8] Here the term "object" is used in the Lua sense, not as an object from the object model of MAD-NG.
-.. [#f10] This *hidden* methods argument is named ``self`` in Lua and Python, or ``this`` in Java and C++.
+.. [#f10] This *hidden* methods argument is named :literal:`self` in Lua and Python, or :literal:`this` in Java and C++.
 .. [#f11] FFI stands for Foreign Function Interface, an acronym well known in high-level languages communities.
 .. [#f12] References semantic in Lua is similar to pointers semantic in C, see ISO/IEC 9899:1999 §6.2.5.
-.. [#f13] Local variables and upvalues of functions can be modified using the ``debug`` module.
+.. [#f13] Local variables and upvalues of functions can be modified using the :literal:`debug` module.

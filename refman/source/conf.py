@@ -13,10 +13,10 @@ lexers['mad'] = MadLexer()
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 master_doc = 'index'
-project = 'MAD-NG'
+project = 'MAD-NG Reference Manual'
 copyright = '2022, Laurent Deniau'
 author = 'Laurent Deniau'
-release = '0.9.6'
+version = release = '0.9.6'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -33,6 +33,10 @@ source_suffix = {
 
 highlight_language = "mad"
 numfig = True
+numfig_secnum_depth = 2
+# numfig_format - 
+# A dictionary mapping 'figure', 'table', 'code-block' and 'section' to strings that are used for format of figure numbers. As a special character, %s will be replaced to figure number.
+# Default is to use 'Fig. %s' for 'figure', 'Table %s' for 'table', 'Listing %s' for 'code-block' and 'Section %s' for 'section'.
 
 templates_path = ['_templates']
 exclude_patterns = []
