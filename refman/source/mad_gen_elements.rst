@@ -4,7 +4,7 @@ Elements
 
 The ``element`` object is the *root object* of all elements used to model particle accelerators, including sequences and drifts. It provides most default values inherited by all elements.
 
-The ``element`` module extends the :doc:`typeid <types>` module with the ``is_element`` *function*, which returns ``true`` if its argument is an ``element`` object, ``false`` otherwise.
+The ``element`` module extends the :doc:`typeid <mad_mod_types>` module with the ``is_element`` *function*, which returns ``true`` if its argument is an ``element`` object, ``false`` otherwise.
 
 Taxonomy
 --------
@@ -130,16 +130,16 @@ The ``element`` *object* provides the following attributes:
 	 A *number* specifying the bending angle :math:`\alpha` of the element [rad]. A positive angle represents a bend to the right, i.e. a :math:`-y`-rotation towards negative x values. (default: ``0``).
 
 **tilt**
-	 A *number* specifying the physical tilt of the element [rad]. All the physical quantities defined by the element are in the tilted frame, except ``misalign`` that comes first when tracking through an element, see the :doc:`track <track>` command for details. (default: ``0``).
+	 A *number* specifying the physical tilt of the element [rad]. All the physical quantities defined by the element are in the tilted frame, except ``misalign`` that comes first when tracking through an element, see the :doc:`track <mad_cmd_track>` command for details. (default: ``0``).
 
 **model**
-	 A *string* specifying the integration model ``"DKD"`` or ``"TKT"`` to use when tracking through the element and overriding the command attribute, see the :doc:`track <track>` command for details. (default: ``cmd.model``).
+	 A *string* specifying the integration model ``"DKD"`` or ``"TKT"`` to use when tracking through the element and overriding the command attribute, see the :doc:`track <mad_cmd_track>` command for details. (default: ``cmd.model``).
 
 **method**
-	 A *number* specifying the integration order 2, 4, 6, or 8 to use when tracking through the element and overriding the command attribute, see the :doc:`track <track>` command for details. (default: ``cmd.method``).
+	 A *number* specifying the integration order 2, 4, 6, or 8 to use when tracking through the element and overriding the command attribute, see the :doc:`track <mad_cmd_track>` command for details. (default: ``cmd.method``).
 
 **nslice**
-	 A *number* specifying the number of slices or a *list* of increasing relative positions or a *callable* ``(elm, mflw, lw)`` returning one of the two previous kind of positions specification to use when tracking through the element and overriding the command attribute, see the :doc:`survey <survey>` or the :doc:`track <track>` commands for details. (default: ``cmd.nslice``).
+	 A *number* specifying the number of slices or a *list* of increasing relative positions or a *callable* ``(elm, mflw, lw)`` returning one of the two previous kind of positions specification to use when tracking through the element and overriding the command attribute, see the :doc:`survey <mad_cmd_survey>` or the :doc:`track <mad_cmd_track>` commands for details. (default: ``cmd.nslice``).
 
 **refpos**
 	 A *string* holding one of ``"entry"``, ``"centre"`` or ``"exit"``, or a *number* specifying a position in [m] from the start of the element, all of them resulting in an offset to substract to the ``at`` attribute to find the :math:`s`-position of the element entry when inserted in a sequence, see :ref:`element positions<element positions>` for details. (default: ``nil`` :math:`\equiv` ``seq.refer``).
@@ -419,7 +419,7 @@ Kicker, HKicker, VKicker
 The ``kicker`` element inheriting from the ``tkicker`` element, is the *root object* of kickers involved in the orbit correction and defines the following attributes:
 
 **chkick, cvkick**
-	 A *number* specifying respectively the horizontal and vertical correction strength of the element set by the :doc:`correct <correct>` command [m\ :math:`^{-1}`]. (default: ).
+	 A *number* specifying respectively the horizontal and vertical correction strength of the element set by the :doc:`correct <mad_cmd_correct>` command [m\ :math:`^{-1}`]. (default: ).
 
 
 The ``hkicker`` (horizontal kicker) and ``vkicker`` (vertical kicker) elements define the following attribute:
@@ -512,7 +512,7 @@ The ``genmap`` element defines the following attributes: [#f8]_
 	 A *callable* ``(elm, mflw, lw)`` invoked before each step of thick integration to update the ``damap``. (default: ``nil``)
 
 **nslice**
-	 A *number* specifying the number of slices or a *list* of increasing relative positions or a *callable* ``(elm, mflw, lw)`` returning one of the two previous kind of positions specification to use when tracking through the element and overriding the command attribute, see the :doc:`survey <survey>` or the :doc:`track <track>` commands for details. (default: ``1``).
+	 A *number* specifying the number of slices or a *list* of increasing relative positions or a *callable* ``(elm, mflw, lw)`` returning one of the two previous kind of positions specification to use when tracking through the element and overriding the command attribute, see the :doc:`survey <mad_cmd_survey>` or the :doc:`track <mad_cmd_track>` commands for details. (default: ``1``).
 
 
 SLink
@@ -647,7 +647,7 @@ An element can have thin or thick sub-elements stored in its *list* part, hence 
 Aperture
 --------
 
-All the apertures are *mappable* defined by the following attributes in the tilted frame of an element, see the :doc:`track <track>` command for details:
+All the apertures are *mappable* defined by the following attributes in the tilted frame of an element, see the :doc:`track <mad_cmd_track>` command for details:
 
 **kind**
 	 A *string* specifying the aperture shape. (no default).
@@ -720,7 +720,7 @@ The supported aperture shapes are listed hereafter. The parameters defining the 
 Misalignment
 ------------
 
-The misalignments are *mappable* defined at the entry of an element by the following attributes, see the :doc:`track <track>` command for details:
+The misalignments are *mappable* defined at the entry of an element by the following attributes, see the :doc:`track <mad_cmd_track>` command for details:
 
 **dx, dy, ds**
 	 A *number* specifying the :math:`x`\ , :math:`y`\ , :math:`s`\ -displacement at the element entry [m], see :numref:`fig-gen-dispxs` and :numref:`fig-gen-dispys` . (default: ``0``).

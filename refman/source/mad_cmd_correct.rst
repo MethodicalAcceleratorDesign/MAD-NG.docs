@@ -76,7 +76,7 @@ The ``correct`` command supports the following attributes:
 	 Example: ``plane = 'x'``.
 
 	**method**
-	 A *string* specifying the method to use for correcting the orbit among ``LSQ``, ``SVD`` or ``micado``. These methods correspond to the solver used from the :doc:`linear algebra <linalg>` module to find the orbit correction, namely ``solve``, ``ssolve`` or ``nsolve``. (default: ``'micado'``). 
+	 A *string* specifying the method to use for correcting the orbit among ``LSQ``, ``SVD`` or ``micado``. These methods correspond to the solver used from the :doc:`linear algebra <mad_mod_linalg>` module to find the orbit correction, namely ``solve``, ``ssolve`` or ``nsolve``. (default: ``'micado'``). 
 	 Example: ``method = 'svd'``.
 
 	**ncor**
@@ -92,7 +92,7 @@ The ``correct`` command supports the following attributes:
 	 Example: ``units = 1e- 3`` [m], i.e. [mm].
 
 	**corcnd** 
-	 A *log* or a *string* specifying the method to use among ``svdcnd`` and ``pcacnd`` from the :doc:`linear algebra <linalg>` module for the preconditioning of the system. A ``true`` value corresponds to . (default: ``false``). 
+	 A *log* or a *string* specifying the method to use among ``svdcnd`` and ``pcacnd`` from the :doc:`linear algebra <mad_mod_linalg>` module for the preconditioning of the system. A ``true`` value corresponds to . (default: ``false``). 
 	 Example: ``corcnd = 'pcacnd'``.
 
 	**corcut** 

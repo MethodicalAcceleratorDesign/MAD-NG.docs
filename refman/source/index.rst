@@ -10,31 +10,31 @@ Welcome to MAD-NG's Reference Manual!
    :maxdepth: 3
    :caption: Part I:
 
-   /part-I.rst
+   /mad_gen_index.rst
 
 .. toctree::
    :maxdepth: 3
    :caption: Part II:
 
-   /part-II.rst
+   /mad_cmd_index.rst
 
 .. toctree::
    :maxdepth: 3
    :caption: Part III:
 
-   /part-III.rst
+   /mad_phy_index.rst
 
 .. toctree::
    :maxdepth: 3
    :caption: Part IV:
 
-   /part-IV.rst
+   /mad_mod_index.rst
 
 .. toctree::
    :maxdepth: 3
    :caption: Part V:
 
-   /part-V.rst
+   /mad_prg_index.rst
 
 Indices and tables
 ==================

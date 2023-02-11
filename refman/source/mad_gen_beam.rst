@@ -4,7 +4,7 @@ Beams
 
 The ``beam`` object is the *root object* of beams that store information relative to particles and particle beams. It also provides a simple interface to the particles and nuclei database.
 
-The ``beam`` module extends the :doc:`typeid <types>` module with the ``is_beam`` *function*, which returns ``true`` if its argument is a ``beam`` object, ``false`` otherwise.
+The ``beam`` module extends the :doc:`typeid <mad_mod_types>` module with the ``is_beam`` *function*, which returns ``true`` if its argument is a ``beam`` object, ``false`` otherwise.
 
 Attributes
 ----------
@@ -227,5 +227,5 @@ Examples
 
 .. rubric:: Footnotes
 
-.. [#f1] The ``qelect`` value is defined in the :doc:`constants` module.``
+.. [#f1] The ``qelect`` value is defined in the :doc:`mad_mod_const` module.``
 .. [#f2] The option ``rbarc`` in MAD-X is too volatile and does not ensure such consistency...
