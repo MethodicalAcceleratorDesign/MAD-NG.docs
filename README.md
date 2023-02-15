@@ -1,0 +1,2 @@
+# MADdocs
+MAD-NG documentation
