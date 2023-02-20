@@ -199,8 +199,9 @@ The :var:`twiss` command supports the following attributes:
 	Example: :expr:`savemap = true`.
 
 **atentry**
-	 A *callable* :literal:`(elm, mflw, 0, -1)` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index :const:`-1`. (default: :const:`fnil`). 
-	 Example: :expr:`atentry = myaction`.
+	A *callable* :literal:`(elm, mflw, 0, -1)` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index :const:`-1`. (default: :const:`fnil`). 
+	  
+	Example: :expr:`atentry = myaction`.
 
 **atslice**
 	A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :const:`fnil`). 
@@ -248,12 +249,14 @@ The :var:`twiss` command supports the following attributes:
 	Example: :expr:`X1 = { t=100, pt=10 }`.
 
 **info**
-	 A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
-	 Example: :expr:`info = 2`.
+	A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
+	
+	Example: :expr:`info = 2`.
 
 **debug**
-	 A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
-	 Example: :expr:`debug = 2`.
+	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
+	
+	Example: :expr:`debug = 2`.
 
 **usrdef**
 	Any user defined data that will be attached to the tracked map flow, which is internally passed to the elements method :literal:`:track` and to their underlying maps. (default: :const:`nil`). 
@@ -268,7 +271,7 @@ The :var:`twiss` command supports the following attributes:
 
 The :var:`twiss` command returns the following objects in this order:
 
-**mtbl}** A *mtable* corresponding to the augmented TFS table of the :var:`track` command with the :var:`twiss` command columns.
+**mtbl** A *mtable* corresponding to the augmented TFS table of the :var:`track` command with the :var:`twiss` command columns.
 
 **mflw** A *mflow* corresponding to the augmented map flow of the :var:`track` command with the :var:`twiss` command data.
 
@@ -505,7 +508,7 @@ TODO
 .. [#f7] The :literal:`TKT` scheme (Yoshida) is automatically converted to the :literal:`MKM` scheme (Boole) when appropriate.
 .. [#f8] In all cases, MAD-NG uses PTC setup :literal:`time=true, exact=true`.
 .. [#f2] The output of mtable in TFS files can be fully customized by the user.
-.. [#f3] The fields from :literal:`name` to :literal:`lost` set by the :var:`track` command
+.. [#f3] The fields from :literal:`name` to :literal:`lost` are set by the :var:`track` command
 .. [#f4] This field is not saved in the TFS table by default.
 .. [#f5] Fields and columns starting with two underscores are protected data and never saved to TFS files.
 .. [#f6] The column from :literal:`name` to :literal:`status` are set by the :var:`track` command.

@@ -21,16 +21,15 @@ The :literal:`match` command format is summarized in :numref:`fig-match-synop`. 
 
 	status, fmin, ncall = match { 
 		command		= function or nil, 
-		variables 	= { variables-attributes }, 
+		variables 	= { variables-attributes, 
 					{ variable-attributes }, 
 					..., more variable definitions, ... 
-					{ variable-attributes }, 
-
-		Equalities 	= { constraints-attributes}, 
+					{ variable-attributes } }, 
+		equalities 	= { constraints-attributes, 
 					{ constraint-attributes }, 
 					..., more equality definitions, ... 
-					{ constraint-attributes }, 
-		inequalities 	= { constraints-attributes }, 
+					{ constraint-attributes } }, 
+		inequalities 	= { constraints-attributes, 
 					{ constraint-attributes }, 
 					..., more inequality definitions,... 
 					{ constraint-attributes }, 
@@ -90,6 +89,7 @@ The :literal:`match` command supports the following attributes:
 
 **info**	
 	A *number* specifying the information level to control the verbosity of the output on the :ref:`console <sec.match.conso>`. (default: :const:`nil`). 
+
  	Example: :expr:`info = 3`.
 
 .. _match.debug:
@@ -300,6 +300,7 @@ The *variables-attributes* is a set of attributes that specify all variables tog
 
 **nvar**
 	A *number* specifying the number of variables of the problem. It is useful when the problem is made abstract with functions and it is not possible to deduce this count from single variable definitions, or one needs to override it. (default: :const:`nil`). 
+
  	Example: :expr:`nvar = 15`.
 
 **get**
