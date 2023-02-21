@@ -32,7 +32,7 @@ The :literal:`match` command format is summarized in :numref:`fig-match-synop`. 
 		inequalities 	= { constraints-attributes, 
 					{ constraint-attributes }, 
 					..., more inequality definitions,... 
-					{ constraint-attributes }, 
+					{ constraint-attributes } }, 
 		weights 	= { weights-list }, 
 		objective 	= {  objective-attributes }, 
 		maxcall=nil,  	-- call limit 
@@ -139,9 +139,9 @@ The :literal:`match` command returns the following values in this order:
 	+---------------+------------------------------------------------------------------------------------------------------+
 	| STOPPED       | Termination forced by user, i.e. :expr:`{env.stop = true}`\ .                                        |
 	+---------------+------------------------------------------------------------------------------------------------------+
-	|                         **Errors**                                                                                   |
+	|    :raw-latex:`\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad`  **Errors**                                         |
 	+---------------+------------------------------------------------------------------------------------------------------+
-	| FAILURE       | Generic failure (:ref:`NLopt <sec.match.nlopt>` only, unlikely).                                     |
+	| FAILURE       |   Generic failure (:ref:`NLopt <sec.match.nlopt>` only, unlikely).                                   |
 	+---------------+------------------------------------------------------------------------------------------------------+
 	| INVALID_ARGS  | Invalid argument (:ref:`NLopt <sec.match.nlopt>` only, unlikely).                                    |
 	+---------------+------------------------------------------------------------------------------------------------------+
@@ -392,8 +392,7 @@ The *constraints-attributes* is a set of attributes that specify all equalities 
 		 	if cjac then -- fill [2x2] matrix if present 
 				cjac:fill { 24*x[1]^2, - 1 ; - 3*(1 - x[1])^2, - 1 }
 	  		end
-
-		End
+		end
 
 \
 	**disp** 
@@ -704,11 +703,6 @@ The bottom line of the *intermediate summary* displays in order:
 The bottom line of the *final summary* displays the same information but for the best case found, as well as the final status returned by the :literal:`match` command. The number in square brackets right after :literal:`fbst` is the evaluation number of the best case.
 
 The :ref:`LSopt <sec.match.lsopt>` module adds the sign :literal:`#` to mark the *adjusted* variables and the sign :literal:`*` to mark the *rejected* variables and constraints on the right of the *intermediate summary* tables to qualify the behavior of the constraints and the variables during the optimization process. If these signs appear in the *final summary* too, it means that they were always adjusted or rejected during the matching, which is useful to tune your study e.g. by removing the useless constraints.
-
-
-
-Match command output
-""""""""""""""""""""
 
 .. _code.match.info1:
 
@@ -1067,7 +1061,7 @@ methods finds the values :math:`a=5\pm 10^{-10}`, :math:`f_1=3\pm 10^{-11}`, and
 		 maxcall=3000, info=1 
 	}
 
-The same least squares minimization can be achieved on noisy data by adding a gaussian RNG truncated at :math:`2\sigma` to the data generator, i.e.~:literal:`noise=2`, and by increasing the attribute :literal:`bisec=5`. Of course, the penalty tolerance :literal:`fmin` must be moved to variables tolerance :literal:`tol` or :literal:`rtol`.
+The same least squares minimization can be achieved on noisy data by adding a gaussian RNG truncated at :math:`2\sigma` to the data generator, i.e.:literal:`noise=2`, and by increasing the attribute :literal:`bisec=5`. Of course, the penalty tolerance :literal:`fmin` must be moved to variables tolerance :literal:`tol` or :literal:`rtol`.
 The :literal:`'LD_JACOBIAN'` methods finds the values :math:`a=4.98470, f_1=3.00369`, and :math:`f_2=6.99932` in :math:`704` iterations (:math:`404` for :literal:`'LD_LMDIF'`). The data and the model are plotted in :numref:`fig.match.fitnoise`.
 
 .. _fig.match.fitnoise:

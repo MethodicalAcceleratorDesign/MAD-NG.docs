@@ -43,13 +43,13 @@ The :literal:`plot` command supports the following attributes:
 
 .. _plot.attr:
 
-	**info**
-		A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
-		Example: :expr:`info = 2`.
+**info**
+	A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
+	Example: :expr:`info = 2`.
 
-	**debug**
-		A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
-		Example: :expr:`debug = 2`.
+**debug**
+	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
+	Example: :expr:`debug = 2`.
 
 The :literal:`plot` command returns itself.
 
