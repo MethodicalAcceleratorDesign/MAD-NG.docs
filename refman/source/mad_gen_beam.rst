@@ -110,17 +110,22 @@ The :var:`beam` *object* provides the following attributes:
 The :var:`beam` *object* also implements a special protect-and-update mechanism for its attributes to ensure consistency and precedence between the physical quantities stored internally:
 
 *	 The following attributes are *read-only*, i.e. writing to them triggers an error:
+		
 		:literal:`mass, charge, spin, emrad, aphot`
 
 *	 The following attributes are *read-write*, i.e. hold values, with their accepted numerical ranges:
+		
 		:literal:`particle, energy` :math:`>` :var:`mass`,
 		:literal:`ex` :math:`>0`, :literal:`ey` :math:`>0`, :literal:`et` :math:`>0`,
 		:literal:`nbunch` :math:`>0`, :literal:`npart` :math:`>0`, :literal:`sigt` :math:`>0`, :literal:`sige` :math:`>0`.
 
 *	 The following attributes are *read-update*, i.e. setting these attributes update the :literal:`energy`, with their accepted numerical ranges:
+		
 		:literal:`pc` :math:`>0`, :math:`0.9>` :literal:`beta` :math:`>0`, :literal:`gamma` :math:`>1`, :literal:`betgam` :math:`>0.1`, :literal:`brho` :math:`>0`,
 		:literal:`pc2`, :literal:`beta2`, :literal:`betgam2`.
+
 *	 The following attributes are *read-update*, i.e. setting these attributes update the emittances :literal:`ex`, :literal:`ey`, and :literal:`et` repectively, with their accepted numerical ranges:
+		
 		:literal:`exn` :math:`>0`, :literal:`eyn` :math:`>0`, :literal:`etn` :math:`>0`.
 
 
@@ -161,7 +166,8 @@ The following attribute is stored with metamethods in the metatable, but has dif
 Particles database
 ------------------
 
-The :var:`beam` *object* manages the particles database, which is shared by all :var:`beam` instances. The default set of supported particles is:
+The :var:`beam` *object* manages the particles database, which is shared by all :var:`beam` instances. The default set of supported particles is: 
+
 		electron, positron, proton, antiproton, neutron, antineutron, ion, muon, 
 		antimuon, deuteron, antideuteron, negmuon (=muon), posmuon (=antimuon).
 

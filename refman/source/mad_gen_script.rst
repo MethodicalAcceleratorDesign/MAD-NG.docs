@@ -176,7 +176,7 @@ It is worth understanding the error message that invalid syntaxes above would re
 
 .. code-block:: console
 	
-	file:line: attempt to perform arithmetic on a function value. }
+	file:line: attempt to perform arithmetic on a function value. 
 
 
 as it is a bit subtle and needs some explanations: the *lambda* is syntactically closed at the end of the returned expression :expr:`(x+y)`, and the following operations :literal:`/` or :literal:`*` are considered as being outside the *lambda* definition, that is applied to the freshly created function itself...
@@ -311,20 +311,17 @@ MAD-NG is based on Lua, a dynamically typed programming language that provides t
 
 *table*
 	The type of tables, see `Lua 5.2`_ §3.4.8 for details. In this textbook, the following qualified types are used to distinguish between two kinds of special use of tables:
-
-    *	 A *list* is a table used as an array, that is a table indexed by a *continuous* sequence of integers starting from :const:`1` where the length operator :literal:`#` has defined behavior. [#f7]_
-
-    *	 A *set* is a table used as a dictionary, that is a table indexed by keys --- strings or other types --- or a *sparse* sequence of integers where the length operator :literal:`#` has undefined behavior.
+		
+		*	 A *list* is a table used as an array, that is a table indexed by a *continuous* sequence of integers starting from :const:`1` where the length operator :literal:`#` has defined behavior. [#f7]_
+		*	 A *set* is a table used as a dictionary, that is a table indexed by keys --- strings or other types --- or a *sparse* sequence of integers where the length operator :literal:`#` has undefined behavior.
 
 
 *function*
 	The type of functions, see `Lua 5.2`_ §3.4.10 for details. In this textbook, the following qualified types are used to distinguish between few kinds of special use of functions:
-
-    *	 A *lambda* is a function defined with the :literal:`\\` syntax.
-
-    *	 A *functor* is an object [#f8]_ that behaves like a function.
-
-    *	 A *method* is a function called with the :literal:`:` syntax and its owner as first argument. A *method* defined with the :literal:`:` syntax has an implicit first argument named :literal:`self` [#f10]_
+		
+		*	 A *lambda* is a function defined with the :literal:`\\` syntax.
+		*	 A *functor* is an object [#f8]_ that behaves like a function.
+		*	 A *method* is a function called with the :literal:`:` syntax and its owner as first argument. A *method* defined with the :literal:`:` syntax has an implicit first argument named :literal:`self` [#f10]_
 
 
 *thread* 
@@ -375,7 +372,8 @@ The concepts are natural extensions of types that concentrate more on behavior o
 *mappable*
 	An object that can be iterated with a loop over keys or a generic :literal:`for` with the :literal:`pairs` iterator. Sets and objects (from the object model) are examples of *mappable* objects.
 
-*callable* An object that can be called using the call operator :literal:`()`. Functions and functors are examples of *callable* objects.
+*callable* 
+	An object that can be called using the call operator :literal:`()`. Functions and functors are examples of *callable* objects.
 
 
 Ecosystem

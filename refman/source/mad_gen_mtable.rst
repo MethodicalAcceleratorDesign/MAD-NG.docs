@@ -223,11 +223,11 @@ The :literal:`mtable` object provides the following metamethods:
 		#. Otherwise returns :const:`nil`.
 
 **__newindex**
-	 A *metamethod*	:literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*). If *key* is a *number* or a value specifying a row in the reference column or a *string* specifying a column name, the following error is raised:
+	A *metamethod*	:literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*). If *key* is a *number* or a value specifying a row in the reference column or a *string* specifying a column name, the following error is raised:
 
-.. code-block::
-	
-	"invalid mtable write access (use 'set' methods)"
+	.. code-block::
+		
+		"invalid mtable write access (use 'set' methods)"
 
 
 **__init**
