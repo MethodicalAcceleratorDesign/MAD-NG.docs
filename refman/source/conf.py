@@ -70,7 +70,6 @@ latex_docclass = {
 }
 latex_elements = {
     'preamble': '''
-    \\renewcommand{\\vec}{\\mathbf} % For vectors
     \\usepackage{nameref} % For getting chapter name
     
     \\renewcommand\sphinxtableofcontentshook{}
