@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Numbers &mdash; MAD-NG Reference Manual 0.9.6 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Complex Numbers" href="mad_mod_cplxnum.html" />
+    <link rel="prev" title="Numerical Ranges" href="mad_mod_numrange.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            MAD-NG Reference Manual
+          </a>
+              <div class="version">
+                0.9.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Part I:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_gen_index.html">LANGUAGE</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part II:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_cmd_index.html">ELEMENTS &amp; COMMANDS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part III:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_phy_index.html">PHYSICS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part IV:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mad_mod_index.html">MODULES</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_types.html">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_const.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_functions.html">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_functor.html">Functors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_monomial.html">Monomials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_numrange.html">Numerical Ranges</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Random Numbers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#contructors">Contructors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c-api">C API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_cplxnum.html">Complex Numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_linalg.html">Linear Algebra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_diffalg.html">Differential Algebra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_diffmap.html">Differential Maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_miscfuns.html">Miscellaneous Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_gphys.html">Generic Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_extern.html">External modules</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part V:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_prg_index.html">PROGRAMMING</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MAD-NG Reference Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mad_mod_index.html">MODULES</a></li>
+      <li class="breadcrumb-item active">Random Numbers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mad_mod_randnum.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="mad_mod_numrange.html" class="btn btn-neutral float-left" title="Numerical Ranges" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mad_mod_cplxnum.html" class="btn btn-neutral float-right" title="Complex Numbers" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="random-numbers">
+<span id="index-0"></span><h1>Random Numbers<a class="headerlink" href="#random-numbers" title="Permalink to this heading">¶</a></h1>
+<p>The module <code class="xref mad mad-mod docutils literal notranslate"><span class="pre">gmath</span></code> provides few Pseudo-Random Number Generators (PRNGs).The defaut implementation is the <em>Xoshiro256**</em> (XOR/shift/rotate) variant of the <a class="reference external" href="https://en.wikipedia.org/wiki/Xorshift">XorShift</a> PRNG familly <a class="reference internal" href="#xorshft03" id="id1"><span>[XORSHFT03]</span></a>, an all-purpose, rock-solid generator with a period of <span class="math notranslate nohighlight">\(2^{256}-1\)</span> that supports long jumps of period <span class="math notranslate nohighlight">\(2^{128}\)</span>. This PRNG is also the default implementation of recent versions of Lua (not LuaJIT, see below) and GFortran. See <a class="reference external" href="https://prng.di.unimi.it">https://prng.di.unimi.it</a> for details about Xoshiro/Xoroshiro PRNGs.</p>
+<p>The module <code class="xref mad mad-mod docutils literal notranslate"><span class="pre">math</span></code> of LuaJIT provides an implementation of the <em>Tausworthe</em> PRNG <a class="reference internal" href="#tauswth96" id="id2"><span>[TAUSWTH96]</span></a>, which has a period of <span class="math notranslate nohighlight">\(2^{223}\)</span> but doesn’t support long jumps, and hence uses a single global PRNG.</p>
+<p>The module <code class="xref mad mad-mod docutils literal notranslate"><span class="pre">gmath</span></code> also provides an implementation of the simple global PRNG of MAD-X for comparison.</p>
+<p>It’s worth mentionning that none of these PRNG are cryptographically secure generators, they are nevertheless superior to the commonly used <em>Mersenne Twister</em> PRNG <a class="reference internal" href="#mertwis98" id="id3"><span>[MERTWIS98]</span></a>, with the exception of the MAD-X PRNG.</p>
+<p>All PRNG <em>functions</em> (except constructors) are wrappers around PRNG <em>methods</em> with the same name, and expect an optional PRNG <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng_</span></code> as first parameter. If this optional PRNG <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng_</span></code> is omitted, i.e. not provided, these functions will use the current global PRNG by default.</p>
+<section id="contructors">
+<h2>Contructors<a class="headerlink" href="#contructors" title="Permalink to this heading">¶</a></h2>
+<dl class="mad function">
+<dt class="sig sig-object mad" id="randnew">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">randnew</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#randnew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new Xoshiro256** PRNG with a period of <span class="math notranslate nohighlight">\(2^{128}\)</span> that is garuanteed to not overlapp with any other Xoshiro256** PRNGs, unless it is initialized with a seed.</p>
+</dd></dl>
+
+<dl class="mad function">
+<dt class="sig sig-object mad" id="xrandnew">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">xrandnew</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xrandnew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new MAD-X PRNG initialized with default seed 123456789. Hence, all new MAD-X PRNG will generate the same sequence until they are initialized with a user-defined seed.</p>
+</dd></dl>
+
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">¶</a></h2>
+<dl class="mad function">
+<dt class="sig sig-object mad" id="randset">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">randset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">prng_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#randset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the current global PRNG to <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng</span></code> (if provided) and return the previous global PRNG.</p>
+</dd></dl>
+
+<dl class="mad function">
+<dt class="sig sig-object mad" id="is_randgen">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">is_randgen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">a</span></em><span class="sig-paren">)</span><a class="headerlink" href="#is_randgen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="xref mad mad-const docutils literal notranslate"><span class="pre">true</span></code> if <code class="xref mad mad-var docutils literal notranslate"><span class="pre">a</span></code> is a PRNG, <code class="xref mad mad-const docutils literal notranslate"><span class="pre">false</span></code> otherwise. This function is also available from the module <code class="xref mad mad-mod docutils literal notranslate"><span class="pre">MAD.typeid</span></code>.</p>
+</dd></dl>
+
+<dl class="mad function">
+<dt class="sig sig-object mad" id="is_xrandgen">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">is_xrandgen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">a</span></em><span class="sig-paren">)</span><a class="headerlink" href="#is_xrandgen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="xref mad mad-const docutils literal notranslate"><span class="pre">true</span></code> if <code class="xref mad mad-var docutils literal notranslate"><span class="pre">a</span></code> is a MAD-X PRNG, <code class="xref mad mad-const docutils literal notranslate"><span class="pre">false</span></code> otherwise. This function is only available from the module <code class="xref mad mad-mod docutils literal notranslate"><span class="pre">MAD.typeid</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">¶</a></h2>
+<p>All methods are also provided as functions from the module <code class="xref mad mad-mod docutils literal notranslate"><span class="pre">MAD.gmath</span></code> for convenience. If the PRNG is not provided, the current global PRNG is used instead.</p>
+<dl class="mad function">
+<dt class="sig sig-object mad" id="prng:randseed">
+<em class="property"> </em><span class="sig-prename descclassname"><span class="pre">prng:</span></span><span class="sig-name descname"><span class="pre">randseed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#prng:randseed" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object mad" id="randseed">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">randseed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">[prng_</span></em>, <em class="sig-param"><span class="pre">]</span> <span class="pre">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#randseed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the seed of the PRNG <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng</span></code> to <code class="xref mad mad-var docutils literal notranslate"><span class="pre">seed</span></code>.</p>
+</dd></dl>
+
+<dl class="mad function">
+<dt class="sig sig-object mad" id="prng:rand">
+<em class="property"> </em><span class="sig-prename descclassname"><span class="pre">prng:</span></span><span class="sig-name descname"><span class="pre">rand</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prng:rand" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object mad" id="rand">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">rand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">prng_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#rand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new pseudo-random number in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1)</span></code> from the PRNG <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng</span></code>.</p>
+</dd></dl>
+
+<dl class="mad function">
+<dt class="sig sig-object mad" id="prng:randi">
+<em class="property"> </em><span class="sig-prename descclassname"><span class="pre">prng:</span></span><span class="sig-name descname"><span class="pre">randi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prng:randi" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object mad" id="randi">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">randi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">prng_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#randi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new pseudo-random number in the range of a <em>u64_t</em> from the PRNG <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng</span></code> (<em>u32_t</em> for the MAD-X PRNG), see C API below for details.</p>
+</dd></dl>
+
+<dl class="mad function">
+<dt class="sig sig-object mad" id="prng:randn">
+<em class="property"> </em><span class="sig-prename descclassname"><span class="pre">prng:</span></span><span class="sig-name descname"><span class="pre">randn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prng:randn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object mad" id="randn">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">randn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">prng_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#randn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new pseudo-random gaussian number in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[-inf,</span> <span class="pre">+inf]</span></code> from the PRNG <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng</span></code> by using the Box-Muller transformation (Marsaglia’s polar form) to a peuso-random number in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1)</span></code>.</p>
+</dd></dl>
+
+<dl class="mad function">
+<dt class="sig sig-object mad" id="prng:randtn">
+<em class="property"> </em><span class="sig-prename descclassname"><span class="pre">prng:</span></span><span class="sig-name descname"><span class="pre">randtn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cut_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#prng:randtn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object mad" id="randtn">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">randtn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">[prng_</span></em>, <em class="sig-param"><span class="pre">]</span> <span class="pre">cut_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#randtn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new truncated pseudo-random gaussian number in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[-cut_,</span> <span class="pre">+cut_]</span></code> from the PRNG <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng</span></code> by using iteratively the method <a class="reference internal" href="#prng:randn" title="prng:randn"><code class="xref mad mad-func docutils literal notranslate"><span class="pre">prng:randn()</span></code></a>. This simple algorithm is actually used for compatibility with MAD-X.
+Default: <code class="xref mad mad-expr docutils literal notranslate"><span class="pre">cut_</span> <span class="pre">=</span> <span class="pre">+inf</span></code>.</p>
+</dd></dl>
+
+<dl class="mad function">
+<dt class="sig sig-object mad" id="prng:randp">
+<em class="property"> </em><span class="sig-prename descclassname"><span class="pre">prng:</span></span><span class="sig-name descname"><span class="pre">randp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lmb_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#prng:randp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object mad" id="randp">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">randp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">[prng_</span></em>, <em class="sig-param"><span class="pre">]</span> <span class="pre">lmb_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#randp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new pseudo-random poisson number in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">+inf]</span></code> from the PRNG <code class="xref mad mad-obj docutils literal notranslate"><span class="pre">prng</span></code> with parameter <span class="math notranslate nohighlight">\(\lambda &gt; 0\)</span> by using the <em>inverse transform sampling</em> method on peuso-random numbers.
+Default: <code class="xref mad mad-expr docutils literal notranslate"><span class="pre">lmb_</span> <span class="pre">=</span> <span class="pre">1</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="iterators">
+<h2>Iterators<a class="headerlink" href="#iterators" title="Permalink to this heading">¶</a></h2>
+<dl class="mad function">
+<dt class="sig sig-object mad">
+<em class="property"> </em><span class="sig-name descname"><span class="pre">ipairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">prng</span></em><span class="sig-paren">)</span></dt>
+<dd><p>Return an <em>ipairs</em> iterator suitable for generic <code class="xref mad mad-const docutils literal notranslate"><span class="pre">for</span></code> loops. The generated values are those returned by <a class="reference internal" href="#prng:rand" title="prng:rand"><code class="xref mad mad-func docutils literal notranslate"><span class="pre">prng:rand()</span></code></a>.</p>
+</dd></dl>
+
+</section>
+<section id="c-api">
+<h2>C API<a class="headerlink" href="#c-api" title="Permalink to this heading">¶</a></h2>
+<dl class="c type">
+<dt class="sig sig-object c" id="c.prng_state_t">
+<span class="k"><span class="pre">type</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prng_state_t</span></span></span><a class="headerlink" href="#c.prng_state_t" title="Permalink to this definition">¶</a><br /></dt>
+<dt class="sig sig-object c" id="c.xrng_state_t">
+<span class="k"><span class="pre">type</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xrng_state_t</span></span></span><a class="headerlink" href="#c.xrng_state_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The Xoshiro256** and the MAD-X PRNG types.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt class="sig sig-object c" id="c.mad_num_rand">
+<a class="reference internal" href="mad_mod_types.html#c.num_t" title="num_t"><span class="n"><span class="pre">num_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mad_num_rand</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.prng_state_t" title="prng_state_t"><span class="n"><span class="pre">prng_state_t</span></span></a><span class="p"><span class="pre">*</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.mad_num_rand" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Return a pseudo-random double precision float in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1)</span></code>.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt class="sig sig-object c" id="c.mad_num_randi">
+<span class="n"><span class="pre">u64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mad_num_randi</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.prng_state_t" title="prng_state_t"><span class="n"><span class="pre">prng_state_t</span></span></a><span class="p"><span class="pre">*</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.mad_num_randi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Return a pseudo-random 64 bit unsigned integer in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">ULLONG_MAX]</span></code>.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt class="sig sig-object c" id="c.mad_num_randseed">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mad_num_randseed</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.prng_state_t" title="prng_state_t"><span class="n"><span class="pre">prng_state_t</span></span></a><span class="p"><span class="pre">*</span></span>, <a class="reference internal" href="mad_mod_types.html#c.num_t" title="num_t"><span class="n"><span class="pre">num_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">seed</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.mad_num_randseed" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the seed of the PRNG.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt class="sig sig-object c" id="c.mad_num_randjump">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mad_num_randjump</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.prng_state_t" title="prng_state_t"><span class="n"><span class="pre">prng_state_t</span></span></a><span class="p"><span class="pre">*</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.mad_num_randjump" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Apply a jump to the PRNG as if <span class="math notranslate nohighlight">\(2^{128}\)</span> pseudo-random numbers were generated. Hence PRNGs with different number of jumps will never overlap. This function is applied to new PRNGs with an incremental number of jumps.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt class="sig sig-object c" id="c.mad_num_xrand">
+<a class="reference internal" href="mad_mod_types.html#c.num_t" title="num_t"><span class="n"><span class="pre">num_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mad_num_xrand</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.xrng_state_t" title="xrng_state_t"><span class="n"><span class="pre">xrng_state_t</span></span></a><span class="p"><span class="pre">*</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.mad_num_xrand" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Return a pseudo-random double precision float in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1)</span></code> from the MAD-X PRNG.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt class="sig sig-object c" id="c.mad_num_xrandi">
+<span class="n"><span class="pre">u32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mad_num_xrandi</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.xrng_state_t" title="xrng_state_t"><span class="n"><span class="pre">xrng_state_t</span></span></a><span class="p"><span class="pre">*</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.mad_num_xrandi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Return a pseudo-random 32 bit unsigned integer in the range <code class="xref mad mad-const docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">UINT_MAX]</span></code> from the MAD-X PRNG.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt class="sig sig-object c" id="c.mad_num_xrandseed">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mad_num_xrandseed</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.xrng_state_t" title="xrng_state_t"><span class="n"><span class="pre">xrng_state_t</span></span></a><span class="p"><span class="pre">*</span></span>, <span class="n"><span class="pre">u32_t</span></span><span class="w"> </span><span class="n"><span class="pre">seed</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.mad_num_xrandseed" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the seed of the MAD-X PRNG.</p>
+</dd></dl>
+
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h2>
+<div role="list" class="citation-list">
+<div class="citation" id="xorshft03" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">XORSHFT03</a><span class="fn-bracket">]</span></span>
+<ol class="upperalpha simple" start="7">
+<li><p>Marsaglia, <em>“Xorshift RNGs”</em>, Journal of Statistical Software, 8 (14), July 2003. doi:10.18637/jss.v008.i14.</p></li>
+</ol>
+</div>
+<div class="citation" id="tauswth96" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">TAUSWTH96</a><span class="fn-bracket">]</span></span>
+<ol class="upperalpha simple" start="16">
+<li><p>L’Ecuyer, <em>“Maximally Equidistributed Combined Tausworthe Generators”</em>, Mathematics of Computation, 65 (213), 1996, p203–213.</p></li>
+</ol>
+</div>
+<div class="citation" id="mertwis98" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">MERTWIS98</a><span class="fn-bracket">]</span></span>
+<ol class="upperalpha simple" start="13">
+<li><p>Matsumoto and T. Nishimura, <em>“Mersenne Twister: A 623-dimensionally equidistributed uniform pseudorandom number generator”</em>. ACM Trans. on Modeling and Comp. Simulation, 8 (1), Jan. 1998, p3–30.</p></li>
+</ol>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mad_mod_numrange.html" class="btn btn-neutral float-left" title="Numerical Ranges" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mad_mod_cplxnum.html" class="btn btn-neutral float-right" title="Complex Numbers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Laurent Deniau.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Differential Algebra &mdash; MAD-NG Reference Manual 0.9.6 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Differential Maps" href="mad_mod_diffmap.html" />
+    <link rel="prev" title="Linear Algebra" href="mad_mod_linalg.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            MAD-NG Reference Manual
+          </a>
+              <div class="version">
+                0.9.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Part I:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_gen_index.html">LANGUAGE</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part II:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_cmd_index.html">ELEMENTS &amp; COMMANDS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part III:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_phy_index.html">PHYSICS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part IV:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mad_mod_index.html">MODULES</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_types.html">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_const.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_functions.html">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_functor.html">Functors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_monomial.html">Monomials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_numrange.html">Numerical Ranges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_randnum.html">Random Numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_cplxnum.html">Complex Numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_linalg.html">Linear Algebra</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Differential Algebra</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#representation">Representation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#approximation">Approximation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application">Application</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#performance">Performance</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#constructors">Constructors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#operators">Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c-api">C API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_diffmap.html">Differential Maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_miscfuns.html">Miscellaneous Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_gphys.html">Generic Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_mod_extern.html">External modules</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part V:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_prg_index.html">PROGRAMMING</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MAD-NG Reference Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mad_mod_index.html">MODULES</a></li>
+      <li class="breadcrumb-item active">Differential Algebra</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mad_mod_diffalg.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="mad_mod_linalg.html" class="btn btn-neutral float-left" title="Linear Algebra" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mad_mod_diffmap.html" class="btn btn-neutral float-right" title="Differential Maps" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="differential-algebra">
+<span id="index-0"></span><h1>Differential Algebra<a class="headerlink" href="#differential-algebra" title="Permalink to this heading">¶</a></h1>
+<p>This chapter describes real <em>tpsa</em> and complex <em>ctpsa</em> objects as supported by MAD-NG. The module for the Generalized Truncated Power Series Algebra (GTPSA) that represents parametric multivariate truncated <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor_series">Taylor series</a> is not exposed, only the contructors are visible from the <code class="xref mad mad-mod docutils literal notranslate"><span class="pre">MAD</span></code> environment and thus, TPSAs are handled directly by their methods or by the generic functions of the same name from the module <code class="xref mad mad-mod docutils literal notranslate"><span class="pre">MAD.gmath</span></code>. Note that both <em>tpsa</em> and <em>ctpsa</em> are defined as C structure for direct compliance with the C API.</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
+<p>TPSAs are numerical objects representing <span class="math notranslate nohighlight">\(n\)</span>-th degrees Taylor polynomial approximation of some functions <span class="math notranslate nohighlight">\(f(x)\)</span> about <span class="math notranslate nohighlight">\(x=a\)</span>. They are a powerful differential algebra tool for solving physics problems described by differential equations and for <a class="reference external" href="https://en.wikipedia.org/wiki/Perturbation_theory">perturbation theory</a>, e.g. for solving motion equations, but also for estimating uncertainties, modelling multidimensional distributions or calculating multivariate derivatives for optimization. There are often misunderstandings about their accuracy and limitations, so it is useful to clarify here some of these aspects here.</p>
+<p>To begin with, GTPSAs represent multivariate Taylor series truncated at order <span class="math notranslate nohighlight">\(n\)</span>, and thus behave like <span class="math notranslate nohighlight">\(n\)</span>-th degrees multivariate polynomials with coefficients in <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>. MAD-NG supports GTPSAs with thousands of variables and/or parameters of arbitrary order each, up to a maximum total order of 63, but Taylor series with alternating signs in their coefficients can quickly be subject to numerical instabilities and <a class="reference external" href="https://en.wikipedia.org/wiki/Catastrophic_cancellation">catastrophic cancellation</a> as orders increase.</p>
+<p>Other methods are not better and suffer from the same problem and more, such as symbolic differentiation, which can lead to inefficient code due to the size of the analytical expressions, or numerical differentiation, which can introduce round-off errors in the discretisation process and cancellation. Both classical methods are more problematic when computing high order derivatives, where complexity and errors increase.</p>
+<section id="representation">
+<h3>Representation<a class="headerlink" href="#representation" title="Permalink to this heading">¶</a></h3>
+<p>A TPSA in the variable <span class="math notranslate nohighlight">\(x\)</span> at order <span class="math notranslate nohighlight">\(n\)</span> in the neighbourhood of the point <span class="math notranslate nohighlight">\(a\)</span> in the domain of the function <span class="math notranslate nohighlight">\(f\)</span>, noted <span class="math notranslate nohighlight">\(T_f^n(x;a)\)</span>, has the following representation:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}T_f^n(x;a) &amp;= f(a) + f'(a) (x-a) + \frac{f''(a)}{2!} (x-a)^2 + \dots + \frac{f^{(n)}(a)}{n!} (x-a)^n \\
+&amp;= \sum_{k=0}^{n} \frac{f_{a}^{(k)}}{k!}(x-a)^k\end{split}\]</div>
+<p>where the terms <span class="math notranslate nohighlight">\(\frac{f_{a}^{(k)}}{k!}\)</span> are the coefficients stored in the <em>tpsa</em> and <em>ctpsa</em> objects.</p>
+<p>The calculation of these coefficients uses a technique known as <a class="reference external" href="https://en.wikipedia.org/wiki/Automatic_differentiation">automatic differentiation</a> (AD) which operates as polynomials over the augmented (differential) algebra of <a class="reference external" href="https://en.wikipedia.org/wiki/Dual_number">dual number</a>, <em>without any approximation</em>, being exact to numerical precision.</p>
+<p>The validity of the polynomial representation <span class="math notranslate nohighlight">\(T_f^n(x;a)\)</span> for the real or complex <a class="reference external" href="https://en.wikipedia.org/wiki/Analytic_function">analytic function</a> <span class="math notranslate nohighlight">\(f\)</span> is characterized by the convergence of the remainder when the order <span class="math notranslate nohighlight">\(n\)</span> goes to infinity:</p>
+<div class="math notranslate nohighlight">
+\[\lim_{n \rightarrow \infty} R_f^n(x ; a) = \lim_{n \rightarrow \infty} f_a(x) - T_f^n(x ; a) = 0\]</div>
+<p>and the <a class="reference external" href="https://en.wikipedia.org/wiki/Radius_of_convergence">radius of convergence</a> <span class="math notranslate nohighlight">\(h\)</span> of <span class="math notranslate nohighlight">\(T_f^n(x;a)\)</span> nearby the point <span class="math notranslate nohighlight">\(a\)</span> is given by:</p>
+<div class="math notranslate nohighlight">
+\[\min_{h&gt;0} \lim_{n \rightarrow \infty} R_f^n(x\pm h ; a) \neq 0.\]</div>
+<p>By using the <a class="reference external" href="https://en.wikipedia.org/wiki/Mean_value_theorem">mean value theorem</a> recursively we can derive the explicit mean-value form of the remainder:</p>
+<div class="math notranslate nohighlight">
+\[R_f^n(x ; a) = \frac{f^{(n+1)}_a(\xi)}{(n+1)!} (x-a)^{n+1}\]</div>
+<p>for some <span class="math notranslate nohighlight">\(\xi\)</span> strictly between <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(a\)</span>, leading to the mean-value form of the <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%27s_theorem">Taylor’s theorem</a>:</p>
+<div class="math notranslate nohighlight">
+\[f_a(x) = T_f^n(x ; a) + R_f^n(x ; a) = \sum_{k=0}^{n} \frac{f_{a}^{(k)}}{k!}(x-a)^k + \frac{f^{(n+1)}_a(\xi)}{(n+1)!} (x-a)^{n+1}\]</div>
+<p>Note that a large radius of convergence does not necessarily mean rapid convergence of the Taylor series to the function, although there is a relationship between the rate of convergence, the function <span class="math notranslate nohighlight">\(f\)</span>, the point <span class="math notranslate nohighlight">\(a\)</span> and the length <span class="math notranslate nohighlight">\(h\)</span>. Nevertheless, Taylor series are known to be slow to converge in most cases for numerical applications, except in some cases where appropriate range reduction or <a class="reference external" href="https://en.wikipedia.org/wiki/Series_acceleration">convergence acceleration</a> methods give good results. Thus, Taylor series should not be used as interpolation functions when better formulas exist for this purpose, see for example fixed-point or <a class="reference external" href="https://en.wikipedia.org/wiki/Minimax_approximation_algorithm">minmax</a> algorithms.</p>
+<p>In our practice, a truncation error is always present due to the truncated nature of the TPSA at order <span class="math notranslate nohighlight">\(n\)</span>, but it is rarely calculated analytically for complex systems as it can be estimated by comparing the calculations at high and low orders, and determining the lowest order for which the result is sufficiently stable.</p>
+<p>By extension, a TPSA in the two variables <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> at order 2 in the neighbourhood of the point <span class="math notranslate nohighlight">\((a,b)\)</span> in the domain of the function <span class="math notranslate nohighlight">\(f\)</span>, noted <span class="math notranslate nohighlight">\(T_f^2(x,y;a,b)\)</span>, has the following representation:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}T_f^2(x,y;a,b) = f(a,b) + &amp;\left(\frac{\partial f}{\partial x}\bigg\rvert_{(a,b)}\!\!\!\!\!\!\!(x-a) + \frac{\partial f}{\partial y}\bigg\rvert_{(a,b)}\!\!\!\!\!\!\!(y-b)\right) \\
++ \frac{1}{2!} &amp;\left(\frac{\partial^2 f}{\partial x^2}\bigg\rvert_{(a,b)}\!\!\!\!\!\!\!(x-a)^2
+                + 2\frac{\partial^2 f}{\partial x\partial y}\bigg\rvert_{(a,b)}\!\!\!\!\!\!\!(x-a)(y-b)
+                + \frac{\partial^2 f}{\partial y^2}\bigg\rvert_{(a,b)}\!\!\!\!\!\!\!(y-b)^2\right)\end{split}\]</div>
+<p>where the large brackets are grouping the terms in <a class="reference external" href="https://en.wikipedia.org/wiki/Homogeneous_polynomial">homogeneous polynomials</a>, as stored in the <em>tpsa</em> and <em>ctpsa</em> objects. The central term of the second order <span class="math notranslate nohighlight">\(2\frac{\partial^2 f}{\partial x\partial y}\)</span> emphasises the reason why the function <span class="math notranslate nohighlight">\(f\)</span> must be analytic and independent of the integration path as it implies <span class="math notranslate nohighlight">\(\frac{\partial^2 f}{\partial x\partial y} = \frac{\partial^2 f}{\partial y\partial x}\)</span> and stores the value (scaled by <span class="math notranslate nohighlight">\(\frac{1}{2}\)</span>) as the coefficient of the monomial <span class="math notranslate nohighlight">\(x^1 y^1\)</span>. This is an important consideration to keep in mind regarding TPSA, but it is not a pactical limitation due to the <a class="reference external" href="https://en.wikipedia.org/wiki/Conservative_vector_field">conservative nature</a> of our applications described by <a class="reference external" href="https://en.wikipedia.org/wiki/Hamiltonian_vector_field">Hamiltonian vector fields</a>.</p>
+<p>The generalization to a TPSA of <span class="math notranslate nohighlight">\(\nu\)</span> variables <span class="math notranslate nohighlight">\(X\)</span> at order <span class="math notranslate nohighlight">\(n\)</span> nearby the point <span class="math notranslate nohighlight">\(A\)</span> in the <span class="math notranslate nohighlight">\(\nu\)</span>-dimensional domain of the function <span class="math notranslate nohighlight">\(f\)</span>, noted <span class="math notranslate nohighlight">\(T_f^n(X;A)\)</span>, has the following representation:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}T_f^n(X;A) = \sum_{k=0}^n \frac{f_{A}^{(k)}}{k!}(X;A)^k = \sum_{k=0}^n \frac{1}{k!} \sum_{|\vec{m}|=k} \begin{pmatrix}k \\ \vec{m}\end{pmatrix} \frac{\partial^k f}{\partial X^{\vec{m}}}\bigg\rvert_{A}\!\!(X;A)^{\vec{m}}\end{split}\]</div>
+<p>where the term <span class="math notranslate nohighlight">\(\begin{pmatrix}k \\ \vec{m}\end{pmatrix} = \frac{k!}{c_1!\,c_2!..c_{\nu}!}\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Multinomial_theorem">multinomial coefficient</a> with <span class="math notranslate nohighlight">\(\vec{m}\)</span> the vector of <span class="math notranslate nohighlight">\(\nu\)</span> variables orders <span class="math notranslate nohighlight">\(c_i, i=1..\nu\)</span> in the monomial and <span class="math notranslate nohighlight">\(|\vec{m}| = \sum_i c_i\)</span> its total order. Again, we may mention that each term <span class="math notranslate nohighlight">\(\frac{1}{k!} \begin{pmatrix}k \\ \vec{m}\end{pmatrix} \frac{\partial^k f}{\partial X^{\vec{m}}}\bigg\rvert_{A}\)</span> corresponds strictly to a coefficient stored in the <em>tpsa</em> and <em>ctpsa</em> objects.</p>
+<p>An important point to mention is related to the <em>multinomial coefficient</em> and its relevance when computing physical quantities such as high order anharmonicities, e.g. chromaticities. When the physical quantity corresponds to the derivative of the function <span class="math notranslate nohighlight">\(f^{(k)}_A\)</span>, the coefficient must be multiplied by <span class="math notranslate nohighlight">\(c_1!\,c_2!\,..c_{\nu}!\)</span> in order to obtain the correct value.</p>
+</section>
+<section id="approximation">
+<h3>Approximation<a class="headerlink" href="#approximation" title="Permalink to this heading">¶</a></h3>
+<p>As already said, TPSAs do not perform approximations for orders <span class="math notranslate nohighlight">\(0\,..n\)</span> and the Taylor’s theorem gives an explicit form of the remainder for the truncation error of higher orders, while all derivatives are computed using AD. AD relies on the fact that any computer program can execute a sequence of elementary arithmetic operations and functions, and apply the chain rule to them repeatedly to automatically compute the derivatives to machine precision.</p>
+<p>So when TPSAs introduce appromixation errors? When they are used as <em>interpolation functions</em> to approximate by substitution or perturbation, values at positions <span class="math notranslate nohighlight">\(a+h\)</span> away from their initial point <span class="math notranslate nohighlight">\(a\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[T_f^n(x+h;a) = \sum_{k=0}^{n} \frac{f_{a}^{(k)}}{k!} (x-a+h)^k
+            \quad \ne \quad
+               \sum_{k=0}^{n} \frac{f_{a+h}^{(k)}}{k!} (x-a-h)^k = T_f^n(x;a+h)\]</div>
+<p>where the approximation error at order <span class="math notranslate nohighlight">\(k\)</span> is given by:</p>
+<div class="math notranslate nohighlight">
+\[\left|f^{(k)}_{a+h} - f^{(k)}_a\right| \approx \frac{1}{|2h|} \left|\frac{\text{d}^k T_f^n(x;a+h)}{\text{d} x^k} - \frac{\text{d}^k T_f^n(x+h;a)}{\text{d} x^k}\right| + {\cal O}(k+1)\]</div>
+<p>In summary, operations and functions on TPSAs are exact while TPSAs used as functions lead to approximations even within the radius of convergence, unlike infinite Taylor series. MAD-NG never uses TPSAs as interpolation functions, but of course the module does provide users with methods for interpolating functions.</p>
+</section>
+<section id="application">
+<h3>Application<a class="headerlink" href="#application" title="Permalink to this heading">¶</a></h3>
+<p>MAD-NG is a tracking code that never composes elements maps during tracking, but performs a <em>functional application</em> of elements physics to user-defined input differential maps modelled as sets of TPSAs (one per variable). Tracking particles orbits is a specific case where the “differential” maps are of order 0, i.e. they contain only the scalar part of the maps and no derivatives. Therefore, TPSAs must also behave as scalars in polymorphic codes like MAD-NG, so that the same equations of motion can be applied by the same functions to particle orbits and differential maps. Thus, the <code class="xref mad mad-var docutils literal notranslate"><span class="pre">track</span></code> command, and by extension the <code class="xref mad mad-var docutils literal notranslate"><span class="pre">cofind</span></code> (closed orbit search) and <code class="xref mad mad-var docutils literal notranslate"><span class="pre">twiss</span></code> commands, never use TPSAs as interpolation functions and the results are as accurate as for tracking particles orbits. In particular, it preserves the symplectic structure of the phase space if the applied elements maps are themselves <a class="reference external" href="https://en.wikipedia.org/wiki/Symplectomorphism">symplectic maps</a>.</p>
+<p>Users may be tempted to compute or compose elements maps to model whole elements or even large lattice sections before applying them to some input differential maps in order to speed up tracking or parallelise computations. But this approach leads to the two types of approximations that we have just explained: the resulting map is not only truncated, thus loosing local feed-down effects implied by e.g. a translation from orbit <span class="math notranslate nohighlight">\(x\)</span> to <span class="math notranslate nohighlight">\(x+h(s)\)</span> along the path <span class="math notranslate nohighlight">\(s\)</span> or equivalently by the misalignment of the elements, but the derivatives are also approximated for each particle orbit by the global composition calculated on a nearby orbit, typically the zero orbit. So as the addition of floating point numbers is not associative, the composition of truncated maps is not associative too.</p>
+<p>The following equations show the successive refinement of the type of calculations performed by the tracking codes, starting from the worst but common approximations at the top-left to the more general and accurate functional application without approximation at the bottom-right, as computed by MAD-NG:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}({\mathcal M}_n \circ \cdots \circ {\mathcal M}_2 \circ {\mathcal M}_1) (X_0)
+  &amp;\ne {\mathcal M}_n( \cdots ({\mathcal M}_2({\mathcal M}_1 (X_0)))\cdots) \\
+  &amp;\ne \widetilde{\mathcal M}_n(\cdots (\widetilde{\mathcal M}_2 (\widetilde{\mathcal M}_1 (X_0)))\cdots) \\
+  &amp;\ne {\cal F}_n(\cdots ({\cal F}_2 ({\cal F}_1 (X_0)))\cdots)\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\({\mathcal M}_i\)</span> is the <span class="math notranslate nohighlight">\(i\)</span>-th map computed at some <em>a priori</em> orbit (zero orbit), <span class="math notranslate nohighlight">\(\widetilde{\mathcal M}_i\)</span> is the <span class="math notranslate nohighlight">\(i\)</span>-th map computed at the input orbit <span class="math notranslate nohighlight">\(X_{i-1}\)</span> which still implies some expansion, and finally <span class="math notranslate nohighlight">\({\mathcal F}_i\)</span> is the functional application of the full-fledged physics of the <span class="math notranslate nohighlight">\(i\)</span>-th map without any intermediate expansion, i.e. without calculating a differential map, and with all the required knownledge including the input orbit <span class="math notranslate nohighlight">\(X_{i-1}\)</span> to perform the exact calculation.</p>
+<p>However, although MAD-NG only performs functional map applications (last right equation above) and never compute element maps or uses TPSAs as interpolation functions, it could be prone to small truncation errors during the computation of the non-linear normal forms which involves the composition of many orbitless maps, potentially breaking symplecticity of the resulting transformation for last order.</p>
+<p>The modelling of multidimensional beam distributions is also possible with TPSAs, as when a linear phase space description is provided as initial conditions to the <code class="xref mad mad-var docutils literal notranslate"><span class="pre">twiss</span></code> command through, e.g. a <code class="xref mad mad-var docutils literal notranslate"><span class="pre">beta0</span></code> block. Extending the description of the initial phase space with high-order maps allows complex non-linear phase spaces to be modelled and their transformations along the lattice to be captured and analysed.</p>
+</section>
+<section id="performance">
+<h3>Performance<a class="headerlink" href="#performance" title="Permalink to this heading">¶</a></h3>
+<p>In principle, TPSAs should have equivalent performance to matrix/tensors for low orders and small number of variables, perhaps slightly slower at order 1 or 2 as the management of these data structures involves complex code and additional memory allocations. But from order 3 and higher, TPSA-based codes outperform matrix/tensor codes because the number of coefficients remains much smaller as shown in <a class="reference internal" href="#fig-tpsa-size"><span class="std std-numref">Fig. 15</span></a> and <a class="reference internal" href="#fig-tensor-size"><span class="std std-numref">Fig. 16</span></a>, and the complexity of the elementary operations (resp. multiplication) depends linearly (resp. quadratically) on the size of these data structures.</p>
+<figure class="align-center" id="id1" style="width: 75%">
+<span id="fig-tpsa-size"></span><img alt="_images/tpsa-sizes.png" src="_images/tpsa-sizes.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 15 </span><span class="caption-text">Number of coefficients in TPSAs for <span class="math notranslate nohighlight">\(\nu\)</span> variables at order <span class="math notranslate nohighlight">\(n\)</span> is <span class="math notranslate nohighlight">\({\scriptstyle\begin{pmatrix} n+\nu \\[-1ex] \nu \end{pmatrix}} = \frac{(n+\nu)!}{n!\nu!}\)</span>.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id2">
+<span id="fig-tensor-size"></span><img alt="_images/tensor-sizes.png" src="_images/tensor-sizes.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 16 </span><span class="caption-text">Number of coefficients in tensors for <span class="math notranslate nohighlight">\(\nu\)</span> variables at order <span class="math notranslate nohighlight">\(n\)</span> is <span class="math notranslate nohighlight">\(\sum_{k=0}^n \nu^{k+1} = \frac{\nu(\nu^{n+1}-1)}{\nu-1}\)</span>.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="constructors">
+<h2>Constructors<a class="headerlink" href="#constructors" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="operators">
+<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="iterators">
+<h2>Iterators<a class="headerlink" href="#iterators" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="c-api">
+<h2>C API<a class="headerlink" href="#c-api" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Footnotes</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mad_mod_linalg.html" class="btn btn-neutral float-left" title="Linear Algebra" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mad_mod_diffmap.html" class="btn btn-neutral float-right" title="Differential Maps" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Laurent Deniau.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

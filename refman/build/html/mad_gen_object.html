@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Objects &mdash; MAD-NG Reference Manual 0.9.6 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Beams" href="mad_gen_beam.html" />
+    <link rel="prev" title="Scripting" href="mad_gen_script.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            MAD-NG Reference Manual
+          </a>
+              <div class="version">
+                0.9.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Part I:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mad_gen_index.html">LANGUAGE</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_intro.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_script.html">Scripting</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Objects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creation">Creation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#constructors">Constructors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#incomplete-objects">Incomplete objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identification">Identification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#customizing-creation">Customizing creation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#inheritance">Inheritance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#reading-attributes">Reading attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#writing-attributes">Writing attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#class-instances">Class instances</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metamethods">Metamethods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flags">Flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#environments">Environments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_beam.html">Beams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_beta0.html">Beta0 Blocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_elements.html">Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_sequence.html">Sequences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_mtable.html">MTables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_madx.html">MADX</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part II:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_cmd_index.html">ELEMENTS &amp; COMMANDS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part III:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_phy_index.html">PHYSICS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part IV:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_mod_index.html">MODULES</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part V:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_prg_index.html">PROGRAMMING</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MAD-NG Reference Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mad_gen_index.html">LANGUAGE</a></li>
+      <li class="breadcrumb-item active">Objects</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mad_gen_object.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="mad_gen_script.html" class="btn btn-neutral float-left" title="Scripting" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mad_gen_beam.html" class="btn btn-neutral float-right" title="Beams" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="objects">
+<h1>Objects<a class="headerlink" href="#objects" title="Permalink to this heading">¶</a></h1>
+<p id="ch-gen-obj">The object model is of key importance as it implements many features used extensively by objects like <code class="xref mad mad-var docutils literal notranslate"><span class="pre">beam</span></code>, <code class="xref mad mad-var docutils literal notranslate"><span class="pre">sequence</span></code>, <code class="docutils literal notranslate"><span class="pre">mtable</span></code>, all the commands, all the elements, and the <code class="docutils literal notranslate"><span class="pre">MADX</span></code> environment. The aim of the object model is to extend the scripting language with concepts like objects, inheritance, methods, metamethods, deferred expressions, commands and more.</p>
+<p>In computer science, the object model of MAD-NG is said to implement the concepts of prototypical objects, single inheritance and dynamic lookup of attributes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A <em>prototypical object</em> is an object created from a prototype, <a class="footnote-reference brackets" href="#f1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> named its parent.</p></li>
+<li><p><em>Single inheritance</em> specifies that an object has only one direct parent.</p></li>
+<li><p><em>Dynamic lookup</em> means that undefined attributes are searched in the parents at <em>each</em> read.</p></li>
+</ul>
+</div></blockquote>
+<p>A prototype represents the default state and behavior, and new objects can reuse part of the knowledge stored in the prototype by inheritance, or by defining how the new object differs from the prototype. Because any object can be used as a prototype, this approach holds some advantages for representing default knowledge, and incrementally and dynamically modifying them.</p>
+<section id="creation">
+<h2>Creation<a class="headerlink" href="#creation" title="Permalink to this heading">¶</a></h2>
+<p>The creation of a new object requires to hold a reference to its parent, i.e. the prototype, which indeed will create the child and return it as if it were returned from a function:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">object</span> <span class="kr">in</span> <span class="n">MAD</span>
+<span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">object</span> <span class="p">{</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>The special <em>root object</em> <code class="docutils literal notranslate"><span class="pre">object</span></code> from the <code class="docutils literal notranslate"><span class="pre">MAD</span></code> environment is the parent of <em>all</em> objects, including elements, sequences, TFS tables and commands. It provides by inheritance the methods needed to handle objects, environments, and more. In this minimalist example, the created object has <code class="docutils literal notranslate"><span class="pre">object</span></code> as parent, so it is the simplest object that can be created.</p>
+<p>It is possible to name immutably an object during its creation:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">object</span> <span class="s1">&#39;myobj&#39;</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">name</span><span class="p">)</span> <span class="c1">-- display: myobj</span>
+</pre></div>
+</div>
+<p>Here, <a class="footnote-reference brackets" href="#f2" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <code class="docutils literal notranslate"><span class="pre">obj</span></code> is the variable holding the object while the <em>string</em> <code class="xref mad mad-var docutils literal notranslate"><span class="pre">'myobj'</span></code> is the name of the object. It is important to distinguish well the variable that holds the <em>object</em> from the object’s name that holds the <em>string</em>, because they are very often named the same.</p>
+<p>It is possible to define attributes during object creation or afterward:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">object</span> <span class="s1">&#39;myobj&#39;</span> <span class="p">{</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span> <span class="p">}</span>
+<span class="n">obj</span><span class="p">.</span><span class="n">c</span> <span class="o">=</span> <span class="p">{</span> <span class="n">d</span><span class="o">=</span><span class="mi">5</span> <span class="p">}</span> <span class="c1">-- add a new attribute c</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">b</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">c</span><span class="p">.</span><span class="n">d</span><span class="p">)</span>  <span class="c1">-- display: myobj 1 hello 5</span>
+</pre></div>
+</div>
+<section id="constructors">
+<h3>Constructors<a class="headerlink" href="#constructors" title="Permalink to this heading">¶</a></h3>
+<p>The previous object creation can be done equivalently using the prototype as a constructor:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">object</span><span class="p">(</span><span class="s1">&#39;myobj&#39;</span><span class="p">,{</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span> <span class="p">})</span>
+</pre></div>
+</div>
+<p>An object constructor expects two arguments, an optional <em>string</em> for the name, and a required <em>table</em> for the attributes placeholder, optionally filled with initial attributes. The table is used to create the object itself, so it cannot be reused to create a different object:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">attr</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span> <span class="p">}</span>
+<span class="kd">local</span> <span class="n">obj1</span> <span class="o">=</span> <span class="n">object</span><span class="p">(</span><span class="s1">&#39;obj1&#39;</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span> <span class="c1">-- ok</span>
+<span class="kd">local</span> <span class="n">obj2</span> <span class="o">=</span> <span class="n">object</span><span class="p">(</span><span class="s1">&#39;obj2&#39;</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span> <span class="c1">-- runtime error, attr is already used.</span>
+</pre></div>
+</div>
+<p>The following objects creations are all semantically equivalent but use different syntax that may help to understand the creation process and avoid runtime errors:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="c1">-- named objects:</span>
+<span class="kd">local</span> <span class="n">nobj</span> <span class="o">=</span> <span class="n">object</span> <span class="s1">&#39;myobj&#39;</span>  <span class="p">{</span> <span class="p">}</span>  <span class="c1">-- two stages creation.</span>
+<span class="kd">local</span> <span class="n">nobj</span> <span class="o">=</span> <span class="n">object</span> <span class="s1">&#39;myobj&#39;</span> <span class="p">({</span> <span class="p">})</span> <span class="c1">-- idem.</span>
+<span class="kd">local</span> <span class="n">nobj</span> <span class="o">=</span> <span class="n">object</span><span class="p">(</span><span class="s1">&#39;myobj&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>  <span class="c1">-- idem.</span>
+<span class="kd">local</span> <span class="n">nobj</span> <span class="o">=</span> <span class="n">object</span><span class="p">(</span><span class="s1">&#39;myobj&#39;</span><span class="p">)({</span> <span class="p">})</span> <span class="c1">-- idem.</span>
+<span class="kd">local</span> <span class="n">nobj</span> <span class="o">=</span> <span class="n">object</span><span class="p">(</span><span class="s1">&#39;myobj&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="p">})</span> <span class="c1">-- one stage creation.</span>
+<span class="c1">-- unnamed objects:</span>
+<span class="kd">local</span> <span class="n">uobj</span> <span class="o">=</span> <span class="n">object</span>   <span class="p">{</span> <span class="p">}</span>         <span class="c1">-- one stage creation.</span>
+<span class="kd">local</span> <span class="n">uobj</span> <span class="o">=</span> <span class="n">object</span>  <span class="p">({</span> <span class="p">})</span>        <span class="c1">-- idem.</span>
+<span class="kd">local</span> <span class="n">uobj</span> <span class="o">=</span> <span class="n">object</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>         <span class="c1">-- two stages creation.</span>
+<span class="kd">local</span> <span class="n">uobj</span> <span class="o">=</span> <span class="n">object</span><span class="p">()({</span> <span class="p">})</span>        <span class="c1">-- idem.</span>
+<span class="kd">local</span> <span class="n">uobj</span> <span class="o">=</span> <span class="n">object</span><span class="p">(</span><span class="kc">nil</span><span class="p">,{</span> <span class="p">})</span>      <span class="c1">-- one stage creation.</span>
+</pre></div>
+</div>
+</section>
+<section id="incomplete-objects">
+<h3>Incomplete objects<a class="headerlink" href="#incomplete-objects" title="Permalink to this heading">¶</a></h3>
+<p>The following object creation shows how the two stage form can create an incomplete object that can only be used to complete its construction:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">object</span> <span class="s1">&#39;myobj&#39;</span>   <span class="c1">-- obj is incomplete, table is missing</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>              <span class="c1">-- runtime error.</span>
+<span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span> <span class="p">{</span> <span class="p">}</span>                <span class="c1">-- now obj is complete.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>              <span class="c1">-- display: myobj</span>
+</pre></div>
+</div>
+<p>Any attempt to use an incomplete object will trigger a runtime error with a message like:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">file:line: forbidden read access to incomplete object.</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">file:line: forbidden write access to incomplete object.</span>
+</pre></div>
+</div>
+<p>depending on the kind of access.</p>
+</section>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">¶</a></h3>
+<p>An object used as a prototype to create new objects becomes a <em>class</em>, and a class cannot change, add, remove or override its methods and metamethods. This restriction ensures the behavioral consistency between the children after their creation. An object qualified as <em>final</em> cannot create instances and therefore cannot become a class.</p>
+</section>
+<section id="identification">
+<h3>Identification<a class="headerlink" href="#identification" title="Permalink to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">object</span></code> module extends the <a class="reference internal" href="mad_mod_types.html"><span class="doc">typeid</span></a> module with the <code class="xref mad mad-func docutils literal notranslate"><span class="pre">is_object(a)</span></code> <em>function</em>, which returns <code class="xref mad mad-const docutils literal notranslate"><span class="pre">true</span></code> if its argument <code class="docutils literal notranslate"><span class="pre">a</span></code> is an object, <code class="xref mad mad-const docutils literal notranslate"><span class="pre">false</span></code> otherwise:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">is_object</span> <span class="kr">in</span> <span class="n">MAD</span><span class="p">.</span><span class="n">typeid</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">is_object</span><span class="p">(</span><span class="n">object</span><span class="p">),</span> <span class="n">is_object</span><span class="p">(</span><span class="n">object</span><span class="p">{}),</span> <span class="n">is_object</span><span class="p">{})</span>
+<span class="c1">-- display: true  true  false</span>
+</pre></div>
+</div>
+<p>It is possible to know the objects qualifiers using the appropriate methods:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">object</span><span class="p">:</span><span class="n">is_class</span><span class="p">(),</span> <span class="n">object</span><span class="p">:</span><span class="n">is_final</span><span class="p">(),</span> <span class="n">object</span><span class="p">:</span><span class="n">is_readonly</span><span class="p">())</span>
+<span class="c1">-- display: true  false  true</span>
+</pre></div>
+</div>
+</section>
+<section id="customizing-creation">
+<h3>Customizing creation<a class="headerlink" href="#customizing-creation" title="Permalink to this heading">¶</a></h3>
+<p>During the creation process of objects, the metamethod <code class="docutils literal notranslate"><span class="pre">__init(self)</span></code> is invoked if it exists, with the newly created object as its sole argument to let the parent finalize or customize its initialization <em>before</em> it is returned. This mechanism is used by commands to run their <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:exec()</span></code> <em>method</em> during their creation.</p>
+</section>
+</section>
+<section id="inheritance">
+<h2>Inheritance<a class="headerlink" href="#inheritance" title="Permalink to this heading">¶</a></h2>
+<p>The object model allows to build tree-like inheritance hierarchy by creating objects from classes, themselves created from other classes, and so on until the desired hierarchy is modeled. The example below shows an excerpt of the taxonomy of the elements as implemented by the <a class="reference internal" href="mad_gen_elements.html"><span class="doc">element</span></a> module, with their corresponding depth levels in comment:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">object</span> <span class="kr">in</span> <span class="n">MAD</span>                    <span class="c1">-- depth level 1</span>
+<span class="kd">local</span> <span class="n">element</span> <span class="o">=</span> <span class="n">object</span>           <span class="p">{...}</span> <span class="c1">-- depth level 2</span>
+
+<span class="kd">local</span> <span class="n">drift_element</span> <span class="o">=</span> <span class="n">element</span>    <span class="p">{...}</span> <span class="c1">-- depth level 3</span>
+<span class="kd">local</span> <span class="n">instrument</span> <span class="o">=</span> <span class="n">drift_element</span> <span class="p">{...}</span> <span class="c1">-- depth level 4</span>
+<span class="kd">local</span> <span class="n">monitor</span>  <span class="o">=</span> <span class="n">instrument</span>      <span class="p">{...}</span> <span class="c1">-- depth level 5</span>
+<span class="kd">local</span> <span class="n">hmonitor</span> <span class="o">=</span> <span class="n">monitor</span>         <span class="p">{...}</span> <span class="c1">-- depth level 6</span>
+<span class="kd">local</span> <span class="n">vmonitor</span> <span class="o">=</span> <span class="n">monitor</span>         <span class="p">{...}</span> <span class="c1">-- depth level 6</span>
+
+<span class="kd">local</span> <span class="n">thick_element</span> <span class="o">=</span> <span class="n">element</span>    <span class="p">{...}</span> <span class="c1">-- depth level 3</span>
+<span class="kd">local</span> <span class="n">tkicker</span> <span class="o">=</span> <span class="n">thick_element</span>    <span class="p">{...}</span> <span class="c1">-- depth level 4</span>
+<span class="kd">local</span> <span class="n">kicker</span>  <span class="o">=</span> <span class="n">tkicker</span>          <span class="p">{...}</span> <span class="c1">-- depth level 5</span>
+<span class="kd">local</span> <span class="n">hkicker</span> <span class="o">=</span> <span class="n">kicker</span>           <span class="p">{...}</span> <span class="c1">-- depth level 6</span>
+<span class="kd">local</span> <span class="n">vicker</span>  <span class="o">=</span> <span class="n">kicker</span>           <span class="p">{...}</span> <span class="c1">-- depth level 6</span>
+</pre></div>
+</div>
+<section id="reading-attributes">
+<h3>Reading attributes<a class="headerlink" href="#reading-attributes" title="Permalink to this heading">¶</a></h3>
+<p>Reading an attribute not defined in an object triggers a recursive dynamic lookup along the chain of its parents until it is found or the root <code class="docutils literal notranslate"><span class="pre">object</span></code> is reached. Reading an object attribute defined as a <em>function</em> automatically evaluates it with the object passed as the sole argument and the returned value is forwarded to the reader as if it were the attribute’s value. When the argument is not used by the function, it becomes a <em>deferred expression</em> that can be defined directly with the operator <code class="docutils literal notranslate"><span class="pre">:=</span></code> as explained in the section <a class="reference internal" href="mad_gen_script.html#ssec-defexpr"><span class="std std-ref">Deferred expression</span></a>. This feature allows to use attributes holding values and functions the same way and postpone design decisions, e.g. switching from simple value to complex calculations without impacting the users side with calling parentheses at every use.</p>
+<p>The following example is similar to the second example of the section <a class="reference internal" href="mad_gen_script.html#ssec-defexpr"><span class="std std-ref">Deferred expression</span></a>, and it must be clear that <code class="docutils literal notranslate"><span class="pre">fun</span></code> must be explicitly called to retrieve the value despite that its definition is the same as the attribute <code class="docutils literal notranslate"><span class="pre">v2</span></code>.</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">var</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kd">local</span> <span class="n">fun</span> <span class="o">=</span> <span class="o">\-&gt;</span> <span class="n">var</span> <span class="c1">-- here := is invalid</span>
+<span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">object</span> <span class="p">{</span> <span class="n">v1</span> <span class="p">:</span><span class="o">=</span> <span class="n">var</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=\-&gt;</span> <span class="n">var</span><span class="p">,</span> <span class="n">v3</span> <span class="o">=</span> <span class="n">var</span> <span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">v1</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">v2</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">v3</span><span class="p">,</span> <span class="n">fun</span><span class="p">())</span> <span class="c1">-- display: 10 10 10 10</span>
+<span class="n">var</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">v1</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">v2</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">v3</span><span class="p">,</span> <span class="n">fun</span><span class="p">())</span> <span class="c1">-- display: 20 20 10 20</span>
+</pre></div>
+</div>
+</section>
+<section id="writing-attributes">
+<h3>Writing attributes<a class="headerlink" href="#writing-attributes" title="Permalink to this heading">¶</a></h3>
+<p>Writing to an object uses direct access and does not involve any lookup. Hence setting an attribute with a non-<code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code> value in an object hides his definition inherited from the parents, while setting an attribute with <code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code> in an object restores the inheritance lookup:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">obj1</span> <span class="o">=</span> <span class="n">object</span> <span class="p">{</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span> <span class="p">}</span>
+<span class="kd">local</span> <span class="n">obj2</span> <span class="o">=</span> <span class="n">obj1</span> <span class="p">{</span> <span class="n">a</span><span class="o">=\</span><span class="n">s</span><span class="o">-&gt;</span> <span class="n">s</span><span class="p">.</span><span class="n">b</span><span class="o">..</span><span class="s1">&#39; world&#39;</span> <span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj1</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">obj2</span><span class="p">.</span><span class="n">a</span><span class="p">)</span> <span class="c1">-- display: 1 hello world</span>
+<span class="n">obj2</span><span class="p">.</span><span class="n">a</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj1</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">obj2</span><span class="p">.</span><span class="n">a</span><span class="p">)</span> <span class="c1">-- display: 1 1</span>
+</pre></div>
+</div>
+<p>This property is extensively used by commands to specify their attributes default values or to rely on other commands attributes default values, both being overridable by the users.</p>
+<p>It is forbidden to write to a read-only objects or to a read-only attributes. The former can be set using the <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:readonly</span></code> <em>method</em>, while the latter corresponds to attributes with names that start by <code class="docutils literal notranslate"><span class="pre">__</span></code>, i.e. two underscores.</p>
+</section>
+<section id="class-instances">
+<h3>Class instances<a class="headerlink" href="#class-instances" title="Permalink to this heading">¶</a></h3>
+<p>To determine if an object is an instance of a given class, use the <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:is_instanceOf</span></code> <em>method</em>:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">hmonitor</span><span class="p">,</span> <span class="n">instrument</span><span class="p">,</span> <span class="n">element</span> <span class="kr">in</span> <span class="n">MAD</span><span class="p">.</span><span class="n">element</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hmonitor</span><span class="p">:</span><span class="n">is_instanceOf</span><span class="p">(</span><span class="n">instrument</span><span class="p">))</span> <span class="c1">-- display: true</span>
+</pre></div>
+</div>
+<p>To get the list of <em>public</em> attributes of an instance, use the <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:get_varkeys</span></code> <em>method</em>:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">a</span> <span class="kr">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">hmonitor</span><span class="p">:</span><span class="n">get_varkeys</span><span class="p">())</span> <span class="kr">do</span> <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="kr">end</span>
+<span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">a</span> <span class="kr">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">hmonitor</span><span class="p">:</span><span class="n">get_varkeys</span><span class="p">(</span><span class="n">object</span><span class="p">))</span> <span class="kr">do</span> <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="kr">end</span>
+<span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">a</span> <span class="kr">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">hmonitor</span><span class="p">:</span><span class="n">get_varkeys</span><span class="p">(</span><span class="n">instrument</span><span class="p">))</span> <span class="kr">do</span> <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="kr">end</span>
+<span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">a</span> <span class="kr">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">element</span><span class="p">:</span><span class="n">get_varkeys</span><span class="p">())</span> <span class="kr">do</span> <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="kr">end</span>
+</pre></div>
+</div>
+<p>The code snippet above lists the names of the attributes set by:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>the object <code class="docutils literal notranslate"><span class="pre">hmonitor</span></code> (only).</p></li>
+<li><p>the objects in the hierachy from <code class="docutils literal notranslate"><span class="pre">hmonitor</span></code> to <code class="docutils literal notranslate"><span class="pre">object</span></code> included.</p></li>
+<li><p>the objects in the hierachy from <code class="docutils literal notranslate"><span class="pre">hmonitor</span></code> to <code class="docutils literal notranslate"><span class="pre">instrument</span></code> included.</p></li>
+<li><p>the object <code class="xref mad mad-var docutils literal notranslate"><span class="pre">element</span></code> (only), the root of all elements.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h3>
+<figure class="align-center" id="id7">
+<span id="fig-gen-objmod"></span><img alt="_images/objmod-lookup-crop.png" src="_images/objmod-lookup-crop.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Object model and inheritance.</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><a class="reference internal" href="#fig-gen-objmod"><span class="std std-numref">Fig. 2</span></a> summarizes inheritance and attributes lookup with arrows and colors, which are reproduced by the example hereafter:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">element</span><span class="p">,</span> <span class="n">quadrupole</span> <span class="kr">in</span> <span class="n">MAD</span><span class="p">.</span><span class="n">element</span>    <span class="c1">-- kind</span>
+<span class="kd">local</span> <span class="n">mq</span>  <span class="o">=</span> <span class="n">quadrupole</span> <span class="s1">&#39;mq&#39;</span>  <span class="p">{</span> <span class="n">l</span>  <span class="o">=</span>  <span class="mf">2.1</span>  <span class="p">}</span> <span class="c1">-- class</span>
+<span class="kd">local</span> <span class="n">qf</span>  <span class="o">=</span> <span class="n">mq</span>         <span class="s1">&#39;qf&#39;</span>  <span class="p">{</span> <span class="n">k1</span> <span class="o">=</span>  <span class="mf">0.05</span> <span class="p">}</span> <span class="c1">-- circuit</span>
+<span class="kd">local</span> <span class="n">qd</span>  <span class="o">=</span> <span class="n">mq</span>         <span class="s1">&#39;qd&#39;</span>  <span class="p">{</span> <span class="n">k1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.06</span> <span class="p">}</span> <span class="c1">-- circuit</span>
+<span class="kd">local</span> <span class="n">qf1</span> <span class="o">=</span> <span class="n">qf</span>         <span class="s1">&#39;qf1&#39;</span> <span class="p">{}</span>             <span class="c1">-- element</span>
+<span class="p">...</span> <span class="c1">-- more elements</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qf1</span><span class="p">.</span><span class="n">k1</span><span class="p">)</span>                    <span class="c1">-- display: 0.05 (lookup)</span>
+<span class="n">qf</span><span class="p">.</span><span class="n">k1</span> <span class="o">=</span> <span class="mf">0.06</span>                     <span class="c1">-- update strength of &#39;qf&#39; circuit</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qf1</span><span class="p">.</span><span class="n">k1</span><span class="p">)</span>                    <span class="c1">-- display: 0.06 (lookup)</span>
+<span class="n">qf1</span><span class="p">.</span><span class="n">k1</span> <span class="o">=</span> <span class="mf">0.07</span>                    <span class="c1">-- set strength of &#39;qf1&#39; element</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qf</span><span class="p">.</span><span class="n">k1</span><span class="p">,</span> <span class="n">qf1</span><span class="p">.</span><span class="n">k1</span><span class="p">)</span>             <span class="c1">-- display: 0.06 0.07 (no lookup)</span>
+<span class="n">qf1</span><span class="p">.</span><span class="n">k1</span> <span class="o">=</span> <span class="kc">nil</span>                     <span class="c1">-- cancel strength of &#39;qf1&#39; element</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qf1</span><span class="p">.</span><span class="n">k1</span><span class="p">,</span> <span class="n">qf1</span><span class="p">.</span><span class="n">l</span><span class="p">)</span>             <span class="c1">-- display: 0.06 2.1 (lookup)</span>
+<span class="nb">print</span><span class="p">(</span><span class="o">#</span><span class="n">element</span><span class="p">:</span><span class="n">get_varkeys</span><span class="p">())</span>    <span class="c1">-- display: 33 (may vary)</span>
+</pre></div>
+</div>
+<p>The element <code class="docutils literal notranslate"><span class="pre">quadrupole</span></code> provided by the <a class="reference internal" href="mad_gen_elements.html"><span class="doc">element</span></a> module is the father of the objects created on its left. The <em>black arrows</em> show the user defined hierarchy of object created from and linked to the <code class="docutils literal notranslate"><span class="pre">quadrupole</span></code>. The main quadrupole <code class="docutils literal notranslate"><span class="pre">mq</span></code> is a user class representing the physical element, e.g. defining a length, and used to create two new classes, a focusing quadrupole <code class="docutils literal notranslate"><span class="pre">qf</span></code> and a defocusing quadrupole <code class="docutils literal notranslate"><span class="pre">qd</span></code> to model the circuits, e.g. hold the strength of elements connected in series, and finally the real individual elements <code class="docutils literal notranslate"><span class="pre">qf1</span></code>, <code class="docutils literal notranslate"><span class="pre">qd1</span></code>, <code class="docutils literal notranslate"><span class="pre">qf2</span></code> and <code class="docutils literal notranslate"><span class="pre">qd2</span></code> that will populate the sequence. A tracking command will request various attributes when crossing an element, like its length or its strength, leading to lookup of different depths in the hierarchy along the <em>red arrow</em>. A user may also write or overwrite an attribute at different level in the hierarchy by accessing directly to an element, as shown by the <em>purple arrows</em>, and mask an attribute of the parent with the new definitions in the children. The construction shown in this example follows the <em>separation of concern</em> principle and it is still highly reconfigurable despite that is does not contain any deferred expression or lambda function.</p>
+</section>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">¶</a></h2>
+<p>New attributes can be added to objects using the dot operator <code class="docutils literal notranslate"><span class="pre">.</span></code> or the indexing operator <code class="docutils literal notranslate"><span class="pre">[]</span></code> as for tables. Attributes with non-<em>string</em> keys are considered as private. Attributes with <em>string</em> keys starting by two underscores are considered as private and read-only, and must be set during creation:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="n">mq</span><span class="p">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;Main Arc Quadrupole&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qf1</span><span class="p">.</span><span class="n">comment</span><span class="p">)</span>      <span class="c1">-- displays: Main Arc Quadrupole</span>
+<span class="n">qf</span><span class="p">.</span><span class="n">__k1</span> <span class="o">=</span> <span class="mf">0.01</span>          <span class="c1">-- error</span>
+<span class="n">qf2</span> <span class="o">=</span> <span class="n">qf</span> <span class="p">{</span> <span class="n">__k1</span><span class="o">=</span><span class="mf">0.01</span> <span class="p">}</span>  <span class="c1">-- ok</span>
+</pre></div>
+</div>
+<p>The root <code class="docutils literal notranslate"><span class="pre">object</span></code> provides the following attributes:</p>
+<dl class="simple">
+<dt><strong>name</strong></dt><dd><p>A <em>lambda</em> returning the <em>string</em> <code class="docutils literal notranslate"><span class="pre">__id</span></code>.</p>
+</dd>
+<dt><strong>parent</strong></dt><dd><p>A <em>lambda</em> returning a <em>reference</em> to the parent <em>object</em>.</p>
+</dd>
+</dl>
+<p><strong>Warning</strong>: the following private and read-only attributes are present in all objects as part of the object model and should <em>never be used, set or changed</em>; breaking this rule would lead to an <em>undefined behavior</em>:</p>
+<dl class="simple">
+<dt><strong>__id</strong></dt><dd><p>A <em>string</em> holding the object’s name set during its creation.</p>
+</dd>
+<dt><strong>__par</strong></dt><dd><p>A <em>reference</em> holding the object’s parent set during its creation.</p>
+</dd>
+<dt><strong>__flg</strong></dt><dd><p>A <em>number</em> holding the object’s flags.</p>
+</dd>
+<dt><strong>__var</strong></dt><dd><p>A <em>table</em> holding the object’s variables, i.e. pairs of (<em>key</em>, <em>value</em>).</p>
+</dd>
+<dt><strong>__env</strong></dt><dd><p>A <em>table</em> holding the object’s environment.</p>
+</dd>
+<dt><strong>__index</strong></dt><dd><p>A <em>reference</em> to the object’s parent variables.</p>
+</dd>
+</dl>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">¶</a></h2>
+<p>New methods can be added to objects but not classes, using the <code class="docutils literal notranslate"><span class="pre">:set_methods(set)</span></code> <em>method</em> with <code class="docutils literal notranslate"><span class="pre">set</span></code> being the <em>set</em> of methods to add as in the following example:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="n">sequence</span> <span class="p">:</span><span class="n">set_methods</span> <span class="p">{</span>
+  <span class="n">name_of</span>   <span class="o">=</span> <span class="n">name_of</span><span class="p">,</span>
+  <span class="n">index_of</span>  <span class="o">=</span> <span class="n">index_of</span><span class="p">,</span>
+  <span class="n">range_of</span>  <span class="o">=</span> <span class="n">range_of</span><span class="p">,</span>
+  <span class="n">length_of</span> <span class="o">=</span> <span class="n">length_of</span><span class="p">,</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>where the keys are the names of the added methods and their values must be a <em>callable</em> accepting the object itself, i.e. <code class="docutils literal notranslate"><span class="pre">self</span></code>, as their first argument. Classes cannot set new methods.</p>
+<p>The root <code class="docutils literal notranslate"><span class="pre">object</span></code> provides the following methods:</p>
+<dl>
+<dt><strong>is_final</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning a <em>boolean</em> telling if the object is final, i.e. cannot have instance.</p>
+</dd>
+<dt><strong>is_class</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning a <em>boolean</em> telling if the object is a <em>class</em>, i.e. had/has an instance.</p>
+</dd>
+<dt><strong>is_readonly</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning a <em>boolean</em> telling if the object is read-only, i.e. attributes cannot be changed.</p>
+</dd>
+<dt><strong>is_instanceOf</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(cls)</span></code> returning a <em>boolean</em> telling if <code class="docutils literal notranslate"><span class="pre">self</span></code> is an instance of <code class="docutils literal notranslate"><span class="pre">cls</span></code>.</p>
+</dd>
+<dt><strong>set_final</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([a])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> set as final if <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">~=</span> <span class="pre">false</span></code> or non-final.</p>
+</dd>
+<dt><strong>set_readonly</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([a])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> set as read-only if <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">~=</span> <span class="pre">false</span></code> or read-write.</p>
+</dd>
+<dt><strong>same</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([name])</span></code> returning an empty clone of <code class="docutils literal notranslate"><span class="pre">self</span></code> and named after the <em>string</em> <code class="docutils literal notranslate"><span class="pre">name</span></code> (default: <code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code>).</p>
+</dd>
+<dt><strong>copy</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([name])</span></code> returning a copy of <code class="docutils literal notranslate"><span class="pre">self</span></code> and named after the <em>string</em> <code class="docutils literal notranslate"><span class="pre">name</span></code> (default: <code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code>). The private attributes are not copied, e.g. the final, class or read-only qualifiers are not copied.</p>
+</dd>
+<dt><strong>get_varkeys</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([cls])</span></code> returning both, the <em>list</em> of the non-private attributes of <code class="docutils literal notranslate"><span class="pre">self</span></code> down to <code class="docutils literal notranslate"><span class="pre">cls</span></code> (default: <code class="docutils literal notranslate"><span class="pre">self</span></code>) included, and the <em>set</em> of their keys in the form of pairs (<em>key</em>, <em>key</em>).</p>
+</dd>
+<dt><strong>get_variables</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(lst,</span> <span class="pre">[set],</span> <span class="pre">[noeval])</span></code> returning a <em>set</em> containing the pairs (<em>key</em>, <em>value</em>) of the attributes listed in <code class="docutils literal notranslate"><span class="pre">lst</span></code>. If <code class="docutils literal notranslate"><span class="pre">set</span></code> is provided, it will be used to store the pairs. If <code class="docutils literal notranslate"><span class="pre">noveval</span> <span class="pre">==</span> <span class="pre">true</span></code>, the functions are not evaluated. The full <em>list</em> of attributes can be retrieved from <code class="docutils literal notranslate"><span class="pre">get_varkeys</span></code>. Shortcut <code class="docutils literal notranslate"><span class="pre">getvar</span></code>.</p>
+</dd>
+<dt><strong>set_variables</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">[override])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> with the attributes set to the pairs (<em>key</em>, <em>value</em>) contained in <code class="docutils literal notranslate"><span class="pre">set</span></code>. If <code class="docutils literal notranslate"><span class="pre">override</span> <span class="pre">~=</span> <span class="pre">true</span></code>, the read-only attributes (with <em>key</em> starting by <code class="docutils literal notranslate"><span class="pre">&quot;__&quot;</span></code>) cannot be updated.</p>
+</dd>
+<dt><strong>copy_variables</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">[lst],</span> <span class="pre">[override])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> with the attributes listed in <code class="docutils literal notranslate"><span class="pre">lst</span></code> set to the pairs (<em>key</em>, <em>value</em>) contained in <code class="docutils literal notranslate"><span class="pre">set</span></code>. If <code class="docutils literal notranslate"><span class="pre">lst</span></code> is not provided, it is replaced by <code class="docutils literal notranslate"><span class="pre">self.__attr</span></code>. If <code class="docutils literal notranslate"><span class="pre">set</span></code> is an <em>object</em> and <code class="docutils literal notranslate"><span class="pre">lst.noeval</span></code> exists, it is used as the list of attributes to copy without function evaluation.<a class="footnote-reference brackets" href="#f3" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> If <code class="docutils literal notranslate"><span class="pre">override</span> <span class="pre">~=</span> <span class="pre">true</span></code>, the read-only attributes (with <em>key</em> starting by <code class="docutils literal notranslate"><span class="pre">&quot;__&quot;</span></code>) cannot be updated. Shortcut <code class="docutils literal notranslate"><span class="pre">cpyvar</span></code>.</p>
+</dd>
+<dt><strong>wrap_variables</strong></dt><dd><blockquote>
+<div><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">[override])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> with the attributes wrapped by the pairs (<em>key</em>, <em>value</em>) contained in <code class="docutils literal notranslate"><span class="pre">set</span></code>, where the <em>value</em> must be a <em>callable</em> <code class="docutils literal notranslate"><span class="pre">(a)</span></code> that takes the attribute (as a callable) and returns the wrapped <em>value</em>. If <code class="docutils literal notranslate"><span class="pre">override</span> <span class="pre">~=</span> <span class="pre">true</span></code>, the read-only attributes (with <em>key</em> starting by <code class="docutils literal notranslate"><span class="pre">&quot;__&quot;</span></code>) cannot be updated.</p>
+</div></blockquote>
+<p>The following example shows how to convert the length <code class="xref mad mad-var docutils literal notranslate"><span class="pre">l</span></code> of an RBEND from cord to arc, <a class="footnote-reference brackets" href="#f4" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> keeping its strength <code class="xref mad mad-var docutils literal notranslate"><span class="pre">k0</span></code> to be computed on the fly:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">cord2arc</span> <span class="kr">in</span> <span class="n">MAD</span><span class="p">.</span><span class="n">gmath</span>
+<span class="kd">local</span> <span class="n">rbend</span>    <span class="kr">in</span> <span class="n">MAD</span><span class="p">.</span><span class="n">element</span>
+<span class="kd">local</span> <span class="n">printf</span>   <span class="kr">in</span> <span class="n">MAD</span><span class="p">.</span><span class="n">utility</span>
+<span class="kd">local</span> <span class="n">rb</span> <span class="o">=</span> <span class="n">rbend</span> <span class="s1">&#39;rb&#39;</span> <span class="p">{</span> <span class="n">angle</span><span class="o">=</span><span class="n">pi</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">k0</span><span class="o">=\</span><span class="n">s</span> <span class="n">s</span><span class="p">.</span><span class="n">angle</span><span class="o">/</span><span class="n">s</span><span class="p">.</span><span class="n">l</span> <span class="p">}</span>
+<span class="n">printf</span><span class="p">(</span><span class="s2">&quot;l=%.5f, k0=%.5f</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">rb</span><span class="p">.</span><span class="n">l</span><span class="p">,</span> <span class="n">rb</span><span class="p">.</span><span class="n">k0</span><span class="p">)</span> <span class="c1">-- l=2.00000, k0=0.15708</span>
+<span class="n">rb</span><span class="p">:</span><span class="n">wrap_variables</span> <span class="p">{</span> <span class="n">l</span><span class="o">=\</span><span class="n">l</span><span class="o">\</span><span class="n">s</span> <span class="n">cord2arc</span><span class="p">(</span><span class="n">l</span><span class="p">(),</span><span class="n">s</span><span class="p">.</span><span class="n">angle</span><span class="p">)</span> <span class="p">}</span> <span class="c1">-- RBARC</span>
+<span class="n">printf</span><span class="p">(</span><span class="s2">&quot;l=%.5f, k0=%.5f</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">rb</span><span class="p">.</span><span class="n">l</span><span class="p">,</span> <span class="n">rb</span><span class="p">.</span><span class="n">k0</span><span class="p">)</span> <span class="c1">-- l=2.00825, k0=0.15643</span>
+<span class="n">rb</span><span class="p">.</span><span class="n">angle</span> <span class="o">=</span> <span class="n">pi</span><span class="o">/</span><span class="mi">20</span> <span class="c1">-- update angle</span>
+<span class="n">printf</span><span class="p">(</span><span class="s2">&quot;l=%.5f, k0=%.5f</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">rb</span><span class="p">.</span><span class="n">l</span><span class="p">,</span> <span class="n">rb</span><span class="p">.</span><span class="n">k0</span><span class="p">)</span> <span class="c1">-- l=2.00206, k0=0.07846</span>
+</pre></div>
+</div>
+<p>The method converts non-<em>callable</em> attributes into callables automatically to simplify the user-side, i.e. <code class="docutils literal notranslate"><span class="pre">l()</span></code> can always be used as a <em>callable</em> whatever its original form was. At the end, <code class="xref mad mad-var docutils literal notranslate"><span class="pre">k0</span></code> and <code class="xref mad mad-var docutils literal notranslate"><span class="pre">l</span></code> are computed values and updating <code class="xref mad mad-var docutils literal notranslate"><span class="pre">angle</span></code> affects both as expected.</p>
+</dd>
+<dt><strong>clear_variables</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after setting all non-private attributes to <code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code>.</p>
+</dd>
+<dt><strong>clear_array</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after setting the array slots to <code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code>, i.e. clear the <em>list</em> part.</p>
+</dd>
+<dt><strong>clear_all</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after clearing the object except its private attributes.</p>
+</dd>
+<dt><strong>set_methods</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">[override])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> with the methods set to the pairs (<em>key</em>, <em>value</em>) contained in <code class="docutils literal notranslate"><span class="pre">set</span></code>, where <em>key</em> must be a <em>string</em> (the method’s name) and <em>value</em> must be a <em>callable</em> (the method itself). If <code class="docutils literal notranslate"><span class="pre">override</span> <span class="pre">~=</span> <span class="pre">true</span></code>, the read-only methods (with <em>key</em> starting by <code class="docutils literal notranslate"><span class="pre">&quot;__&quot;</span></code>) cannot be updated. Classes cannot update their methods.</p>
+</dd>
+<dt><strong>set_metamethods</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">[override])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> with the attributes set to the pairs (<em>key</em>, <em>value</em>) contained in <code class="docutils literal notranslate"><span class="pre">set</span></code>, where <em>key</em> must be a <em>string</em> (the metamethod’s name) and <em>value</em> must be a <em>callable</em>(the metamethod itself). If <code class="docutils literal notranslate"><span class="pre">override</span> <span class="pre">==</span> <span class="pre">false</span></code>, the metamethods cannot be updated. Classes cannot update their metamethods.</p>
+</dd>
+<dt><strong>insert</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([idx],</span> <span class="pre">a)</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after inserting <code class="docutils literal notranslate"><span class="pre">a</span></code> at the position <code class="docutils literal notranslate"><span class="pre">idx</span></code> (default: <code class="docutils literal notranslate"><span class="pre">#self+1</span></code>) and shifting up the items at positions <code class="docutils literal notranslate"><span class="pre">idx..</span></code>.</p>
+</dd>
+<dt><strong>remove</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([idx])</span></code> returning the <em>value</em> removed at the position <code class="docutils literal notranslate"><span class="pre">idx</span></code> (default: <code class="docutils literal notranslate"><span class="pre">#self</span></code>) and shifting down the items at positions <code class="docutils literal notranslate"><span class="pre">idx..</span></code>.</p>
+</dd>
+<dt><strong>move</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(idx1,</span> <span class="pre">idx2,</span> <span class="pre">idxto,</span> <span class="pre">[dst])</span></code> returning the destination object <code class="docutils literal notranslate"><span class="pre">dst</span></code> (default: <code class="docutils literal notranslate"><span class="pre">self</span></code>) after moving the items from <code class="docutils literal notranslate"><span class="pre">self</span></code> at positions <code class="docutils literal notranslate"><span class="pre">idx1..idx2</span></code> to <code class="docutils literal notranslate"><span class="pre">dst</span></code> at positions <code class="docutils literal notranslate"><span class="pre">idxto..</span></code>. The destination range can overlap with the source range.</p>
+</dd>
+<dt><strong>sort</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([cmp])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after sorting in-place its <em>list</em> part using the ordering <em>callable</em> (<code class="docutils literal notranslate"><span class="pre">cmp(ai,</span> <span class="pre">aj)</span></code>) (default: <code class="docutils literal notranslate"><span class="pre">&quot;&lt;&quot;</span></code>), which must define a partial order over the items. The sorting algorithm is not stable.</p>
+</dd>
+<dt><strong>bsearch</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">[cmp],</span> <span class="pre">[low],</span> <span class="pre">[high])</span></code> returning the lowest index <code class="docutils literal notranslate"><span class="pre">idx</span></code> in the range specified by <code class="docutils literal notranslate"><span class="pre">low..high</span></code> (default: <code class="docutils literal notranslate"><span class="pre">1..#self</span></code>) from the <strong>ordered</strong> <em>list</em> of <code class="docutils literal notranslate"><span class="pre">self</span></code> that compares <code class="xref mad mad-const docutils literal notranslate"><span class="pre">true</span></code> with item <code class="docutils literal notranslate"><span class="pre">a</span></code> using the <em>callable</em> (<code class="docutils literal notranslate"><span class="pre">cmp(a,</span> <span class="pre">self[idx])</span></code>) (default: <code class="docutils literal notranslate"><span class="pre">&quot;&lt;=&quot;</span></code> for ascending, <code class="docutils literal notranslate"><span class="pre">&quot;&gt;=&quot;</span></code> for descending), or <code class="docutils literal notranslate"><span class="pre">high+1</span></code>. In the presence of multiple equal items, <code class="docutils literal notranslate"><span class="pre">&quot;&lt;=&quot;</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">&quot;&gt;=&quot;</span></code>) will return the index of the first equal item while <code class="docutils literal notranslate"><span class="pre">&quot;&lt;&quot;</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">&quot;&gt;&quot;</span></code>) the index next to the last equal item for ascending (resp. descending) order. <a class="footnote-reference brackets" href="#f5" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p>
+</dd>
+<dt><strong>lsearch</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">[cmp],</span> <span class="pre">[low],</span> <span class="pre">[high])</span></code> returning the lowest index <code class="docutils literal notranslate"><span class="pre">idx</span></code> in the range specified by <code class="docutils literal notranslate"><span class="pre">low..high</span></code> (default: <code class="docutils literal notranslate"><span class="pre">1..#self</span></code>) from the <em>list</em> of <code class="docutils literal notranslate"><span class="pre">self</span></code> that compares <code class="xref mad mad-const docutils literal notranslate"><span class="pre">true</span></code> with item <code class="docutils literal notranslate"><span class="pre">a</span></code> using the <em>callable</em> (<code class="docutils literal notranslate"><span class="pre">cmp(a,</span> <span class="pre">self[idx])</span></code>) (default: <code class="docutils literal notranslate"><span class="pre">&quot;==&quot;</span></code>), or <code class="docutils literal notranslate"><span class="pre">high+1</span></code>. In the presence of multiple equal items in an ordered <em>list</em>, <code class="docutils literal notranslate"><span class="pre">&quot;&lt;=&quot;</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">&quot;&gt;=&quot;</span></code>) will return the index of the first equal item while <code class="docutils literal notranslate"><span class="pre">&quot;&lt;&quot;</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">&quot;&gt;&quot;</span></code>) the index next to the last equal item for ascending (resp. descending) order. <a class="footnote-reference brackets" href="#f5" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p>
+</dd>
+<dt><strong>get_flags</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning the flags of <code class="docutils literal notranslate"><span class="pre">self</span></code>. The flags are not inherited nor copied.</p>
+</dd>
+<dt><strong>set_flags</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(flgs)</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after setting the flags determined by <code class="docutils literal notranslate"><span class="pre">flgs</span></code>.</p>
+</dd>
+<dt><strong>clear_flags</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(flgs)</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after clearing the flags determined by <code class="docutils literal notranslate"><span class="pre">flgs</span></code>.</p>
+</dd>
+<dt><strong>test_flags</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(flgs)</span></code> returning a <em>boolean</em> telling if all the flags determined by <code class="docutils literal notranslate"><span class="pre">flgs</span></code> are set.</p>
+</dd>
+<dt><strong>open_env</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([ctx])</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after opening an environment, i.e. a global scope, using <code class="docutils literal notranslate"><span class="pre">self</span></code> as the context for <code class="docutils literal notranslate"><span class="pre">ctx</span></code> (default: 1). The argument <code class="docutils literal notranslate"><span class="pre">ctx</span></code> must be either a <em>function</em> or a <em>number</em> defining a call level <span class="math notranslate nohighlight">\(\geq 1\)</span>.</p>
+</dd>
+<dt><strong>close_env</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after closing the environment linked to it. Closing an environment twice is safe.</p>
+</dd>
+<dt><strong>load_env</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(loader)</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after calling the <code class="docutils literal notranslate"><span class="pre">loader</span></code>, i.e. a compiled chunk, using <code class="docutils literal notranslate"><span class="pre">self</span></code> as its environment. If the loader is a <em>string</em>, it is interpreted as the filename of a script to load, see functions <code class="docutils literal notranslate"><span class="pre">load</span></code> and <code class="docutils literal notranslate"><span class="pre">loadfile</span></code> in <a class="reference external" href="http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf">Lua 5.2</a> §6.1 for details.</p>
+</dd>
+<dt><strong>dump_env</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning <code class="docutils literal notranslate"><span class="pre">self</span></code> after dumping its content on the terminal in the rought form of pairs (<em>key</em>, <em>value</em>), including content of table and object <em>value</em>, useful for debugging environments.</p>
+</dd>
+<dt><strong>is_open_env</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning a <em>boolean</em> telling if <code class="docutils literal notranslate"><span class="pre">self</span></code> is an open environment.</p>
+</dd>
+<dt><strong>raw_len</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">()</span></code> returning the <em>number</em> of items in the <em>list</em> part of the object. This method should not be confused with the native <em>function</em> <code class="docutils literal notranslate"><span class="pre">rawlen</span></code>.</p>
+</dd>
+<dt><strong>raw_get</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(key)</span></code> returning the <em>value</em> of the attribute <code class="xref mad mad-var docutils literal notranslate"><span class="pre">key</span></code> without <em>lambda</em> evaluation nor inheritance lookup. This method should not be confused with the native <em>function</em> <code class="docutils literal notranslate"><span class="pre">rawget</span></code>.</p>
+</dd>
+<dt><strong>raw_set</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">val)</span></code> setting the attribute <code class="xref mad mad-var docutils literal notranslate"><span class="pre">key</span></code> to the <em>value</em> <code class="xref mad mad-var docutils literal notranslate"><span class="pre">val</span></code>, bypassing all guards of the object model. This method should not be confused with the native <em>function</em> <code class="docutils literal notranslate"><span class="pre">rawset</span></code>. <strong>Warning</strong>: use this dangerous method at your own risk!</p>
+</dd>
+<dt><strong>var_get</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(key)</span></code> returning the <em>value</em> of the attribute <code class="xref mad mad-var docutils literal notranslate"><span class="pre">key</span></code> without <em>lambda</em> evaluation.</p>
+</dd>
+<dt><strong>var_val</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">val)</span></code> returning the <em>value</em> <code class="xref mad mad-var docutils literal notranslate"><span class="pre">val</span></code> of the attribute <code class="xref mad mad-var docutils literal notranslate"><span class="pre">key</span></code> with <em>lambda</em> evaluation. This method is the complementary of <code class="docutils literal notranslate"><span class="pre">var_get</span></code>, i.e. <code class="docutils literal notranslate"><span class="pre">__index</span></code> <span class="math notranslate nohighlight">\(\equiv\)</span> <code class="docutils literal notranslate"><span class="pre">var_val</span></code> <span class="math notranslate nohighlight">\(\circ\)</span> <code class="docutils literal notranslate"><span class="pre">var_get</span></code>.</p>
+</dd>
+<dt><strong>dumpobj</strong></dt><dd><p>A <em>method</em>     <code class="docutils literal notranslate"><span class="pre">([fname],</span> <span class="pre">[cls],</span> <span class="pre">[patt],</span> <span class="pre">[noeval])</span></code> return <code class="docutils literal notranslate"><span class="pre">self</span></code> after dumping its non-private attributes in file <code class="docutils literal notranslate"><span class="pre">fname</span></code> (default: <code class="docutils literal notranslate"><span class="pre">stdout</span></code>) in a hierarchical form down to <code class="docutils literal notranslate"><span class="pre">cls</span></code>. If the <em>string</em> <code class="docutils literal notranslate"><span class="pre">patt</span></code> is provided, it filters the names of the attributes to dump. If <code class="docutils literal notranslate"><span class="pre">fname</span> <span class="pre">==</span> <span class="pre">'-'</span></code>, the dump is returned as a <em>string</em> in place of <code class="docutils literal notranslate"><span class="pre">self</span></code>. The <em>logical</em> <code class="docutils literal notranslate"><span class="pre">noeval</span></code> prevents the evaluatation the deferred expressions and reports the functions addresses instead. In the output, <code class="docutils literal notranslate"><span class="pre">self</span></code> and its parents are displayed indented according to their inheritance level, and preceeded by a <code class="docutils literal notranslate"><span class="pre">+</span></code> sign. The attributes overridden through the inheritance are tagged with <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">*</span></code> signs, where <span class="math notranslate nohighlight">\(n\)</span> corresponds to the number of overrides since the first definition.</p>
+</dd>
+</dl>
+</section>
+<section id="metamethods">
+<h2>Metamethods<a class="headerlink" href="#metamethods" title="Permalink to this heading">¶</a></h2>
+<p>New metamethods can be added to objects but not classes, using the <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:set_metamethods(set)</span></code> <em>method</em> with <code class="docutils literal notranslate"><span class="pre">set</span></code> being the <em>set</em> of metamethods to add as in the following example:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="n">sequence</span> <span class="p">:</span><span class="n">set_metamethods</span> <span class="p">{</span>
+  <span class="n">__len</span>      <span class="o">=</span> <span class="n">len_mm</span><span class="p">,</span>
+  <span class="n">__index</span>    <span class="o">=</span> <span class="n">index_mm</span><span class="p">,</span>
+  <span class="n">__newindex</span> <span class="o">=</span> <span class="n">newindex_mm</span><span class="p">,</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>where the keys are the names of the added metamethods and their values must be a <em>callable</em> accepting the object itself, i.e. <code class="docutils literal notranslate"><span class="pre">self</span></code>, as their first argument. Classes cannot set new metamethods.</p>
+<p>The root <code class="docutils literal notranslate"><span class="pre">object</span></code> provides the following metamethods:</p>
+<dl class="simple">
+<dt><strong>__init</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">()</span></code> called to finalize <code class="docutils literal notranslate"><span class="pre">self</span></code> before returning from the constructor.</p>
+</dd>
+<dt><strong>__same</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">()</span></code> similar to the <em>method</em> <code class="docutils literal notranslate"><span class="pre">same</span></code>.</p>
+</dd>
+<dt><strong>__copy</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">()</span></code> similar to the <em>method</em> <code class="docutils literal notranslate"><span class="pre">copy</span></code>.</p>
+</dd>
+<dt><strong>__len</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">()</span></code> called by the length operator <code class="docutils literal notranslate"><span class="pre">#</span></code> to return the size of the <em>list</em> part of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+</dd>
+<dt><strong>__call</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">([name],</span> <span class="pre">tbl)</span></code> called by the call operator <code class="docutils literal notranslate"><span class="pre">()</span></code> to return an instance of <code class="docutils literal notranslate"><span class="pre">self</span></code> created from <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">tbl</span></code>, i.e. using <code class="docutils literal notranslate"><span class="pre">self</span></code> as a constructor.</p>
+</dd>
+<dt><strong>__index</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">(key)</span></code> called by the indexing operator <code class="docutils literal notranslate"><span class="pre">[key]</span></code> to return the <em>value</em> of an attribute determined by <em>key</em> after having performed <em>lambda</em> evaluation and inheritance lookup.</p>
+</dd>
+<dt><strong>__newindex</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">val)</span></code> called by the assignment operator <code class="docutils literal notranslate"><span class="pre">[key]=val</span></code> to create new attributes for the pairs (<em>key</em>, <em>value</em>).</p>
+</dd>
+<dt><strong>__pairs</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">()</span></code> called by the <code class="docutils literal notranslate"><span class="pre">pairs</span></code> <em>function</em> to return an iterator over the non-private attributes of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+</dd>
+<dt><strong>__ipairs</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">()</span></code> called by the <code class="docutils literal notranslate"><span class="pre">ipairs</span></code> <em>function</em> to return an iterator over the <em>list</em> part of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+</dd>
+<dt><strong>__tostring</strong></dt><dd><p>A <em>metamethod</em> <code class="docutils literal notranslate"><span class="pre">()</span></code> called by the <code class="docutils literal notranslate"><span class="pre">tostring</span></code> <em>function</em> to return a <em>string</em> describing succinctly <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+</dd>
+</dl>
+<p>The following attributes are stored with metamethods in the metatable, but have different purposes:</p>
+<dl class="simple">
+<dt><strong>__obj</strong></dt><dd><p>A unique private <em>reference</em> that characterizes objects.</p>
+</dd>
+<dt><strong>__metatable</strong></dt><dd><p>A <em>reference</em> to the metatable itself protecting against modifications.</p>
+</dd>
+</dl>
+</section>
+<section id="flags">
+<h2>Flags<a class="headerlink" href="#flags" title="Permalink to this heading">¶</a></h2>
+<p id="sec-obj-flgs">The object model uses <em>flags</em> to qualify objects, like <em>class</em>-object, <em>final</em>-object and <em>readonly</em>-object. The difference with <em>boolean</em> attributes is that flags are <em>not</em> inherited nor copied.
+The flags of objects are managed by the methods <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:get_flags</span></code>, <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:set_flags</span></code>, <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:clear_flags</span></code> and <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:test_flags</span></code>. Methods like <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:is_class</span></code>, <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:is_final</span></code> and <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:is_readonly</span></code> are roughly equivalent to call the method <code class="xref mad mad-meth docutils literal notranslate"><span class="pre">:test_flags</span></code> with the corresponding (private) flag as argument. Note that functions from the <code class="xref mad mad-func docutils literal notranslate"><span class="pre">typeid</span></code> module that check for types or kinds, like <code class="xref mad mad-func docutils literal notranslate"><span class="pre">is_object</span></code> or <code class="xref mad mad-func docutils literal notranslate"><span class="pre">is_beam</span></code>, never rely on flags because types and kinds are not qualifers.</p>
+<p>From the technical point of view, flags are encoded into a 32-bit integer and the object model uses the protected bits 29-31, hence bits 0-28 are free of use. Object flags can be used and extended by other modules introducing their own flags, like the <code class="xref mad mad-var docutils literal notranslate"><span class="pre">element</span></code> module that relies on bits 0-4 and used by many commands. In practice, the bit index does not need to be known and should not be used directly but through its name to abstract its value.</p>
+</section>
+<section id="environments">
+<h2>Environments<a class="headerlink" href="#environments" title="Permalink to this heading">¶</a></h2>
+<p>The object model allows to transform an object into an environment; in other words, a global workspace for a given context, i.e. scope. Objects-as-environments are managed by the methods <code class="docutils literal notranslate"><span class="pre">open_env</span></code>, <code class="docutils literal notranslate"><span class="pre">close_env</span></code>, <code class="docutils literal notranslate"><span class="pre">load_env</span></code>, <code class="docutils literal notranslate"><span class="pre">dump_env</span></code> and <code class="xref mad mad-func docutils literal notranslate"><span class="pre">is_open_env</span></code>.
+Things defined in this workspace will be stored in the object, and accessible from outside using the standard ways to access object attributes:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">object</span> <span class="kr">in</span> <span class="n">MAD</span>
+<span class="kd">local</span> <span class="n">one</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">object</span> <span class="p">{</span> <span class="n">a</span><span class="p">:</span><span class="o">=</span><span class="n">one</span> <span class="p">}</span> <span class="c1">-- obj with &#39;a&#39; defined</span>
+<span class="c1">-- local a = 1                -- see explication below</span>
+
+<span class="n">obj</span><span class="p">:</span><span class="n">open_env</span><span class="p">()</span>                <span class="c1">-- open environment</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>                         <span class="c1">-- obj.b defined</span>
+<span class="n">c</span> <span class="o">=\</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">..</span><span class="s2">&quot;:&quot;</span><span class="o">..</span><span class="n">b</span>             <span class="c1">-- obj.c defined</span>
+<span class="n">obj</span><span class="p">:</span><span class="n">close_env</span><span class="p">()</span>               <span class="c1">-- close environment</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">b</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">c</span><span class="p">)</span>    <span class="c1">-- display: 1   2   1:2</span>
+<span class="n">one</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">b</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">c</span><span class="p">)</span>    <span class="c1">-- display: 3   2   3:2</span>
+<span class="n">obj</span><span class="p">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">b</span><span class="p">,</span> <span class="n">obj</span><span class="p">.</span><span class="n">c</span><span class="p">)</span>    <span class="c1">-- display: 4   2   4:2</span>
+</pre></div>
+</div>
+<p>Uncommenting the line <code class="docutils literal notranslate"><span class="pre">local</span> <span class="pre">a</span> <span class="pre">=</span> <span class="pre">1</span></code> would change the last displayed column to <code class="docutils literal notranslate"><span class="pre">1:2</span></code> for the three prints because the <em>lambda</em> defined for <code class="docutils literal notranslate"><span class="pre">obj.c</span></code> would capture the local <code class="docutils literal notranslate"><span class="pre">a</span></code> as it would exist in its scope. As seen hereabove, once the environment is closed, the object still holds the variables as attributes.</p>
+<p>The MADX environment is an object that relies on this powerful feature to load MAD-X lattices, their settings and their “business logic”, and provides functions, constants and elements to mimic the behavior of the global workspace of MAD-X to some extend:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="n">MADX</span><span class="p">:</span><span class="n">open_env</span><span class="p">()</span>
+<span class="n">mq_k1</span> <span class="o">=</span> <span class="mf">0.01</span>                     <span class="c1">-- mq.k1 is not a valid identifier!</span>
+<span class="n">MQ</span> <span class="o">=</span> <span class="n">QUADRUPOLE</span> <span class="p">{</span><span class="n">l</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">k1</span><span class="p">:</span><span class="o">=</span><span class="n">MQ_K1</span><span class="p">}</span> <span class="c1">-- MADX environment is case insensitive</span>
+<span class="n">MADX</span><span class="p">:</span><span class="n">close_env</span><span class="p">()</span>                 <span class="c1">-- but not the attributes of objects!</span>
+<span class="kd">local</span> <span class="n">mq</span> <span class="kr">in</span> <span class="n">MADX</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mq</span><span class="p">.</span><span class="n">k1</span><span class="p">)</span>                     <span class="c1">-- display: 0.01</span>
+<span class="n">MADX</span><span class="p">.</span><span class="n">MQ_K1</span> <span class="o">=</span> <span class="mf">0.02</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mq</span><span class="p">.</span><span class="n">k1</span><span class="p">)</span>                     <span class="c1">-- display: 0.02</span>
+</pre></div>
+</div>
+<p>Note that MAD-X workspace is case insensitive and everything is “global” (no scope, namespaces), hence the <code class="docutils literal notranslate"><span class="pre">quadrupole</span></code> element has to be directly available inside the MADX environment. Moreover, the MADX object adds the method <code class="docutils literal notranslate"><span class="pre">load</span></code> to extend <code class="docutils literal notranslate"><span class="pre">load_env</span></code> and ease the conversion of MAD-X lattices. For more details see <a class="reference internal" href="mad_gen_madx.html"><span class="doc">MADX</span></a>.</p>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="f1" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Objects are not clones of prototypes, they share states and behaviors with their parents but do not hold copies.</p>
+</aside>
+<aside class="footnote brackets" id="f2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>This syntax for creating objects eases the lattices translation from MAD-X to MAD-NG.</p>
+</aside>
+<aside class="footnote brackets" id="f3" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>This feature is used to setup a command from another command, e.g. <code class="xref mad mad-var docutils literal notranslate"><span class="pre">track</span></code> from <code class="xref mad mad-var docutils literal notranslate"><span class="pre">twiss</span></code></p>
+</aside>
+<aside class="footnote brackets" id="f4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>This approach is safer than the volatile option <code class="docutils literal notranslate"><span class="pre">RBARC</span></code> of MAD-X.</p>
+</aside>
+<aside class="footnote brackets" id="f5" role="note">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id6">2</a>)</span>
+<p><code class="docutils literal notranslate"><span class="pre">bsearch</span></code> and <code class="docutils literal notranslate"><span class="pre">lsearch</span></code> stand for binary (ordered) search and linear (unordered) search respectively.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mad_gen_script.html" class="btn btn-neutral float-left" title="Scripting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mad_gen_beam.html" class="btn btn-neutral float-right" title="Beams" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Laurent Deniau.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

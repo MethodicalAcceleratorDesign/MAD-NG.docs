@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scripting &mdash; MAD-NG Reference Manual 0.9.6 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Objects" href="mad_gen_object.html" />
+    <link rel="prev" title="Introduction" href="mad_gen_intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            MAD-NG Reference Manual
+          </a>
+              <div class="version">
+                0.9.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Part I:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mad_gen_index.html">LANGUAGE</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_intro.html">Introduction</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Scripting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lua-and-luajit">Lua and LuaJIT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lua-primer">Lua primer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#variables">Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#control-flow">Control flow</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tables">Tables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#extensions">Extensions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#line-comment">Line comment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#unary-plus">Unary plus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#local-in-table">Local in table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lambda-function">Lambda function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deferred-expression">Deferred expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ranges">Ranges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lua-syntax-and-extensions">Lua syntax and extensions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#types">Types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#value-vs-reference">Value vs reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concepts">Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ecosystem">Ecosystem</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_object.html">Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_beam.html">Beams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_beta0.html">Beta0 Blocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_elements.html">Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_sequence.html">Sequences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_mtable.html">MTables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mad_gen_madx.html">MADX</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part II:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_cmd_index.html">ELEMENTS &amp; COMMANDS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part III:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_phy_index.html">PHYSICS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part IV:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_mod_index.html">MODULES</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Part V:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mad_prg_index.html">PROGRAMMING</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MAD-NG Reference Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mad_gen_index.html">LANGUAGE</a></li>
+      <li class="breadcrumb-item active">Scripting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mad_gen_script.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="mad_gen_intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mad_gen_object.html" class="btn btn-neutral float-right" title="Objects" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scripting">
+<span id="ch-gen-scrpt"></span><h1>Scripting<a class="headerlink" href="#scripting" title="Permalink to this heading">¶</a></h1>
+<p>The choice of the scripting language for MAD-NG was sixfold: the <em>simplicity</em> and the <em>completeness</em> of the programming language, the <em>portability</em> and the <em>efficiency</em> of the implementation, and its easiness to be <em>extended</em> and <em>embedded</em> in an application. In practice, very few programming languages and implementations fulfill these requirements, and Lua and his Just-In-Time (JIT) compiler LuaJIT were not only the best solutions but almost the only ones available when the development of MAD-NG started in 2016.</p>
+<section id="lua-and-luajit">
+<h2>Lua and LuaJIT<a class="headerlink" href="#lua-and-luajit" title="Permalink to this heading">¶</a></h2>
+<p>The easiest way to shortly describe these choices is to cite their authors.</p>
+<p><em>“Lua is a powerful, efficient, lightweight, embeddable scripting language. It supports procedural programming, object-oriented programming, functional programming, data-driven programming, and data description. Lua combines simple procedural syntax with powerful data description constructs based on associative arrays and extensible semantics. Lua is dynamically typed and has automatic memory management with incremental garbage collection, making it ideal for configuration, scripting, and rapid prototyping.”</em> <a class="footnote-reference brackets" href="#f1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<p><em>“LuaJIT is widely considered to be one of the fastest dynamic language implementations. It has outperformed other dynamic languages on many cross-language benchmarks since its first release in 2005 — often by a substantial margin — and breaks into the performance range traditionally reserved for offline, static language compilers.”</em> <a class="footnote-reference brackets" href="#f2" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p>
+<p>Lua and LuaJIT are free open-source software, distributed under the very liberal MIT license.</p>
+<p>MAD-NG embeds a patched version of LuaJIT 2.1, a very efficient implementation of Lua 5.2.<a class="footnote-reference brackets" href="#f3" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> Hence, the scripting language of MAD-NG is Lua 5.2 with some extensions detailed in the next section, and used for both, the development of most parts of the application, and as the user scripting language. There is no strong frontier between these two aspects of the application, giving full access and high flexibility to the experienced users. The filename extension of MAD-NG scripts is <code class="docutils literal notranslate"><span class="pre">.mad</span></code>.</p>
+<p>Learning Lua is easy and can be achieved within a few hours. The following links should help to quickly become familiar with Lua and LuaJIT:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="http://www.lua.org">Lua</a> website.</p></li>
+<li><p><a class="reference external" href="http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf">Lua 5.2</a> manual for MAD-NG (30 p. PDF).</p></li>
+<li><p><a class="reference external" href="http://www.lua.org/pil/contents.html">Lua 5.0</a> free online book (old).</p></li>
+<li><p><a class="reference external" href="http://luajit.org">LuaJIT</a> website.</p></li>
+<li><p><a class="reference external" href="http://wiki.luajit.org/Home">LuaJIT</a> wiki.</p></li>
+<li><p><a class="reference external" href="https://repo.or.cz/w/luajit-2.0.git/blob_plain/v2.1:/doc/luajit.html">LuaJIT</a> 2.1 documentation.</p></li>
+<li><p><a class="reference external" href="https://github.com/LuaJIT/LuaJIT">LuaJIT</a> 2.1 on GitHub.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="lua-primer">
+<h2>Lua primer<a class="headerlink" href="#lua-primer" title="Permalink to this heading">¶</a></h2>
+<p>The next subsections introduce the basics of the Lua programming language with syntax highlights, namely variables, control flow, functions, tables and methods.<a class="footnote-reference brackets" href="#f4" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p>
+<section id="variables">
+<h3>Variables<a class="headerlink" href="#variables" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">42</span>  <span class="c1">-- All numbers are doubles, but the JIT may specialize them.</span>
+<span class="c1">-- IEEE-754 64-bit doubles have 52 bits for storing exact int values;</span>
+<span class="c1">-- machine precision is not a problem for ints &lt; 1e16.</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;walternate&#39;</span>  <span class="c1">-- Immutable strings like Python.</span>
+<span class="n">t</span> <span class="o">=</span> <span class="s2">&quot;double-quotes are also fine&quot;</span>
+<span class="n">u</span> <span class="o">=</span> <span class="s">[[ Double brackets</span>
+<span class="s">       start and end</span>
+<span class="s">       multi-line strings.]]</span>
+<span class="n">v</span> <span class="o">=</span> <span class="s2">&quot;double-quotes </span><span class="se">\z</span>
+
+<span class="se">     </span><span class="s2">are also fine&quot;</span> <span class="c1">-- \z eats next whitespaces</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="kc">nil</span>  <span class="c1">-- Undefines t, u, v.</span>
+<span class="c1">-- Lua has multiple assignments and nil completion.</span>
+<span class="c1">-- Lua has garbage collection.</span>
+
+<span class="c1">-- Undefined variables return nil. This is not an error:</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="n">anUnknownVariable</span>  <span class="c1">-- Now foo = nil.</span>
+</pre></div>
+</div>
+</section>
+<section id="control-flow">
+<h3>Control flow<a class="headerlink" href="#control-flow" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Blocks are denoted with keywords like do/end:</span>
+<span class="kr">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">50</span> <span class="kr">do</span>
+  <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">-- No ++ or += type operators.</span>
+<span class="kr">end</span>
+
+<span class="c1">-- If clauses:</span>
+<span class="kr">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">40</span> <span class="kr">then</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;over 40&#39;</span><span class="p">)</span>
+<span class="kr">elseif</span> <span class="n">s</span> <span class="o">~=</span> <span class="s1">&#39;walternate&#39;</span> <span class="kr">then</span>  <span class="c1">-- ~= is not equals.</span>
+  <span class="c1">-- Equality check is == like Python; ok for strs.</span>
+  <span class="nb">io.write</span><span class="p">(</span><span class="s1">&#39;not over 40</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1">-- Defaults to stdout.</span>
+<span class="kr">else</span>
+  <span class="c1">-- Variables are global by default.</span>
+  <span class="n">thisIsGlobal</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1">-- Camel case is common.</span>
+  <span class="c1">-- How to make a variable local:</span>
+  <span class="kd">local</span> <span class="n">line</span> <span class="o">=</span> <span class="nb">io.read</span><span class="p">()</span>  <span class="c1">-- Reads next stdin line.</span>
+  <span class="c1">-- String concatenation uses the .. operator:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Winter is coming, &#39;</span><span class="o">..</span><span class="n">line</span><span class="p">)</span>
+<span class="kr">end</span>
+
+<span class="c1">-- Only nil and false are falsy; 0 and &#39;&#39; are true!</span>
+<span class="n">aBoolValue</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="kr">if</span> <span class="ow">not</span> <span class="n">aBoolValue</span> <span class="kr">then</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;was false&#39;</span><span class="p">)</span> <span class="kr">end</span>
+
+<span class="c1">-- &#39;or&#39; and &#39;and&#39; are short-circuited.</span>
+<span class="c1">-- This is similar to the a?b:c operator in C/js:</span>
+<span class="n">ans</span> <span class="o">=</span> <span class="n">aBoolValue</span> <span class="ow">and</span> <span class="s1">&#39;yes&#39;</span> <span class="ow">or</span> <span class="s1">&#39;no&#39;</span>  <span class="c1">--&gt; ans = &#39;no&#39;</span>
+
+<span class="c1">-- numerical for begin, end[, step] (end included)</span>
+<span class="n">revSum</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="kr">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="kr">do</span> <span class="n">revSum</span> <span class="o">=</span> <span class="n">revSum</span> <span class="o">+</span> <span class="n">j</span> <span class="kr">end</span>
+</pre></div>
+</div>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kr">function</span> <span class="nf">fib</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+  <span class="kr">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="kr">then</span> <span class="kr">return</span> <span class="mi">1</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="kr">end</span>
+
+<span class="c1">-- Closures and anonymous functions are ok:</span>
+<span class="kr">function</span> <span class="nf">adder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="c1">-- The returned function is created when adder is</span>
+  <span class="c1">-- called, and captures the value of x:</span>
+  <span class="kr">return</span> <span class="kr">function</span> <span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="kr">end</span>
+<span class="kr">end</span>
+<span class="n">a1</span> <span class="o">=</span> <span class="n">adder</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">a2</span> <span class="o">=</span> <span class="n">adder</span><span class="p">(</span><span class="mi">36</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a1</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>  <span class="c1">--&gt; 25</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a2</span><span class="p">(</span><span class="mi">64</span><span class="p">))</span>  <span class="c1">--&gt; 100</span>
+
+<span class="c1">-- Returns, func calls, and assignments all work with lists</span>
+<span class="c1">-- that may be mismatched in length.</span>
+<span class="c1">-- Unmatched receivers get nil; unmatched senders are discarded.</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span>
+<span class="c1">-- Now x = 1, y = 2, z = 3, and 4 is thrown away.</span>
+
+<span class="kr">function</span> <span class="nf">bar</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">42</span>
+<span class="kr">end</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="s1">&#39;zaphod&#39;</span><span class="p">)</span>  <span class="c1">--&gt; prints &quot;zaphod  nil nil&quot;</span>
+<span class="c1">-- Now x = 4, y = 8, values 15,..,42 are discarded.</span>
+
+<span class="c1">-- Functions are first-class, may be local/global.</span>
+<span class="c1">-- These are the same:</span>
+<span class="kr">function</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="kr">end</span>
+<span class="n">f</span> <span class="o">=</span> <span class="kr">function</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="kr">end</span>
+
+<span class="c1">-- And so are these:</span>
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="nb">math.sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">end</span>
+<span class="kd">local</span> <span class="n">g</span><span class="p">;</span> <span class="n">g</span>  <span class="o">=</span> <span class="kr">function</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="nb">math.sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">end</span>
+<span class="c1">-- the &#39;local g&#39; decl makes g-self-references ok.</span>
+
+<span class="c1">-- Calls with one string param don&#39;t need parens:</span>
+<span class="nb">print</span> <span class="s1">&#39;hello&#39;</span>  <span class="c1">-- Works fine.</span>
+</pre></div>
+</div>
+</section>
+<section id="tables">
+<h3>Tables<a class="headerlink" href="#tables" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Tables = Lua&#39;s only compound data structure;</span>
+<span class="c1">--   they are associative arrays, i.e. hash-lookup dicts;</span>
+<span class="c1">--   they can be used as lists, i.e. sequence of non-nil values.</span>
+
+<span class="c1">-- Dict literals have string keys by default:</span>
+<span class="n">t</span> <span class="o">=</span> <span class="p">{</span><span class="n">key1</span> <span class="o">=</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span> <span class="n">key2</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;key.3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">}</span>
+
+<span class="c1">-- String keys looking as identifier can use dot notation:</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">key1</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;key.3&#39;</span><span class="p">])</span> <span class="c1">-- Prints &#39;value1 true&#39;.</span>
+<span class="c1">-- print(t.key.3)         -- Error, needs explicit indexing by string</span>
+<span class="n">t</span><span class="p">.</span><span class="n">newKey</span> <span class="o">=</span> <span class="p">{}</span>             <span class="c1">-- Adds a new key/value pair.</span>
+<span class="n">t</span><span class="p">.</span><span class="n">key2</span> <span class="o">=</span> <span class="kc">nil</span>              <span class="c1">-- Removes key2 from the table.</span>
+
+<span class="c1">-- Literal notation for any (non-nil) value as key:</span>
+<span class="n">u</span> <span class="o">=</span> <span class="p">{[</span><span class="s1">&#39;@!#&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;qbert&#39;</span><span class="p">,</span> <span class="p">[{}]</span> <span class="o">=</span> <span class="mi">1729</span><span class="p">,</span> <span class="p">[</span><span class="mf">6.28</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tau&#39;</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mf">6.28</span><span class="p">])</span>  <span class="c1">-- prints &quot;tau&quot;</span>
+
+<span class="c1">-- Key matching is basically by value for numbers</span>
+<span class="c1">-- and strings, but by identity for tables.</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s1">&#39;@!#&#39;</span><span class="p">]</span>  <span class="c1">-- Now a = &#39;qbert&#39;.</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">u</span><span class="p">[{}]</span>     <span class="c1">-- We might expect 1729, but it&#39;s nil:</span>
+
+<span class="c1">-- A one-table-param function call needs no parens:</span>
+<span class="kr">function</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">key1</span><span class="p">)</span> <span class="kr">end</span>
+<span class="n">h</span><span class="p">{</span><span class="n">key1</span> <span class="o">=</span> <span class="s1">&#39;Sonmi~451&#39;</span><span class="p">}</span>  <span class="c1">-- Prints &#39;Sonmi~451&#39;.</span>
+
+<span class="kr">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="kr">do</span> <span class="c1">-- Table iteration.</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+<span class="kr">end</span>
+
+<span class="c1">-- List literals implicitly set up int keys:</span>
+<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;value1&#39;</span><span class="p">,</span> <span class="s1">&#39;value2&#39;</span><span class="p">,</span> <span class="mf">1.21</span><span class="p">,</span> <span class="s1">&#39;gigawatts&#39;</span><span class="p">}</span>
+<span class="kr">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="kr">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="kr">do</span>  <span class="c1">-- List iteration.</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>        <span class="c1">-- Indices start at 1 !</span>
+<span class="kr">end</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;length=&quot;</span><span class="p">,</span> <span class="o">#</span><span class="n">l</span><span class="p">)</span>     <span class="c1">-- # is defined only for sequence.</span>
+<span class="c1">-- A &#39;list&#39; is not a real type, l is just a table</span>
+<span class="c1">-- with consecutive integer keys, treated as a list,</span>
+<span class="c1">-- i.e. l = {[1]=&#39;value1&#39;, [2]=&#39;value2&#39;, [3]=1.21, [4]=&#39;gigawatts&#39;}</span>
+<span class="c1">-- A &#39;sequence&#39; is a list with non-nil values.</span>
+</pre></div>
+</div>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Methods notation:</span>
+<span class="c1">--   function tblname:fn(...) is the same as</span>
+<span class="c1">--     function tblname.fn(self, ...) with self being the table.</span>
+<span class="c1">--   calling tblname:fn(...) is the same as</span>
+<span class="c1">--     tblname.fn(tblname, ...)       here self becomes the table.</span>
+<span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">disp</span><span class="o">=</span><span class="kr">function</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">msg</span><span class="p">)</span> <span class="kr">end</span><span class="p">,</span> <span class="c1">-- Method &#39;disp&#39;</span>
+      <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Hello world!&quot;</span> <span class="p">}</span>
+<span class="n">t</span><span class="p">:</span><span class="n">disp</span><span class="p">()</span> <span class="c1">-- Prints &quot;Hello world!&quot;</span>
+<span class="kr">function</span> <span class="nc">t</span><span class="p">:</span><span class="nf">setmsg</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="n">self</span><span class="p">.</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span> <span class="kr">end</span>  <span class="c1">-- Add a new method &#39;setmsg&#39;</span>
+<span class="n">t</span><span class="p">:</span><span class="n">setmsg</span> <span class="s2">&quot;Good bye!&quot;</span>
+<span class="n">t</span><span class="p">:</span><span class="n">disp</span><span class="p">()</span> <span class="c1">-- Prints &quot;Good bye!&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="extensions">
+<h2>Extensions<a class="headerlink" href="#extensions" title="Permalink to this heading">¶</a></h2>
+<p>The aim of the extensions patches applied to the embedded LuaJIT in MAD-NG is to extend the Lua syntax in handy directions, like for example to support the deferred expression operator. A serious effort has been put to develop a Domain Specific Language (DSL) embedded in Lua using these extensions and the native language features to mimic as much as possible the syntax of MAD-X in the relevant aspects of the language, like the definition of elements, lattices or commands, and ease the transition of MAD-X users.</p>
+<p>Bending and extending a programming language like Lua to embed a DSL is more general and challenging than creating a freestanding DSL like in MAD-X. The former is compatible with the huge codebase written by the Lua community, while the latter is a highly specialized niche language. The chosen approach attempts to get the best of the two worlds.</p>
+<section id="line-comment">
+<h3>Line comment<a class="headerlink" href="#line-comment" title="Permalink to this heading">¶</a></h3>
+<p>The line comment operator <code class="docutils literal notranslate"><span class="pre">!</span></code> is valid in MAD-NG, but does not exists in Lua:<a class="footnote-reference brackets" href="#f5" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>     <span class="c1">! this remaining part is a comment</span>
+<span class="kd">local</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>     <span class="c1">-- line comment in Lua</span>
+</pre></div>
+</div>
+</section>
+<section id="unary-plus">
+<h3>Unary plus<a class="headerlink" href="#unary-plus" title="Permalink to this heading">¶</a></h3>
+<p>The unary plus operator <code class="docutils literal notranslate"><span class="pre">+</span></code> is valid in MAD-NG, but does not exists in Lua:<a class="footnote-reference brackets" href="#f5" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">a</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>    <span class="c1">-- syntax error in Lua</span>
+<span class="kd">local</span> <span class="n">b</span> <span class="o">=</span> <span class="o">+</span><span class="n">a</span>    <span class="c1">-- syntax error in Lua</span>
+</pre></div>
+</div>
+</section>
+<section id="local-in-table">
+<h3>Local in table<a class="headerlink" href="#local-in-table" title="Permalink to this heading">¶</a></h3>
+<p>The local <code class="docutils literal notranslate"><span class="pre">in</span></code> table syntax provides a convenient way to retrieve values from a <em>mappable</em> and avoid error-prone repetitions of attributes names. The syntax is as follows:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">tan</span> <span class="kr">in</span> <span class="n">math</span>      <span class="c1">-- syntax error in Lua</span>
+<span class="kd">local</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="kr">in</span> <span class="p">{</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span> <span class="p">}</span>
+<span class="c1">! a, b, c in { a=1, b=2, c=3 }   -- invalid with global variables</span>
+</pre></div>
+</div>
+<p>which is strictly equivalent to the Lua code:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">tan</span> <span class="o">=</span> <span class="nb">math.sin</span><span class="p">,</span> <span class="nb">math.cos</span><span class="p">,</span> <span class="nb">math.tan</span>
+<span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span> <span class="p">}</span>
+<span class="kd">local</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">tbl</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">tbl</span><span class="p">.</span><span class="n">b</span><span class="p">,</span> <span class="n">tbl</span><span class="p">.</span><span class="n">c</span>
+<span class="c1">! local sin, cos, tan = math.cos, math.sin, math.tan   -- nasty typo</span>
+</pre></div>
+</div>
+<p>The JIT has many kinds of optimization to improve a lot the execution speed of the code, and these work much better if variables are declared <code class="docutils literal notranslate"><span class="pre">local</span></code> with minimal lifespan.
+<em>This language extension is of first importance for writing fast clean code!</em></p>
+</section>
+<section id="lambda-function">
+<h3>Lambda function<a class="headerlink" href="#lambda-function" title="Permalink to this heading">¶</a></h3>
+<p>The lambda function syntax is pure syntactic sugar for function definition and therefore fully compatible with the Lua semantic. The following definitions are all semantically equivalent:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="kr">end</span>  <span class="c1">-- Lua syntax</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span>                      <span class="c1">-- most compact form</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span>                   <span class="c1">-- most common form</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span>                 <span class="c1">-- for readability</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>               <span class="c1">-- less compact form</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span> <span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>                    <span class="c1">-- uncommon valid form</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span>                    <span class="c1">-- uncommon valid form</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>                  <span class="c1">-- uncommon valid form</span>
+</pre></div>
+</div>
+<p>The important point is that no space must be present between the <em>lambda</em> operator <code class="docutils literal notranslate"><span class="pre">\</span></code> and the first formal parameter or the first parenthesis; the former will be considered as an empty list of parameters and the latter as an expressions list returning multiple values, and both will trigger a syntax error. For the sake of readability, it is possible without changing the semantic to add extra spaces anywhere in the definition, add an arrow operator <code class="docutils literal notranslate"><span class="pre">-&gt;</span></code>, or add parentheses around the formal parameter list, whether the list is empty or not.</p>
+<p>The following examples show <em>lambda</em> functions with multiple formal parameters:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span> <span class="kr">end</span>  <span class="c1">-- Lua syntax</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>                        <span class="c1">-- most compact form</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>                   <span class="c1">-- most common form</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>                <span class="c1">-- aerial style</span>
+</pre></div>
+</div>
+<p>The lambda function syntax supports multiple return values by enclosing the list of returned expressions within (not optional!) parentheses:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span> <span class="kr">end</span>  <span class="c1">-- Lua syntax</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>                      <span class="c1">-- most compact form</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>                  <span class="c1">-- most common form</span>
+</pre></div>
+</div>
+<p>Extra surrounding parentheses can also be added to disambiguate false multiple return values syntax:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="kr">end</span>  <span class="c1">-- Lua syntax</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">-&gt;</span> <span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>     <span class="c1">-- disambiguation: single value returned</span>
+<span class="c1">! local f = \x,y -&gt; (x+y)/2     -- invalid syntax at &#39;/&#39;</span>
+
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span> <span class="kr">end</span> <span class="c1">-- Lua syntax</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">-&gt;</span> <span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">))</span> <span class="c1">-- disambiguation: single value returned</span>
+<span class="c1">! local f = \x,y -&gt; (x+y)*(x-y) -- invalid syntax at &#39;*&#39;</span>
+</pre></div>
+</div>
+<p>It is worth understanding the error message that invalid syntaxes above would report,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">file:line: attempt to perform arithmetic on a function value.</span>
+</pre></div>
+</div>
+<p>as it is a bit subtle and needs some explanations: the <em>lambda</em> is syntactically closed at the end of the returned expression <code class="xref mad mad-expr docutils literal notranslate"><span class="pre">(x+y)</span></code>, and the following operations <code class="docutils literal notranslate"><span class="pre">/</span></code> or <code class="docutils literal notranslate"><span class="pre">*</span></code> are considered as being outside the <em>lambda</em> definition, that is applied to the freshly created function itself…</p>
+<p>Finally, the <em>lambda</em> function syntax supports full function syntax (for consistency) using the <em>fat</em> arrow operator <code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> in place of the arrow operator:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span> <span class="kr">return</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="kr">end</span>   <span class="c1">-- Lua syntax</span>
+<span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="o">\</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span> <span class="kr">return</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="kr">end</span>         <span class="c1">-- most compact form</span>
+</pre></div>
+</div>
+<p>The fat arrow operator requires the <code class="docutils literal notranslate"><span class="pre">end</span></code> keyword to close syntactically the <em>lambda</em> function, and the <code class="docutils literal notranslate"><span class="pre">return</span></code> keyword to return values (if any), as in Lua functions definitions.</p>
+</section>
+<section id="deferred-expression">
+<span id="ssec-defexpr"></span><h3>Deferred expression<a class="headerlink" href="#deferred-expression" title="Permalink to this heading">¶</a></h3>
+<p>The deferred expression operator <code class="docutils literal notranslate"><span class="pre">:=</span></code> is semantically equivalent to a <em>lambda</em> function without argument. It is syntactically valid only inside <em>table</em> constructors (see <a class="reference external" href="http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf">Lua 5.2</a> §3.4.8): <a class="footnote-reference brackets" href="#f5" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">var</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kd">local</span> <span class="n">fun</span> <span class="o">=</span> <span class="o">\-&gt;</span> <span class="n">var</span>
+<span class="c1">! local fun := var  -- invalid syntax outside table constructors</span>
+<span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span> <span class="n">v1</span> <span class="p">:</span><span class="o">=</span> <span class="n">var</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=\-&gt;</span> <span class="n">var</span><span class="p">,</span> <span class="n">v3</span> <span class="o">=</span> <span class="n">var</span> <span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tbl</span><span class="p">.</span><span class="n">v1</span><span class="p">(),</span> <span class="n">tbl</span><span class="p">.</span><span class="n">v2</span><span class="p">(),</span> <span class="n">tbl</span><span class="p">.</span><span class="n">v3</span><span class="p">,</span> <span class="n">fun</span><span class="p">())</span> <span class="c1">-- display: 10 10 10 10</span>
+<span class="n">var</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tbl</span><span class="p">.</span><span class="n">v1</span><span class="p">(),</span> <span class="n">tbl</span><span class="p">.</span><span class="n">v2</span><span class="p">(),</span> <span class="n">tbl</span><span class="p">.</span><span class="n">v3</span><span class="p">,</span> <span class="n">fun</span><span class="p">())</span> <span class="c1">-- display: 20 20 10 20</span>
+</pre></div>
+</div>
+<p>The deferred expressions hereabove have to be explicitly called to retrieve their values, because they are defined in a <em>table</em>. It is a feature of the object model making the deferred expressions behaving like values. Still, it is possible to support deferred expressions as values in a raw <em>table</em>, i.e. a table without metatable, using the <a class="reference internal" href="mad_mod_types.html#deferred" title="deferred"><code class="xref mad mad-func docutils literal notranslate"><span class="pre">deferred</span></code></a> function from the <a class="reference internal" href="mad_mod_types.html"><span class="doc">typeid</span></a> module:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">deferred</span> <span class="kr">in</span> <span class="n">MAD</span><span class="p">.</span><span class="n">typeid</span>
+<span class="kd">local</span> <span class="n">var</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="n">deferred</span> <span class="p">{</span> <span class="n">v1</span> <span class="p">:</span><span class="o">=</span> <span class="n">var</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=\-&gt;</span> <span class="n">var</span><span class="p">,</span> <span class="n">v3</span> <span class="o">=</span> <span class="n">var</span> <span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tbl</span><span class="p">.</span><span class="n">v1</span><span class="p">,</span> <span class="n">tbl</span><span class="p">.</span><span class="n">v2</span><span class="p">,</span> <span class="n">tbl</span><span class="p">.</span><span class="n">v3</span><span class="p">)</span> <span class="c1">-- display: 10 10 10</span>
+<span class="n">var</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tbl</span><span class="p">.</span><span class="n">v1</span><span class="p">,</span> <span class="n">tbl</span><span class="p">.</span><span class="n">v2</span><span class="p">,</span> <span class="n">tbl</span><span class="p">.</span><span class="n">v3</span><span class="p">)</span> <span class="c1">-- display: 20 20 10</span>
+</pre></div>
+</div>
+</section>
+<section id="ranges">
+<h3>Ranges<a class="headerlink" href="#ranges" title="Permalink to this heading">¶</a></h3>
+<p>The ranges are created from pairs or triplets of concatenated numbers: <a class="footnote-reference brackets" href="#f6" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a></p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="n">start</span><span class="o">..</span><span class="n">stop</span><span class="o">..</span><span class="n">step</span>   <span class="c1">-- order is the same as numerical &#39;for&#39;</span>
+<span class="n">start</span><span class="o">..</span><span class="n">stop</span>         <span class="c1">-- default step is 1</span>
+<span class="mf">3..4</span>                <span class="c1">-- spaces are not needed around concat operator</span>
+<span class="mf">3..4</span><span class="o">..</span><span class="mf">0.1</span>           <span class="c1">-- floating numbers are handled</span>
+<span class="mf">4..3</span><span class="o">..-</span><span class="mf">0.1</span>          <span class="c1">-- negative steps are handled</span>
+<span class="n">stop</span><span class="o">..</span><span class="n">start</span><span class="o">..-</span><span class="n">step</span>  <span class="c1">-- operator precedence</span>
+</pre></div>
+</div>
+<p>The default value for unspecified <code class="xref mad mad-var docutils literal notranslate"><span class="pre">step</span></code> is <code class="xref mad mad-const docutils literal notranslate"><span class="pre">1</span></code>. The Lua syntax has been modified to accept concatenation operator without surrounding spaces for convenience.</p>
+<p>Ranges are <em>iterable</em> and <em>lengthable</em> so the following code excerpt is valid:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">rng</span> <span class="o">=</span> <span class="mf">3..4</span><span class="o">..</span><span class="mf">0.1</span>
+<span class="nb">print</span><span class="p">(</span><span class="o">#</span><span class="n">rng</span><span class="p">)</span> <span class="c1">-- display: 11</span>
+<span class="kr">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="kr">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span> <span class="kr">do</span> <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="kr">end</span>
+</pre></div>
+</div>
+<p>More details on ranges can be found in the <a class="reference internal" href="mad_mod_numrange.html"><span class="doc">Range</span></a> module, especially about the <a class="reference internal" href="mad_mod_numrange.html#range" title="range"><code class="xref mad mad-mod docutils literal notranslate"><span class="pre">range</span></code></a> and <a class="reference internal" href="mad_mod_numrange.html#logrange" title="logrange"><code class="xref mad mad-mod docutils literal notranslate"><span class="pre">logrange</span></code></a> constructors that may adjust <code class="xref mad mad-var docutils literal notranslate"><span class="pre">step</span></code> to ensure precise loops and iterators behaviors with floating-point numbers.</p>
+</section>
+<section id="lua-syntax-and-extensions">
+<h3>Lua syntax and extensions<a class="headerlink" href="#lua-syntax-and-extensions" title="Permalink to this heading">¶</a></h3>
+<p>The operator precedence (see <a class="reference external" href="http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf">Lua 5.2</a> §3.4.7) is recapped and extended in <a class="reference internal" href="#tbl-opprec"><span class="std std-numref">Table 1</span></a> with their precedence level (on the left) from lower to higher priority and their associativity (on the right).</p>
+<table class="docutils align-default" id="tbl-opprec">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Operators precedence with priority and associativity.</span><a class="headerlink" href="#tbl-opprec" title="Permalink to this table">¶</a></caption>
+<tbody>
+<tr class="row-odd"><td><p>1:</p></td>
+<td><p>or</p></td>
+<td><p>left</p></td>
+</tr>
+<tr class="row-even"><td><p>2:</p></td>
+<td><p>and</p></td>
+<td><p>left</p></td>
+</tr>
+<tr class="row-odd"><td><p>3:</p></td>
+<td><p>&lt;  &gt;  &lt;=  &gt;=  ~=  ==</p></td>
+<td><p>left</p></td>
+</tr>
+<tr class="row-even"><td><p>4:</p></td>
+<td><p>..</p></td>
+<td><p>right</p></td>
+</tr>
+<tr class="row-odd"><td><p>5:</p></td>
+<td><p>+  - (binary)</p></td>
+<td><p>left</p></td>
+</tr>
+<tr class="row-even"><td><p>6:</p></td>
+<td><p>*  /  %</p></td>
+<td><p>left</p></td>
+</tr>
+<tr class="row-odd"><td><p>7:</p></td>
+<td><p>not   #  -  + (unary)</p></td>
+<td><p>left</p></td>
+</tr>
+<tr class="row-even"><td><p>8:</p></td>
+<td><p>^</p></td>
+<td><p>right</p></td>
+</tr>
+<tr class="row-odd"><td><p>9:</p></td>
+<td><p>.  []  () (call)</p></td>
+<td><p>left</p></td>
+</tr>
+</tbody>
+</table>
+<p>The <em>string</em> literals, <em>table</em> constructors, and <em>lambda</em> definitions can be combined with function calls (see <a class="reference external" href="http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf">Lua 5.2</a> §3.4.9) advantageously like in the object model to create objects in a similar way to MAD-X. The following function calls are semantically equivalent by pairs:</p>
+<div class="highlight-mad notranslate"><div class="highlight"><pre><span></span><span class="c1">! with parentheses                  ! without parentheses</span>
+<span class="n">func</span><span class="p">(</span> <span class="s1">&#39;hello world!&#39;</span> <span class="p">)</span>              <span class="n">func</span>  <span class="s1">&#39;hello world!&#39;</span>
+<span class="n">func</span><span class="p">(</span> <span class="s2">&quot;hello world!&quot;</span> <span class="p">)</span>              <span class="n">func</span>  <span class="s2">&quot;hello world!&quot;</span>
+<span class="n">func</span><span class="p">(</span> <span class="s">[[hello world!]]</span> <span class="p">)</span>            <span class="n">func</span>  <span class="s">[[hello world!]]</span>
+<span class="n">func</span><span class="p">(</span> <span class="p">{...</span><span class="n">fields</span><span class="p">...}</span> <span class="p">)</span>              <span class="n">func</span>  <span class="p">{...</span><span class="n">fields</span><span class="p">...}</span>
+<span class="n">func</span><span class="p">(</span> <span class="o">\</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="p">)</span>                   <span class="n">func</span>  <span class="o">\</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span>
+<span class="n">func</span><span class="p">(</span> <span class="o">\</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span> <span class="p">)</span>           <span class="n">func</span>  <span class="o">\</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="types">
+<h2>Types<a class="headerlink" href="#types" title="Permalink to this heading">¶</a></h2>
+<p id="sec-typeid">MAD-NG is based on Lua, a dynamically typed programming language that provides the following <em>basic types</em> often italicized in this textbook:</p>
+<dl>
+<dt><em>nil</em></dt><dd><p>The type of the value <code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code>. Uninitialized variables, unset attributes, mismatched arguments, mismatched return values etc, have <code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code> values.</p>
+</dd>
+<dt><em>boolean</em></dt><dd><p>The type of the values <code class="xref mad mad-const docutils literal notranslate"><span class="pre">true</span></code> and <code class="xref mad mad-const docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</dd>
+<dt><em>number</em></dt><dd><p>The type of IEEE 754 double precision floating point numbers. They are exact for integers up to <span class="math notranslate nohighlight">\(\pm 2^{53}\)</span> (<span class="math notranslate nohighlight">\(\approx \pm 10^{16}\)</span>). Values like <code class="xref mad mad-const docutils literal notranslate"><span class="pre">0</span></code>, <code class="xref mad mad-const docutils literal notranslate"><span class="pre">1</span></code>, <code class="xref mad mad-const docutils literal notranslate"><span class="pre">1e3</span></code>, <code class="xref mad mad-const docutils literal notranslate"><span class="pre">1e-3</span></code> are numbers.</p>
+</dd>
+<dt><em>string</em></dt><dd><p>The type of character strings. Strings are “internalized” meaning that two strings with the same content compare equal and share the same memory address:
+<code class="xref mad mad-expr docutils literal notranslate"><span class="pre">a=&quot;hello&quot;;</span> <span class="pre">b=&quot;hello&quot;;</span> <span class="pre">print(a==b)</span> <span class="pre">--</span> <span class="pre">display:</span> <span class="pre">true</span></code>.</p>
+</dd>
+<dt><em>table</em></dt><dd><p>The type of tables, see <a class="reference external" href="http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf">Lua 5.2</a> §3.4.8 for details. In this textbook, the following qualified types are used to distinguish between two kinds of special use of tables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A <em>list</em> is a table used as an array, that is a table indexed by a <em>continuous</em> sequence of integers starting from <code class="xref mad mad-const docutils literal notranslate"><span class="pre">1</span></code> where the length operator <code class="docutils literal notranslate"><span class="pre">#</span></code> has defined behavior. <a class="footnote-reference brackets" href="#f7" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a></p></li>
+<li><p>A <em>set</em> is a table used as a dictionary, that is a table indexed by keys — strings or other types — or a <em>sparse</em> sequence of integers where the length operator <code class="docutils literal notranslate"><span class="pre">#</span></code> has undefined behavior.</p></li>
+</ul>
+</div></blockquote>
+</dd>
+<dt><em>function</em></dt><dd><p>The type of functions, see <a class="reference external" href="http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf">Lua 5.2</a> §3.4.10 for details. In this textbook, the following qualified types are used to distinguish between few kinds of special use of functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A <em>lambda</em> is a function defined with the <code class="docutils literal notranslate"><span class="pre">\</span></code> syntax.</p></li>
+<li><p>A <em>functor</em> is an object <a class="footnote-reference brackets" href="#f8" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> that behaves like a function.</p></li>
+<li><p>A <em>method</em> is a function called with the <code class="docutils literal notranslate"><span class="pre">:</span></code> syntax and its owner as first argument. A <em>method</em> defined with the <code class="docutils literal notranslate"><span class="pre">:</span></code> syntax has an implicit first argument named <code class="docutils literal notranslate"><span class="pre">self</span></code> <a class="footnote-reference brackets" href="#f10" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a></p></li>
+</ul>
+</div></blockquote>
+</dd>
+<dt><em>thread</em></dt><dd><p>The type of coroutines, see <a class="reference external" href="http://github.com/MethodicalAcceleratorDesign/MADdocs/blob/master/lua52-refman-madng.pdf">Lua 5.2</a> §2.6 for details.</p>
+</dd>
+<dt><em>userdata</em></dt><dd><p>The type of raw pointers with memory managed by Lua, and its companion <em>lightuserdata</em> with memory managed by the host language, usually C. They are mainly useful for interfacing Lua with its C API, but MAD-NG favors the faster FFI <a class="footnote-reference brackets" href="#f11" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a> extension of LuaJIT.</p>
+</dd>
+<dt><em>cdata</em></dt><dd><p>The type of C data structures that can be defined, created and manipulated directly from Lua as part of the FFI <a class="footnote-reference brackets" href="#f11" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a> extension of LuaJIT. The numeric ranges, the complex numbers, the (complex) matrices, and the (complex) GTPSA are <em>cdata</em> fully compatible with the embedded C code that operates them.</p>
+</dd>
+</dl>
+<p>This textbook uses also some extra terms in place of types:</p>
+<dl class="simple">
+<dt><em>value</em></dt><dd><p>An instance of any type.</p>
+</dd>
+<dt><em>reference</em></dt><dd><p>A valid memory location storing some <em>value</em>.</p>
+</dd>
+<dt><em>logical</em></dt><dd><p>A <em>value</em> used by control flow, where <code class="xref mad mad-const docutils literal notranslate"><span class="pre">nil</span></code> <span class="math notranslate nohighlight">\(\equiv\)</span> <code class="xref mad mad-const docutils literal notranslate"><span class="pre">false</span></code> and <em>anything-else</em> <span class="math notranslate nohighlight">\(\equiv\)</span> <code class="xref mad mad-const docutils literal notranslate"><span class="pre">true</span></code>.</p>
+</dd>
+</dl>
+<section id="value-vs-reference">
+<h3>Value vs reference<a class="headerlink" href="#value-vs-reference" title="Permalink to this heading">¶</a></h3>
+<p>The types <em>nil</em>, <em>boolean</em> and <em>number</em> have a semantic by <em>value</em>, meaning that variables, arguments, return values, etc., hold their instances directly. As a consequence, any assignment makes a copy of the <em>value</em>, i.e. changing the original value does not change the copy.</p>
+<p>The types <em>string</em>, <em>function</em>, <em>table</em>, <em>thread</em>, <em>userdata</em> and <em>cdata</em> have a semantic by <em>reference</em>, meaning that variables, arguments, return values, etc., do not store their instances directly but a <em>reference</em> to them. As a consequence, any assignment makes a copy of the <em>reference</em> and the instance becomes shared, i.e. references have a semantic by <em>value</em> but changing the content of the value does change the copy. <a class="footnote-reference brackets" href="#f12" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></a></p>
+<p>The types <em>string</em>, <em>function</em> <a class="footnote-reference brackets" href="#f13" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a>, <em>thread</em>, <code class="xref mad mad-var docutils literal notranslate"><span class="pre">cpx</span></code> <em>cdata</em> and numeric (<code class="docutils literal notranslate"><span class="pre">log</span></code>)<code class="docutils literal notranslate"><span class="pre">range</span></code> <em>cdata</em> have a hybrid semantic. In practice these types have a semantic by <em>reference</em>, but they behave like types with semantic by <em>value</em> because their instances are immutable, and therefore sharing them is safe.</p>
+</section>
+</section>
+<section id="concepts">
+<h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this heading">¶</a></h2>
+<p>The concepts are natural extensions of types that concentrate more on behavior of objects <a class="footnote-reference brackets" href="#f8" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> than on types. MAD-NG introduces many concepts to validate objects passed as argument before using them. The main concepts used in this textbook are listed below, see the <a class="reference internal" href="mad_mod_types.html"><span class="doc">typeid</span></a> module for more concepts:</p>
+<dl class="simple">
+<dt><em>lengthable</em></dt><dd><p>An object that can be sized using the length operator <code class="docutils literal notranslate"><span class="pre">#</span></code>. Strings, lists, vectors and ranges are examples of <em>lengthable</em> objects.</p>
+</dd>
+<dt><em>indexable</em></dt><dd><p>An object that can be indexed using the square bracket operator <code class="docutils literal notranslate"><span class="pre">[]</span></code>. Tables, vectors and ranges are examples of <em>indexable</em> objects.</p>
+</dd>
+<dt><em>iterable</em></dt><dd><p>An object that can be iterated with a loop over indexes or a generic <code class="docutils literal notranslate"><span class="pre">for</span></code> with the <code class="docutils literal notranslate"><span class="pre">ipairs</span></code> iterator. Lists, vectors and ranges are examples of <em>iterable</em> objects.</p>
+</dd>
+<dt><em>mappable</em></dt><dd><p>An object that can be iterated with a loop over keys or a generic <code class="docutils literal notranslate"><span class="pre">for</span></code> with the <code class="docutils literal notranslate"><span class="pre">pairs</span></code> iterator. Sets and objects (from the object model) are examples of <em>mappable</em> objects.</p>
+</dd>
+<dt><em>callable</em></dt><dd><p>An object that can be called using the call operator <code class="docutils literal notranslate"><span class="pre">()</span></code>. Functions and functors are examples of <em>callable</em> objects.</p>
+</dd>
+</dl>
+</section>
+<section id="ecosystem">
+<h2>Ecosystem<a class="headerlink" href="#ecosystem" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference internal" href="#fig-gen-ecosys"><span class="std std-numref">Fig. 1</span></a> shows a schematic representation of the ecosystem of MAD-NG, which should help the users to understand the relatioship between the different components of the application. The dashed lines are grouping the items (e.g. modules) by topics while the arrows are showing interdependencies between them and the colors their status.</p>
+<figure class="align-center" id="fig-gen-ecosys">
+<img alt="_images/madng-ecosys-crop.png" src="_images/madng-ecosys-crop.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">MAD-NG ecosystem and status.</span><a class="headerlink" href="#fig-gen-ecosys" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="f1" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>This text is taken from the “What is Lua?” section of the Lua website.</p>
+</aside>
+<aside class="footnote brackets" id="f2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>This text is taken from the “Overview” section of the LuaJIT website.</p>
+</aside>
+<aside class="footnote brackets" id="f3" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>The <code class="docutils literal notranslate"><span class="pre">ENV</span></code> feature of Lua 5.2 is not supported and will never be according to M. Pall.</p>
+</aside>
+<aside class="footnote brackets" id="f4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>This primer was adapted from the blog “Learn Lua in 15 minutes” by T. Neylon.</p>
+</aside>
+<aside class="footnote brackets" id="f5" role="note">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id6">2</a>,<a role="doc-backlink" href="#id8">3</a>)</span>
+<p>This feature was introduced to ease the automatic translation of lattices from MAD-X to MAD-NG.</p>
+</aside>
+<aside class="footnote brackets" id="f6" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">6</a><span class="fn-bracket">]</span></span>
+<p>This is the only feature of MAD-NG that is incompatible with the semantic of Lua.</p>
+</aside>
+<aside class="footnote brackets" id="f7" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">7</a><span class="fn-bracket">]</span></span>
+<p>The Lua community uses the term <em>sequence</em> instead of <em>list</em>, which is confusing is the context of MAD-NG.</p>
+</aside>
+<aside class="footnote brackets" id="f8" role="note">
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id11">1</a>,<a role="doc-backlink" href="#id17">2</a>)</span>
+<p>Here the term “object” is used in the Lua sense, not as an object from the object model of MAD-NG.</p>
+</aside>
+<aside class="footnote brackets" id="f10" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">9</a><span class="fn-bracket">]</span></span>
+<p>This <em>hidden</em> methods argument is named <code class="docutils literal notranslate"><span class="pre">self</span></code> in Lua and Python, or <code class="docutils literal notranslate"><span class="pre">this</span></code> in Java and C++.</p>
+</aside>
+<aside class="footnote brackets" id="f11" role="note">
+<span class="label"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id13">1</a>,<a role="doc-backlink" href="#id14">2</a>)</span>
+<p>FFI stands for Foreign Function Interface, an acronym well known in high-level languages communities.</p>
+</aside>
+<aside class="footnote brackets" id="f12" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">11</a><span class="fn-bracket">]</span></span>
+<p>References semantic in Lua is similar to pointers semantic in C, see ISO/IEC 9899:1999 §6.2.5.</p>
+</aside>
+<aside class="footnote brackets" id="f13" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id16">12</a><span class="fn-bracket">]</span></span>
+<p>Local variables and upvalues of functions can be modified using the <code class="docutils literal notranslate"><span class="pre">debug</span></code> module.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mad_gen_intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mad_gen_object.html" class="btn btn-neutral float-right" title="Objects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Laurent Deniau.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
