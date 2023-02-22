@@ -6,6 +6,7 @@ Sequences
    :numbered:
 
 The MAD Sequences are objects convenient to describe accelerators lattices built from a *list* of elements with increasing :data:`s`-positions. The sequences are also containers that provide fast access to their elements by referring to their indexes, :data:`s`-positions, or (mangled) names, or by running iterators constrained with ranges and predicates.
+
 The :var:`sequence` object is the *root object* of sequences that store information relative to lattices.
 
 The :var:`sequence` module extends the :doc:`typeid <mad_mod_types>` module with the :func:`is_sequence` function, which returns :const:`true` if its argument is a :var:`sequence` object, :const:`false` otherwise.
@@ -234,6 +235,7 @@ The :var:`sequence` object provides the following metamethods:
 **__newindex**
    A *metamethod* :literal:`(key, val)` called by the assignment operator :literal:`[key]=val` to create new attributes for the pairs (*key*, *value*). 
    If *key* is a *number* specifying the index or a *string* specifying the name of an existing element, the following error is raised:
+   
    :literal:`"invalid sequence write access (use replace method)"`
 
 
@@ -312,9 +314,8 @@ A sequence looks at the following attributes of an element, including sub-sequen
    through temporary instances to store the many :literal:`at` and :literal:`from` attributes needed to specify its positions. 
    Once built, the sequence will drop these temporary instances in favor of their common parent, i.e. the original shared element.
 
-**Warning:** 
-   The :literal:`at` and :literal:`from` attributes are not considered as intrinsic properties of the elements and are used only once during installation.
-   Any reuse of these attributes is the responsibility of the user, including the consistency between :literal:`at` and :literal:`from` after updates.
+**Warning:** The :literal:`at` and :literal:`from` attributes are not considered as intrinsic properties of the elements and are used only once during installation.
+Any reuse of these attributes is the responsibility of the user, including the consistency between :literal:`at` and :literal:`from` after updates.
 
 
 Element selections
@@ -323,6 +324,7 @@ Element selections
 The element selection in sequence use predicates in combination with iterators. The sequence iterator manages the range of elements where to apply the selection, 
 while the predicate says if an element in this range is illegible for the selection. In order to ease the use of methods based on the :literal:`:foreach` method, 
 the selector predicate :literal:`sel` can be built from different types of information provided in a *set* with the following attributes:
+
 
 **flag**
    A *number* interpreted as a flags mask to pass to the element method :literal:`:is_selected`. It should not be confused with the flags passed as argument to methods
@@ -429,10 +431,10 @@ The following example shows how to access to the elements with the :literal:`:fo
    local act = \e -> print(e.name,e.id)
    seq:foreach(act, "df[2]/mk[3]")
    -- display:
-   df   3
-   mk   4
-   df   5
-   mk   6
+   --          df   3
+   --          mk   4
+   --          df   5
+   --          mk   6
 
    seq:foreach{action=act, range="df[2]/mk[3]", class=marker}
    -- display: markers at ids 4 and 6
@@ -444,14 +446,14 @@ The following example shows how to access to the elements with the :literal:`:fo
    local act = \e -> print(e.name, e.id, e:is_observed())
    seq:foreach{action=act, range="#s/#e"}
    -- display:
-   $start   nil  false
-   df       1    false
-   mk       2    true
-   df       3    false
-   mk       4    true
-   df       5    false
-   mk       6    true
-   $end     nil  true
+   --          $start   nil  false
+   --          df       1    false
+   --          mk       2    true
+   --          df       3    false
+   --          mk       4    true
+   --          df       5    false
+   --          mk       6    true
+   --          $end     nil  true
 
 Examples
 ========
@@ -606,6 +608,8 @@ The following more complex example shows how to install elements and subsequence
    }
 
    seq:dumpseq()
+
+Display:
 
 .. code-block:: text
    

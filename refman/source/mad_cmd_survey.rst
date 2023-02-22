@@ -19,8 +19,8 @@ The :literal:`survey` command provides a simple interface to the *geometric* tra
 		nturn=1,  	-- number of turns to track 
 		nstep=-1,  	-- number of elements to track 
 		nslice=1,  	-- number of slices (or weights) for each element 
-		implicit=false,  -- slice implicit elements too (e.g.~plots) 
-		misalign=false,  -- consider misalignment 
+		implicit=false, -- slice implicit elements too (e.g. plots) 
+		misalign=false, -- consider misalignment 
 		save=true,  	-- create mtable and save results 
 		title=nil,  	-- title of mtable (default seq.name) 
 		observe=0,  	-- save only in observed elements (every n turns) 
@@ -48,7 +48,8 @@ The :literal:`survey` command format is summarized in :numref:`fig.survey.synop`
 
 **sequence**
 	 The *sequence* to survey. (no default, required). 
- 	 Example: :expr:`sequence = lhcb1`.
+ 	
+	 Example: :expr:`sequence = lhcb1`.
 
 **range** 
 	 A *range* specifying the span of the sequence survey. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute . (default: :const:`nil`). 
@@ -117,6 +118,7 @@ The :literal:`survey` command format is summarized in :numref:`fig.survey.synop`
 
 **savesel** 
 	 A *callable* :literal:`(elm, mflw, lw, islc)` acting as a predicate on selected elements for observation, i.e. the element is discarded if the predicate returns :const:`false`. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :literal:`fnil`) 
+	
 	 Example: :expr:`savesel = \\e -> mylist[e.name] ~= nil`.
 
 **savemap** 

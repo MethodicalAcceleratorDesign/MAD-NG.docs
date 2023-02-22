@@ -51,7 +51,7 @@ The :var:`twiss` command format is summarized in :numref:`fig-twiss-synop`, incl
 		atdebug=fnil,  	-- action called when debugging the element maps 
 		codiff=nil,  	-- finite differences step for jacobian 
 		coiter=nil,  	-- maximum number of iterations 
-		cotol=nil,  	-- closed orbit tolerance (i.e.~|dX|) 
+		cotol=nil,  	-- closed orbit tolerance (i.e.|dX|) 
 		X1=nil,  	-- optional final coordinates translation 
 		info=nil,  	-- information level (output on terminal) 
 		debug=nil, 	-- debug information level (output on terminal) 
@@ -199,8 +199,9 @@ The :var:`twiss` command supports the following attributes:
 	Example: :expr:`savemap = true`.
 
 **atentry**
-	 A *callable* :literal:`(elm, mflw, 0, -1)` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index :const:`-1`. (default: :const:`fnil`). 
-	 Example: :expr:`atentry = myaction`.
+	A *callable* :literal:`(elm, mflw, 0, -1)` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index :const:`-1`. (default: :const:`fnil`). 
+	  
+	Example: :expr:`atentry = myaction`.
 
 **atslice**
 	A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :const:`fnil`). 
@@ -248,12 +249,14 @@ The :var:`twiss` command supports the following attributes:
 	Example: :expr:`X1 = { t=100, pt=10 }`.
 
 **info**
-	 A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
-	 Example: :expr:`info = 2`.
+	A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
+	
+	Example: :expr:`info = 2`.
 
 **debug**
-	 A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
-	 Example: :expr:`debug = 2`.
+	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
+	
+	Example: :expr:`debug = 2`.
 
 **usrdef**
 	Any user defined data that will be attached to the tracked map flow, which is internally passed to the elements method :literal:`:track` and to their underlying maps. (default: :const:`nil`). 
@@ -268,12 +271,14 @@ The :var:`twiss` command supports the following attributes:
 
 The :var:`twiss` command returns the following objects in this order:
 
-**mtbl}** A *mtable* corresponding to the augmented TFS table of the :var:`track` command with the :var:`twiss` command columns.
+**mtbl** 
+	A *mtable* corresponding to the augmented TFS table of the :var:`track` command with the :var:`twiss` command columns.
 
-**mflw** A *mflow* corresponding to the augmented map flow of the :var:`track` command with the :var:`twiss` command data.
+**mflw** 
+	A *mflow* corresponding to the augmented map flow of the :var:`track` command with the :var:`twiss` command data.
 
 **eidx**
-	 An optional *number* corresponding to the last tracked element index in the sequence when :literal:`nstep` was specified and stopped the command before the end of the :literal:`range`.
+	An optional *number* corresponding to the last tracked element index in the sequence when :literal:`nstep` was specified and stopped the command before the end of the :literal:`range`.
 
 
 Twiss mtable
@@ -284,208 +289,208 @@ The :var:`twiss` command returns a *mtable* where the information described here
 
 The header of the *mtable* contains the fields in the default order: [#f3]_ 
 
-	**name**
-	 The name of the command that created the *mtable*, e.g. :literal:`"track"`.
-	**type**
-	 The type of the *mtable*, i.e. :literal:`"track"`.
-	**title**
-	 The value of the command attribute :literal:`title`.
-	**origin**
-	 The origin of the application that created the *mtable*, e.g. :literal:`"MAD 1.0.0 OSX 64"`.
-	**date**
-	 The date of the creation of the *mtable*, e.g. :literal:`"27/05/20"`.
-	**time**
-	 The time of the creation of the *mtable*, e.g. :literal:`"19:18:36"`.
-	**refcol**
-	 The reference *column* for the *mtable* dictionnary, e.g. :literal:`"name"`.
-	**direction**
-	 The value of the command attribute :literal:`dir`.
-	**observe**
-	 The value of the command attribute :literal:`observe`.
-	**implicit**
-	 The value of the command attribute :literal:`implicit`.
-	**misalign**
-	 The value of the command attribute :literal:`misalign`.
-	**deltap**
-	 The value of the command attribute :literal:`deltap`.
-	**lost**
-	 The number of lost particle(s) or damap(s).
-	**chrom**
-	 The value of the command attribute :literal:`chrom`.
-	**coupling**
-	 The value of the command attribute :literal:`coupling`.
-	**length**
-	 The :math:`s`-length of the tracked design orbit.
-	**q1**
-	 The tunes of mode 1.
-	**q2**
-	 The tunes of mode 2.
-	**q3**
-	 The tunes of mode 3.
-	**alfap**
-	 The momentum compaction factor :math:`\alpha_p`.
-	**etap**
-	 The phase slip factor :math:`\eta_p`.
-	**gammatr**
-	 The energy gamma transition :math:`\gamma_{\text{tr}}`.
-	**synch_1**
-	 The first synchroton radiation integral.
-	**synch_2**
-	 The second synchroton radiation integral.
-	**synch_3**
-	 The third synchroton radiation integral.
-	**synch_4**
-	 The fourth synchroton radiation integral.
-	**synch_5**
-	 The fifth synchroton radiation integral.
-	**synch_6**
-	 The sixth synchroton radiation integral.
-	**synch_8**
-	 The eighth synchroton radiation integral.
-	**range**
-	 The value of the command attribute :literal:`range`. [#f4]_ 
-	**__seq**
-	 The *sequence* from the command attribute :var:`sequence`. [#f5]_
+**name**
+	The name of the command that created the *mtable*, e.g. :literal:`"track"`.
+**type**
+	The type of the *mtable*, i.e. :literal:`"track"`.
+**title**
+	The value of the command attribute :literal:`title`.
+**origin**
+	The origin of the application that created the *mtable*, e.g. :literal:`"MAD 1.0.0 OSX 64"`.
+**date**
+	The date of the creation of the *mtable*, e.g. :literal:`"27/05/20"`.
+**time**
+	The time of the creation of the *mtable*, e.g. :literal:`"19:18:36"`.
+**refcol**
+	The reference *column* for the *mtable* dictionnary, e.g. :literal:`"name"`.
+**direction**
+	The value of the command attribute :literal:`dir`.
+**observe**
+	The value of the command attribute :literal:`observe`.
+**implicit**
+	The value of the command attribute :literal:`implicit`.
+**misalign**
+	The value of the command attribute :literal:`misalign`.
+**deltap**
+	The value of the command attribute :literal:`deltap`.
+**lost**
+	The number of lost particle(s) or damap(s).
+**chrom**
+	The value of the command attribute :literal:`chrom`.
+**coupling**
+	The value of the command attribute :literal:`coupling`.
+**length**
+	The :math:`s`-length of the tracked design orbit.
+**q1**
+	The tunes of mode 1.
+**q2**
+	The tunes of mode 2.
+**q3**
+	The tunes of mode 3.
+**alfap**
+	The momentum compaction factor :math:`\alpha_p`.
+**etap**
+	The phase slip factor :math:`\eta_p`.
+**gammatr**
+	The energy gamma transition :math:`\gamma_{\text{tr}}`.
+**synch_1**
+	The first synchroton radiation integral.
+**synch_2**
+	The second synchroton radiation integral.
+**synch_3**
+	The third synchroton radiation integral.
+**synch_4**
+	The fourth synchroton radiation integral.
+**synch_5**
+	The fifth synchroton radiation integral.
+**synch_6**
+	The sixth synchroton radiation integral.
+**synch_8**
+	The eighth synchroton radiation integral.
+**range**
+	The value of the command attribute :literal:`range`. [#f4]_ 
+**__seq**
+	The *sequence* from the command attribute :var:`sequence`. [#f5]_
 
 The core of the *mtable* contains the columns in the default order: [#f6]_
 
-	**name**
-	 The name of the element.
-	**kind**
-	 The kind of the element.
-	**s**
-	 The :math:`s`-position at the end of the element slice.
-	**l**
-	 The length from the start of the element to the end of the element slice.
-	**id**
-	 The index of the particle or damap as provided in :var:`X0`.
-	**x**
-	 The local coordinate :math:`x` at the :math:`s`-position .
-	**px**
-	 The local coordinate :math:`p_x` at the :math:`s`-position.
-	**y**
-	 The local coordinate :math:`y` at the :math:`s`-position.
-	**py**
-	 The local coordinate :math:`p_y` at the :math:`s`-position.
-	**t**
-	 The local coordinate :math:`t` at the :math:`s`-position.
-	**pt**
-	 The local coordinate :math:`p_t` at the :math:`s`-position.
-	**slc**
-	 The slice index ranging from :literal:`-2` to :literal:`nslice`.
-	**turn**
-	 The turn number.
-	**tdir**
-	 The :math:`t`-direction of the tracking in the element.
-	**eidx**
-	 The index of the element in the sequence.
-	**status**
-	 The status of the particle or damap.
-	**alfa11**
-	 The optical function :math:`\alpha` of mode 1 at the :math:`s`-position.
-	**beta11**
-	 The optical function :math:`\beta` of mode 1 at the :math:`s`-position.
-	**gama11**
-	 The optical function :math:`\gamma` of mode 1 at the :math:`s`-position.
-	**mu1**
-	 The phase advance :math:`\mu` of mode 1 at the :math:`s`-position.
-	**dx**
-	 The dispersion function of :math:`x` at the :math:`s`-position.
-	**dpx**
-	 The dispersion function of :math:`p_x` at the :math:`s`-position.
-	**alfa22**
-	 The optical function :math:`\alpha` of mode 2 at the :math:`s`-position.
-	**beta22**
-	 The optical function :math:`\beta` of mode 2 at the :math:`s`-position.
-	**gama22**
-	 The optical function :math:`\gamma` of mode 2 at the :math:`s`-position.
-	**mu2**
-	 The phase advance :math:`\mu` of mode 2 at the :math:`s`-position.
-	**dy**
-	 The dispersion function of :math:`y` at the :math:`s`-position.
-	**dpy**
-	 The dispersion function of :math:`p_y` at the :math:`s`-position.
-	**alfa33**
-	 The optical function :math:`\alpha` of mode 3 at the :math:`s`-position.
-	**beta33**
-	 The optical function :math:`\beta` of mode 3 at the :math:`s`-position.
-	**gama33**
-	 The optical function :math:`\gamma` of mode 3 at the :math:`s`-position.
-	**mu3**
-	 The phase advance :math:`\mu` of mode 3 at the :math:`s`-position.
-	**__map**
-	 The damap at the :math:`s`-position. [#f5]_
+**name**
+	The name of the element.
+**kind**
+	The kind of the element.
+**s**
+	The :math:`s`-position at the end of the element slice.
+**l**
+	The length from the start of the element to the end of the element slice.
+**id**
+	The index of the particle or damap as provided in :var:`X0`.
+**x**
+	The local coordinate :math:`x` at the :math:`s`-position .
+**px**
+	The local coordinate :math:`p_x` at the :math:`s`-position.
+**y**
+	The local coordinate :math:`y` at the :math:`s`-position.
+**py**
+	The local coordinate :math:`p_y` at the :math:`s`-position.
+**t**
+	The local coordinate :math:`t` at the :math:`s`-position.
+**pt**
+	The local coordinate :math:`p_t` at the :math:`s`-position.
+**slc**
+	The slice index ranging from :literal:`-2` to :literal:`nslice`.
+**turn**
+	The turn number.
+**tdir**
+	The :math:`t`-direction of the tracking in the element.
+**eidx**
+	The index of the element in the sequence.
+**status**
+	The status of the particle or damap.
+**alfa11**
+	The optical function :math:`\alpha` of mode 1 at the :math:`s`-position.
+**beta11**
+	The optical function :math:`\beta` of mode 1 at the :math:`s`-position.
+**gama11**
+	The optical function :math:`\gamma` of mode 1 at the :math:`s`-position.
+**mu1**
+	The phase advance :math:`\mu` of mode 1 at the :math:`s`-position.
+**dx**
+	The dispersion function of :math:`x` at the :math:`s`-position.
+**dpx**
+	The dispersion function of :math:`p_x` at the :math:`s`-position.
+**alfa22**
+	The optical function :math:`\alpha` of mode 2 at the :math:`s`-position.
+**beta22**
+	The optical function :math:`\beta` of mode 2 at the :math:`s`-position.
+**gama22**
+	The optical function :math:`\gamma` of mode 2 at the :math:`s`-position.
+**mu2**
+	The phase advance :math:`\mu` of mode 2 at the :math:`s`-position.
+**dy**
+	The dispersion function of :math:`y` at the :math:`s`-position.
+**dpy**
+	The dispersion function of :math:`p_y` at the :math:`s`-position.
+**alfa33**
+	The optical function :math:`\alpha` of mode 3 at the :math:`s`-position.
+**beta33**
+	The optical function :math:`\beta` of mode 3 at the :math:`s`-position.
+**gama33**
+	The optical function :math:`\gamma` of mode 3 at the :math:`s`-position.
+**mu3**
+	The phase advance :math:`\mu` of mode 3 at the :math:`s`-position.
+**__map**
+	The damap at the :math:`s`-position. [#f5]_
 
 The :literal:`chrom` attribute will add the following fields to the *mtable* header:
 
-	**dq1**
-	 The chromatic derivative of tunes of mode 1, i.e. chromaticities.
-	**dq2**
-	 The chromatic derivative of tunes of mode 2, i.e. chromaticities.
-	**dq3**
-	 The chromatic derivative of tunes of mode 3, i.e. chromaticities.
+**dq1**
+	The chromatic derivative of tunes of mode 1, i.e. chromaticities.
+**dq2**
+	The chromatic derivative of tunes of mode 2, i.e. chromaticities.
+**dq3**
+	The chromatic derivative of tunes of mode 3, i.e. chromaticities.
 
 The :literal:`chrom` attribute will add the following columns to the *mtable*:
 
-	**dmu1**
-	 The chromatic derivative of the phase advance of mode 1 at the :math:`s`-position.
-	**ddx**
-	 The chromatic derivative of the dispersion function of :math:`x` at the :math:`s`-position.
-	**ddpx**
-	 The chromatic derivative of the dispersion function of :math:`p_x` at the :math:`s`-position.
-	**wx**
-	 The chromatic amplitude function of mode 1 at the :math:`s`-position.
-	**phix**
-	 The chromatic phase function of mode 1 at the :math:`s`-position.
-	**dmu2**
-	 The chromatic derivative of the phase advance of mode 2 at the :math:`s`-position.
-	**ddy**
-	  The chromatic derivative of the dispersion function of :math:`y` at the :math:`s`-position.
-	**ddpy**
-	 The chromatic derivative of the dispersion function of :math:`p_y` at the :math:`s`-position.
-	**wy**
-	 The chromatic amplitude function of mode 2 at the :math:`s`-position.
-	**phiy**
-	 The chromatic phase function of mode 2 at the :math:`s`-position.
+**dmu1**
+	The chromatic derivative of the phase advance of mode 1 at the :math:`s`-position.
+**ddx**
+	The chromatic derivative of the dispersion function of :math:`x` at the :math:`s`-position.
+**ddpx**
+	The chromatic derivative of the dispersion function of :math:`p_x` at the :math:`s`-position.
+**wx**
+	The chromatic amplitude function of mode 1 at the :math:`s`-position.
+**phix**
+	The chromatic phase function of mode 1 at the :math:`s`-position.
+**dmu2**
+	The chromatic derivative of the phase advance of mode 2 at the :math:`s`-position.
+**ddy**
+	The chromatic derivative of the dispersion function of :math:`y` at the :math:`s`-position.
+**ddpy**
+	The chromatic derivative of the dispersion function of :math:`p_y` at the :math:`s`-position.
+**wy**
+	The chromatic amplitude function of mode 2 at the :math:`s`-position.
+**phiy**
+	The chromatic phase function of mode 2 at the :math:`s`-position.
 
 The :literal:`coupling` attribute will add the following columns to the *mtable*:
 
-	**alfa12**
-	 The optical function :math:`\alpha` of coupling mode 1-2 at the :math:`s`-position.
-	**beta12**
-	 The optical function :math:`\beta` of coupling mode 1-2 at the :math:`s`-position.
-	**gama12**
-	 The optical function :math:`\gamma` of coupling mode 1-2 at the :math:`s`-position.
-	**alfa13**
-	 The optical function :math:`\alpha` of coupling mode 1-3 at the :math:`s`-position.
-	**beta13**
-	 The optical function :math:`\beta` of coupling mode 1-3 at the :math:`s`-position.
-	**gama13**
-	 The optical function :math:`\gamma` of coupling mode 1-3 at the :math:`s`-position.
-	**alfa21**
-	 The optical function :math:`\alpha` of coupling mode 2-1 at the :math:`s`-position.
-	**beta21**
-	 The optical function :math:`\beta` of coupling mode 2-1 at the :math:`s`-position.
-	**gama21**
-	 The optical function :math:`\gamma` of coupling mode 2-1 at the :math:`s`-position.
-	**alfa23**
-	 The optical function :math:`\alpha` of coupling mode 2-3 at the :math:`s`-position.
-	**beta23**
-	 The optical function :math:`\beta` of coupling mode 2-3 at the :math:`s`-position.
-	**gama23**
-	 The optical function :math:`\gamma` of coupling mode 2-3 at the :math:`s`-position.
-	**alfa31**
-	 The optical function :math:`\alpha` of coupling mode 3-1 at the :math:`s`-position.
-	**beta31**
-	 The optical function :math:`\beta` of coupling mode 3-1 at the :math:`s`-position.
-	**gama31**
-	 The optical function :math:`\gamma` of coupling mode 3-1 at the :math:`s`-position.
-	**alfa32**
-	 The optical function :math:`\alpha` of coupling mode 3-2 at the :math:`s`-position.
-	**beta32**
-	 The optical function :math:`\beta` of coupling mode 3-2 at the :math:`s`-position.
-	**gama32**
-	 The optical function :math:`\gamma` of coupling mode 3-2 at the :math:`s`-position.
+**alfa12**
+	The optical function :math:`\alpha` of coupling mode 1-2 at the :math:`s`-position.
+**beta12**
+	The optical function :math:`\beta` of coupling mode 1-2 at the :math:`s`-position.
+**gama12**
+	The optical function :math:`\gamma` of coupling mode 1-2 at the :math:`s`-position.
+**alfa13**
+	The optical function :math:`\alpha` of coupling mode 1-3 at the :math:`s`-position.
+**beta13**
+	The optical function :math:`\beta` of coupling mode 1-3 at the :math:`s`-position.
+**gama13**
+	The optical function :math:`\gamma` of coupling mode 1-3 at the :math:`s`-position.
+**alfa21**
+	The optical function :math:`\alpha` of coupling mode 2-1 at the :math:`s`-position.
+**beta21**
+	The optical function :math:`\beta` of coupling mode 2-1 at the :math:`s`-position.
+**gama21**
+	The optical function :math:`\gamma` of coupling mode 2-1 at the :math:`s`-position.
+**alfa23**
+	The optical function :math:`\alpha` of coupling mode 2-3 at the :math:`s`-position.
+**beta23**
+	The optical function :math:`\beta` of coupling mode 2-3 at the :math:`s`-position.
+**gama23**
+	The optical function :math:`\gamma` of coupling mode 2-3 at the :math:`s`-position.
+**alfa31**
+	The optical function :math:`\alpha` of coupling mode 3-1 at the :math:`s`-position.
+**beta31**
+	The optical function :math:`\beta` of coupling mode 3-1 at the :math:`s`-position.
+**gama31**
+	The optical function :math:`\gamma` of coupling mode 3-1 at the :math:`s`-position.
+**alfa32**
+	The optical function :math:`\alpha` of coupling mode 3-2 at the :math:`s`-position.
+**beta32**
+	The optical function :math:`\beta` of coupling mode 3-2 at the :math:`s`-position.
+**gama32**
+	The optical function :math:`\gamma` of coupling mode 3-2 at the :math:`s`-position.
 
 
 Tracking linear normal form
@@ -505,7 +510,7 @@ TODO
 .. [#f7] The :literal:`TKT` scheme (Yoshida) is automatically converted to the :literal:`MKM` scheme (Boole) when appropriate.
 .. [#f8] In all cases, MAD-NG uses PTC setup :literal:`time=true, exact=true`.
 .. [#f2] The output of mtable in TFS files can be fully customized by the user.
-.. [#f3] The fields from :literal:`name` to :literal:`lost` set by the :var:`track` command
+.. [#f3] The fields from :literal:`name` to :literal:`lost` are set by the :var:`track` command
 .. [#f4] This field is not saved in the TFS table by default.
 .. [#f5] Fields and columns starting with two underscores are protected data and never saved to TFS files.
 .. [#f6] The column from :literal:`name` to :literal:`status` are set by the :var:`track` command.

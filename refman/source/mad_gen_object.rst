@@ -161,7 +161,7 @@ The object model allows to build tree-like inheritance hierarchy by creating obj
 Reading attributes
 """"""""""""""""""
 
-Reading an attribute not defined in an object triggers a recursive dynamic lookup along the chain of its parents until it is found or the root :literal:`object` is reached. Reading an object attribute defined as a *function* automatically evaluates it with the object passed as the sole argument and the returned value is forwarded to the reader as if it were the attribute's value. When the argument is not used by the function, it becomes a *deferred expression* that can be defined directly with the operator :literal:`:=` as explained in section :ref:`ssec.defexpr`. This feature allows to use attributes holding values and functions the same way and postpone design decisions, e.g. switching from simple value to complex calculations without impacting the users side with calling parentheses at every use.
+Reading an attribute not defined in an object triggers a recursive dynamic lookup along the chain of its parents until it is found or the root :literal:`object` is reached. Reading an object attribute defined as a *function* automatically evaluates it with the object passed as the sole argument and the returned value is forwarded to the reader as if it were the attribute's value. When the argument is not used by the function, it becomes a *deferred expression* that can be defined directly with the operator :literal:`:=` as explained in the section :ref:`ssec.defexpr`. This feature allows to use attributes holding values and functions the same way and postpone design decisions, e.g. switching from simple value to complex calculations without impacting the users side with calling parentheses at every use.
 
 The following example is similar to the second example of the section :ref:`ssec.defexpr`, and it must be clear that :literal:`fun` must be explicitly called to retrieve the value despite that its definition is the same as the attribute :literal:`v2`.
 
@@ -352,21 +352,21 @@ The root :literal:`object` provides the following methods:
 **wrap_variables**
 	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes wrapped by the pairs (*key*, *value*) contained in :literal:`set`, where the *value* must be a *callable* :literal:`(a)` that takes the attribute (as a callable) and returns the wrapped *value*. If :literal:`override ~= true`, the read-only attributes (with *key* starting by :literal:`"__"`) cannot be updated.
 
-The following example shows how to convert the length :var:`l` of an RBEND from cord to arc, [#f4]_ keeping its strength :var:`k0` to be computed on the fly:
+	The following example shows how to convert the length :var:`l` of an RBEND from cord to arc, [#f4]_ keeping its strength :var:`k0` to be computed on the fly:
 
-.. code-block::
-	
-	local cord2arc in MAD.gmath
-	local rbend    in MAD.element
-	local printf   in MAD.utility
-	local rb = rbend 'rb' { angle=pi/10, l=2, k0=\s s.angle/s.l }
-	printf("l=%.5f, k0=%.5f\n", rb.l, rb.k0) -- l=2.00000, k0=0.15708
-	rb:wrap_variables { l=\l\s cord2arc(l(),s.angle) } -- RBARC
-	printf("l=%.5f, k0=%.5f\n", rb.l, rb.k0) -- l=2.00825, k0=0.15643
-	rb.angle = pi/20 -- update angle
-	printf("l=%.5f, k0=%.5f\n", rb.l, rb.k0) -- l=2.00206, k0=0.07846
+	.. code-block::
+		
+		local cord2arc in MAD.gmath
+		local rbend    in MAD.element
+		local printf   in MAD.utility
+		local rb = rbend 'rb' { angle=pi/10, l=2, k0=\s s.angle/s.l }
+		printf("l=%.5f, k0=%.5f\n", rb.l, rb.k0) -- l=2.00000, k0=0.15708
+		rb:wrap_variables { l=\l\s cord2arc(l(),s.angle) } -- RBARC
+		printf("l=%.5f, k0=%.5f\n", rb.l, rb.k0) -- l=2.00825, k0=0.15643
+		rb.angle = pi/20 -- update angle
+		printf("l=%.5f, k0=%.5f\n", rb.l, rb.k0) -- l=2.00206, k0=0.07846
 
-The method converts non-\ *callable* attributes into callables automatically to simplify the user-side, i.e. :literal:`l()` can always be used as a *callable* whatever its original form was. At the end, :var:`k0` and :var:`l` are computed values and updating :var:`angle` affects both as expected.
+	The method converts non-\ *callable* attributes into callables automatically to simplify the user-side, i.e. :literal:`l()` can always be used as a *callable* whatever its original form was. At the end, :var:`k0` and :var:`l` are computed values and updating :var:`angle` affects both as expected.
 
 **clear_variables**
 	 A *method*	:literal:`()` returning :literal:`self` after setting all non-private attributes to :const:`nil`.
@@ -518,7 +518,6 @@ Environments
 ------------
 
 The object model allows to transform an object into an environment; in other words, a global workspace for a given context, i.e. scope. Objects-as-environments are managed by the methods :literal:`open_env`, :literal:`close_env`, :literal:`load_env`, :literal:`dump_env` and :func:`is_open_env`.
-
 Things defined in this workspace will be stored in the object, and accessible from outside using the standard ways to access object attributes:
 
 .. code-block::
@@ -554,7 +553,7 @@ The MADX environment is an object that relies on this powerful feature to load M
 	MADX.MQ_K1 = 0.02
 	print(mq.k1)                     -- display: 0.02
 
-Note that MAD-X workspace is case insensitive and everything is "global" (no scope, namespaces), hence the :literal:`quadrupole` element has to be directly available inside the MADX environment. Moreover, the MADX object adds the method :literal:`load` to extend :literal:`load_env` and ease the conversion of MAD-X lattices. For more details see :doc:`MADX <mad_gen_madx>`
+Note that MAD-X workspace is case insensitive and everything is "global" (no scope, namespaces), hence the :literal:`quadrupole` element has to be directly available inside the MADX environment. Moreover, the MADX object adds the method :literal:`load` to extend :literal:`load_env` and ease the conversion of MAD-X lattices. For more details see :doc:`MADX <mad_gen_madx>`.
 
 .. rubric:: Footnotes
 
