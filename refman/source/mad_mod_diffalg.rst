@@ -12,7 +12,7 @@ This chapter describes real :type:`tpsa` and complex :type:`ctpsa` objects as su
 Introduction
 ============
 
-TPSAs are numerical objects representing :math:`n`-th degrees Taylor polynomial approximation of some functions :math:`f(x)` about :math:`x=a`. They are a powerful differential algebra tool for solving physics problems described by differential equations and for `perturbation theory <https://en.wikipedia.org/wiki/Perturbation_theory>`_, e.g. for solving motion equations, but also for estimating uncertainties, modelling multidimensional distributions or calculating multivariate derivatives for optimization. There are often misunderstandings about their accuracy and limitations, so it is useful to clarify here some of these aspects here.
+TPSAs are numerical objects representing :math:`n`-th degrees Taylor polynomial approximation of some functions :math:`f(x)` about :math:`x=a`. They are a powerful differential algebra tool for solving physics problems described by differential equations and for `perturbation theory <https://en.wikipedia.org/wiki/Perturbation_theory>`_, e.g. for solving motion equations, but also for estimating uncertainties, modelling multidimensional distributions or calculating multivariate derivatives for optimization. There are often misunderstandings about their accuracy and limitations, so it is useful to clarify some of these aspects.
 
 To begin with, GTPSAs represent multivariate Taylor series truncated at order :math:`n`, and thus behave like :math:`n`-th degrees multivariate polynomials with coefficients in :math:`\mathbb{R}` or :math:`\mathbb{C}`. MAD-NG supports GTPSAs with thousands of variables and/or parameters of arbitrary order each, up to a maximum total order of 63, but Taylor series with alternating signs in their coefficients can quickly be subject to numerical instabilities and `catastrophic cancellation <https://en.wikipedia.org/wiki/Catastrophic_cancellation>`_ as orders increase.
 
@@ -108,9 +108,9 @@ The following equations show the successive refinement of the type of calculatio
      &\ne \widetilde{\mathcal M}_n(\cdots (\widetilde{\mathcal M}_2 (\widetilde{\mathcal M}_1 (X_0)))\cdots) \\
      &\ne {\cal F}_n(\cdots ({\cal F}_2 ({\cal F}_1 (X_0)))\cdots) 
 
-where :math:`{\mathcal M}_i` is the :math:`i`-th map computed at some *a priori* orbit (zero orbit), :math:`\widetilde{\mathcal M}_i` is the :math:`i`-th map computed at the input orbit :math:`X_{i-1}` which still implies some expansion, and finally :math:`{\mathcal F}_i` is the functional application of the full-fledged physics of the :math:`i`-th map without any intermediate expansion, i.e. without calculating a differential map, and with all the required knownledge including the input orbit :math:`X_{i-1}` to perform the exact calculation.
+where :math:`{\mathcal M}_i` is the :math:`i`-th map computed at some *a priori* orbit (zero orbit), :math:`\widetilde{\mathcal M}_i` is the :math:`i`-th map computed at the input orbit :math:`X_{i-1}` which still implies some expansion, and finally :math:`{\mathcal F}_i` is the functional application of the full-fledged physics of the :math:`i`-th map without any intermediate expansion, i.e. without calculating explicitly an intermediate differential map, and with all the required knownledge including the input orbit :math:`X_{i-1}` to perform the exact calculation.
 
-However, although MAD-NG only performs functional map applications (last right equation above) and never compute element maps or uses TPSAs as interpolation functions, it could be prone to small truncation errors during the computation of the non-linear normal forms which involves the composition of many orbitless maps, potentially breaking symplecticity of the resulting transformation for last order.
+However, although MAD-NG only performs functional map applications (last right equation above) and never compute element maps or uses TPSAs as interpolation functions, it could be prone to small truncation errors during the computation of the non-linear normal forms which involves the composition of many orbitless maps, potentially breaking symplecticity of the resulting transformation for the last order.
 
 The modelling of multidimensional beam distributions is also possible with TPSAs, as when a linear phase space description is provided as initial conditions to the :var:`twiss` command through, e.g. a :var:`beta0` block. Extending the description of the initial phase space with high-order maps allows complex non-linear phase spaces to be modelled and their transformations along the lattice to be captured and analysed.
 
@@ -124,13 +124,13 @@ In principle, TPSAs should have equivalent performance to matrix/tensors for low
    :figwidth: 75%
    :align: center
 
-   Number of coefficients in TPSAs for :math:`\nu` variables at order :math:`n` is :math:`{\scriptstyle\begin{pmatrix} n+\nu \\[-1ex] \nu \end{pmatrix}} = \frac{(n+\nu)!}{n!\nu!}`.
+   Number of coefficients in TPSAs for maps with :math:`\nu` variables at order :math:`n` is :math:`\nu {\scriptstyle\begin{pmatrix} n+\nu \\[-1ex] \nu \end{pmatrix}} = \frac{(n+\nu)!}{n!(\nu-1)!}`.
 
 .. _fig.tensor.size:
 .. figure:: fig/tensor-sizes.png
    :align: center
 
-   Number of coefficients in tensors for :math:`\nu` variables at order :math:`n` is :math:`\sum_{k=0}^n \nu^{k+1} = \frac{\nu(\nu^{n+1}-1)}{\nu-1}`.
+   Number of coefficients in tensors for maps with :math:`\nu` variables at order :math:`n` is :math:`\nu\sum_{k=0}^n \nu^{k+1} = \frac{\nu^2(\nu^{n+1}-1)}{\nu-1}`.
 
 Constructors
 ============
@@ -149,6 +149,71 @@ Iterators
 
 C API
 =====
+
+This C Application Programming Interface describes only the C functions declared in the scripting language and used by the higher level functions and methods presented before in this chapter. For more functions and details, see the C headers. This module introduce also few new C types described hereafter. The :const:`const` :type:`tpsa_t` and :type:`ctpsa_t` are inputs, while the non-:const:`const` :type:`tpsa_t` and :type:`ctpsa_t` are outpouts or are modified *inplace*. 
+
+.. c:type:: desc_t
+
+   The :c:type:`desc_t` type is an `abstract data type <https://en.wikipedia.org/wiki/Abstract_data_type>`_ (ADT) representing the descriptor shared by all real and complex TPSAs with the same internal structure driven by the number of variables and parameters, and their maximum order.
+
+.. c:type:: tpsa_t
+
+   The :c:type:`tpsa_t` type is an ADT representing real :type:
+
+.. c:type:: ctpsa_t
+
+.. c:const:: ord_t mad_tpsa_default
+
+GTPSA
+-----
+
+extern const  ord_t  mad_tpsa_default;
+extern const  ord_t  mad_tpsa_same;
+extern const desc_t *mad_desc_curr;
+
+const desc_t* mad_desc_newv(int nv, ord_t mo_);
+
+// if np == 0, same as mad_desc_newv, otherwise
+// mo = max(1, mo_)
+// po = po_ ? min(mo,po_) : mo
+const desc_t* mad_desc_newvp(int nv, int np, ord_t mo_, ord_t po_);
+
+// mo = max(no[0:nn-1]), nn = nv+np
+// po = np>0 ? min(mo, max(po_, max( no[nv:nn-1] ))) : mo
+const desc_t* mad_desc_newvpo(int nv, int np, const ord_t no[], ord_t po_);
+
+// -- dtor
+void  mad_desc_del    (const desc_t *d);
+
+// -- introspection
+int   mad_desc_getnv  (const desc_t *d, ord_t *mo_, int *np_, ord_t *po_); // return nv
+ord_t mad_desc_getno  (const desc_t *d, int nn, ord_t no_[nn]); // return mo
+ord_t mad_desc_maxord (const desc_t *d); // return mo
+ssz_t mad_desc_maxlen (const desc_t *d); // ordlen(mo) == maxlen
+ssz_t mad_desc_ordlen (const desc_t *d, ord_t mo);
+ord_t mad_desc_gtrunc (const desc_t *d, ord_t to);
+void  mad_desc_info   (const desc_t *d, FILE *fp_);
+
+// -- indexes / monomials
+log_t mad_desc_isvalids  (const desc_t *d, ssz_t n,       str_t s    );
+log_t mad_desc_isvalidm  (const desc_t *d, ssz_t n, const ord_t m [n]);
+log_t mad_desc_isvalidsm (const desc_t *d, ssz_t n, const idx_t m [n]);
+idx_t mad_desc_idxs      (const desc_t *d, ssz_t n,       str_t s    );
+idx_t mad_desc_idxm      (const desc_t *d, ssz_t n, const ord_t m [n]);
+idx_t mad_desc_idxsm     (const desc_t *d, ssz_t n, const idx_t m [n]);
+idx_t mad_desc_nxtbyvar  (const desc_t *d, ssz_t n,       ord_t m [n]);
+idx_t mad_desc_nxtbyord  (const desc_t *d, ssz_t n,       ord_t m [n]);
+ord_t mad_desc_mono      (const desc_t *d, ssz_t n,       ord_t m_[n], idx_t i);
+
+// global cleanup (warning: no GTSPA must still be in use!)
+void  mad_desc_cleanup(void);
+
+
+TPSA
+----
+
+CTPSA
+-----
 
 .. ---------------------------------------
 
