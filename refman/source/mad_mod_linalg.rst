@@ -171,11 +171,11 @@ Getters and Setters
 
    Assign the value :var:`v` to the element at the vector index :var:`n` of the real, complex or integer matrix :var:`mat` for :expr:`1 <= n <= #mat` and return the matrix, i.e. interpreting the matrix as a vector, otherwise raise an *"index out of bounds"* error.
 
-.. function:: mat:getvec (ij, r_)
+.. function:: mat:getvec (ij_, r_)
 
-   Return a column vector or :var:`r` containing the values of the elements at the vector indexes given by the :type:`iterable` :var:`ij` of the real, complex or integer matrix :var:`mat`, i.e. interpreting the matrix as a vector.
+   Return a column vector or :var:`r` containing the values of the elements at the vector indexes given by the :type:`iterable` :var:`ij` of the real, complex or integer matrix :var:`mat`, i.e. interpreting the matrix as a vector. Default: :expr:`ij_ = 1..#mat`.
 
-.. function:: mat:setvec (ij, a, p_, s_)
+.. function:: mat:setvec (ij_, a, p_, s_)
 
    Return the real, complex or integer matrix :var:`mat` after filling the elements at the vector indexes given by the :type:`iterable` :var:`ij`, i.e. interpreting the matrix as a vector, with the values given by :var:`a` depending of its kind:
 
@@ -184,6 +184,8 @@ Getters and Setters
    - if :var:`a` is an :type:`iterable` then the matrix will be filled with values from :var:`a[n]` for :expr:`1 <= n <= #a` and recycled repetitively if :expr:`#a < #ij`.
 
    - if :var:`a` is a :type:`callable`, then :var:`a` is considered as a *stateless iterator*, and the matrix will be filled with the values :var:`v` returned by iterating :expr:`s, v = a(p, s)`.
+
+   Default: :expr:`ij_ = 1..#mat`.
 
 .. function:: mat:insvec (ij, a)
 
