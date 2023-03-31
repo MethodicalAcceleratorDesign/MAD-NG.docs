@@ -7,12 +7,12 @@
 Differential Algebra
 ********************
 
-This chapter describes real :type:`tpsa` and complex :type:`ctpsa` objects as supported by MAD-NG. The module for the Generalized Truncated Power Series Algebra (GTPSA) that represents parametric multivariate truncated `Taylor series <https://en.wikipedia.org/wiki/Taylor_series>`_ is not exposed, only the contructors are visible from the :mod:`MAD` environment and thus, TPSAs are handled directly by their methods or by the generic functions of the same name from the module :mod:`MAD.gmath`. Note that both :type:`tpsa` and :type:`ctpsa` are defined as C structure for direct compliance with the C API.
+This chapter describes real :type:`tpsa` and complex :type:`ctpsa` objects as supported by MAD-NG. The module for the `Generalized Truncated Power Series Algebra <https://accelconf.web.cern.ch/ipac2015/papers/mopje039.pdf>`_ [GTPSA]_ that represents parametric multivariate truncated `Taylor series <https://en.wikipedia.org/wiki/Taylor_series>`_ is not exposed, only the contructors are visible from the :mod:`MAD` environment and thus, TPSAs are handled directly by their methods or by the generic functions of the same name from the module :mod:`MAD.gmath`. Note that both :type:`tpsa` and :type:`ctpsa` are defined as C structure for direct compliance with the C API.
 
 Introduction
 ============
 
-TPSAs are numerical objects representing :math:`n`-th degrees Taylor polynomial approximation of some functions :math:`f(x)` about :math:`x=a`. They are a powerful differential algebra tool for solving physics problems described by differential equations and for `perturbation theory <https://en.wikipedia.org/wiki/Perturbation_theory>`_, e.g. for solving motion equations, but also for estimating uncertainties, modelling multidimensional distributions or calculating multivariate derivatives for optimization. There are often misunderstandings about their accuracy and limitations, so it is useful to clarify some of these aspects.
+TPSAs are numerical objects representing :math:`n`-th degrees Taylor polynomial approximation of some functions :math:`f(x)` about :math:`x=a`. They are a powerful differential algebra tool for solving physics problems described by differential equations and for `perturbation theory <https://en.wikipedia.org/wiki/Perturbation_theory>`_, but also for estimating uncertainties, modelling multidimensional distributions or calculating multivariate derivatives for optimization. There are often misunderstandings about their accuracy and limitations, so it is useful to clarify some of these aspects.
 
 To begin with, GTPSAs represent multivariate Taylor series truncated at order :math:`n`, and thus behave like :math:`n`-th degrees multivariate polynomials with coefficients in :math:`\mathbb{R}` or :math:`\mathbb{C}`. MAD-NG supports GTPSAs with thousands of variables and/or parameters of arbitrary order each, up to a maximum total order of 63, but Taylor series with alternating signs in their coefficients can quickly be subject to numerical instabilities and `catastrophic cancellation <https://en.wikipedia.org/wiki/Catastrophic_cancellation>`_ as orders increase.
 
@@ -51,7 +51,7 @@ for some :math:`\xi` strictly between :math:`x` and :math:`a`, leading to the me
 .. math::
    f_a(x) = T_f^n(x ; a) + R_f^n(x ; a) = \sum_{k=0}^{n} \frac{f_{a}^{(k)}}{k!}(x-a)^k + \frac{f^{(n+1)}_a(\xi)}{(n+1)!} (x-a)^{n+1}
 
-Note that a large radius of convergence does not necessarily mean rapid convergence of the Taylor series to the function, although there is a relationship between the rate of convergence, the function :math:`f`, the point :math:`a` and the length :math:`h`. Nevertheless, Taylor series are known to be slow to converge in most cases for numerical applications, except in some cases where appropriate range reduction or `convergence acceleration <https://en.wikipedia.org/wiki/Series_acceleration>`_ methods give good results. Thus, Taylor series should not be used as interpolation functions when better formulas exist for this purpose, see for example fixed-point or `minmax <https://en.wikipedia.org/wiki/Minimax_approximation_algorithm>`_ algorithms.
+Note that a large radius of convergence does not necessarily mean rapid convergence of the Taylor series to the function, although there is a relationship between the rate of convergence, the function :math:`f`, the point :math:`a` and the length :math:`h`. Nevertheless, Taylor series are known to be slow to converge in most cases for numerical applications, except in some cases where appropriate range reduction or `convergence acceleration <https://en.wikipedia.org/wiki/Series_acceleration>`_ methods give good results. Thus, Taylor series should not be used as interpolation functions when better formulas exist for this purpose, see for example fixed-point or `minmax <https://en.wikipedia.org/wiki/Minimax_approximation_algorithm>`_ algorithms. But in our case, Taylor series are never used as interpolation functions and this point is therefore secondary.
 
 In our practice, a truncation error is always present due to the truncated nature of the TPSA at order :math:`n`, but it is rarely calculated analytically for complex systems as it can be estimated by comparing the calculations at high and low orders, and determining the lowest order for which the result is sufficiently stable.
 
@@ -72,12 +72,12 @@ The generalization to a TPSA of :math:`\nu` variables :math:`X` at order :math:`
 
 where the term :math:`\begin{pmatrix}k \\ \vec{m}\end{pmatrix} = \frac{k!}{c_1!\,c_2!..c_{\nu}!}` is the `multinomial coefficient <https://en.wikipedia.org/wiki/Multinomial_theorem>`_ with :math:`\vec{m}` the vector of :math:`\nu` variables orders :math:`c_i, i=1..\nu` in the monomial and :math:`|\vec{m}| = \sum_i c_i` its total order. Again, we may mention that each term :math:`\frac{1}{k!} \begin{pmatrix}k \\ \vec{m}\end{pmatrix} \frac{\partial^k f}{\partial X^{\vec{m}}}\bigg\rvert_{A}` corresponds strictly to a coefficient stored in the :type:`tpsa` and :type:`ctpsa` objects.
 
-An important point to mention is related to the *multinomial coefficient* and its relevance when computing physical quantities such as high order anharmonicities, e.g. chromaticities. When the physical quantity corresponds to the derivative of the function :math:`f^{(k)}_A`, the coefficient must be multiplied by :math:`c_1!\,c_2!\,..c_{\nu}!` in order to obtain the correct value.
+An important point to mention here is related to the *multinomial coefficient* and its relevance when computing physical quantities such as high order anharmonicities, e.g. chromaticities. When the quantity sought corresponds to the derivative of the function :math:`f^{(k)}_A`, the coefficient must be multiplied by :math:`c_1!\,c_2!\,..c_{\nu}!` in order to obtain the correct value.
 
 Approximation
 -------------
 
-As already said, TPSAs do not perform approximations for orders :math:`0\,..n` and the Taylor's theorem gives an explicit form of the remainder for the truncation error of higher orders, while all derivatives are computed using AD. AD relies on the fact that any computer program can execute a sequence of elementary arithmetic operations and functions, and apply the chain rule to them repeatedly to automatically compute the derivatives to machine precision.
+As already said, the TPSAs themselves do not perform approximations for orders :math:`0\,..n` and the Taylor's theorem gives an explicit form of the remainder for the truncation error of higher orders, while all derivatives are computed using AD. AD relies on the fact that any computer program can execute a sequence of elementary arithmetic operations and functions, and apply the chain rule to them repeatedly to automatically compute the derivatives to machine precision.
 
 So when TPSAs introduce appromixation errors? When they are used as *interpolation functions* to approximate by substitution or perturbation, values at positions :math:`a+h` away from their initial point :math:`a`:
 
@@ -98,7 +98,7 @@ Application
 
 MAD-NG is a tracking code that never composes elements maps during tracking, but performs a *functional application* of elements physics to user-defined input differential maps modelled as sets of TPSAs (one per variable). Tracking particles orbits is a specific case where the "differential" maps are of order 0, i.e. they contain only the scalar part of the maps and no derivatives. Therefore, TPSAs must also behave as scalars in polymorphic codes like MAD-NG, so that the same equations of motion can be applied by the same functions to particle orbits and differential maps. Thus, the :var:`track` command, and by extension the :var:`cofind` (closed orbit search) and :var:`twiss` commands, never use TPSAs as interpolation functions and the results are as accurate as for tracking particles orbits. In particular, it preserves the symplectic structure of the phase space if the applied elements maps are themselves `symplectic maps <https://en.wikipedia.org/wiki/Symplectomorphism>`_.
 
-Users may be tempted to compute or compose elements maps to model whole elements or even large lattice sections before applying them to some input differential maps in order to speed up tracking or parallelise computations. But this approach leads to the two types of approximations that we have just explained: the resulting map is not only truncated, thus loosing local feed-down effects implied by e.g. a translation from orbit :math:`x` to :math:`x+h(s)` along the path :math:`s` or equivalently by the misalignment of the elements, but the derivatives are also approximated for each particle orbit by the global composition calculated on a nearby orbit, typically the zero orbit. So as the addition of floating point numbers is not associative, the composition of truncated maps is not associative too.
+Users may be tempted to compute or compose elements maps to model whole elements or even large lattice sections before applying them to some input differential maps in order to speed up tracking or parallelise computations. But this approach leads to the two types of approximations that we have just explained: the resulting map is not only truncated, thus loosing local feed-down effects implied by e.g. a translation from orbit :math:`x` to :math:`x+h(s)` along the path :math:`s` or equivalently by the misalignment of the elements, but the derivatives are also approximated for each particle orbit by the global composition calculated on a nearby orbit, typically the zero orbit like in MAD-X. So as the addition of floating point numbers is not associative, the composition of truncated maps is not associative too.
 
 The following equations show the successive refinement of the type of calculations performed by the tracking codes, starting from the worst but common approximations at the top-left to the more general and accurate functional application without approximation at the bottom-right, as computed by MAD-NG:
 
@@ -112,7 +112,7 @@ where :math:`{\mathcal M}_i` is the :math:`i`-th map computed at some *a priori*
 
 However, although MAD-NG only performs functional map applications (last right equation above) and never compute element maps or uses TPSAs as interpolation functions, it could be prone to small truncation errors during the computation of the non-linear normal forms which involves the composition of many orbitless maps, potentially breaking symplecticity of the resulting transformation for the last order.
 
-The modelling of multidimensional beam distributions is also possible with TPSAs, as when a linear phase space description is provided as initial conditions to the :var:`twiss` command through, e.g. a :var:`beta0` block. Extending the description of the initial phase space with high-order maps allows complex non-linear phase spaces to be modelled and their transformations along the lattice to be captured and analysed.
+The modelling of multidimensional beam distributions is also possible with TPSAs, such as when a linear phase space description is provided as initial conditions to the :var:`twiss` command through, e.g. a :var:`beta0` block or, even better, a complete high-order map. Extending the description of the initial phase space with high-order maps allows complex non-linear phase spaces to be modelled and their transformations along the lattice to be scrutinized and analysed.
 
 Performance
 -----------
@@ -131,6 +131,29 @@ In principle, TPSAs should have equivalent performance to matrix/tensors for low
    :align: center
 
    Number of coefficients in tensors for maps with :math:`\nu` variables at order :math:`n` is :math:`\nu\sum_{k=0}^n \nu^{k+1} = \frac{\nu^2(\nu^{n+1}-1)}{\nu-1}`.
+
+Types promotion
+===============
+
+The TPSA operations may involve other data types like real and complex numbers leading to many combinations of types. In order to simplify the descriptions, the generic names :var:`num`, :var:`cpx` and :var:`idx` (indexes) are used for real, complex and integer numbers respectively, and :var:`tpsa` and :var:`ctpsa` for real and complex TPSA respectively. For example, the sum of a complex number :var:`cpx` and a real TPSA :var:`tpsa` gives a complex TPSA :var:`ctpsa`. The case of :var:`idx` means that a :type:`number` will be interpreted as an index and automatically rounded if it does not hold an integer value. The following table summarizes all valid combinations of types for binary operations involving at least one TPSA type:
+
+=================  ==================  ===============
+Left Operand Type  Right Operand Type  Result Type
+=================  ==================  ===============
+:type:`number`     :type:`tpsa`        :type:`tpsa` 
+:type:`tpsa`       :type:`number`      :type:`tpsa`  
+:type:`tpsa`       :type:`tpsa`        :type:`tpsa`  
+                                       
+:type:`number`     :type:`ctpsa`       :type:`ctpsa`
+:type:`complex`    :type:`tpsa`        :type:`ctpsa` 
+:type:`complex`    :type:`ctpsa`       :type:`ctpsa`
+:type:`tpsa`       :type:`complex`     :type:`ctpsa`
+:type:`tpsa`       :type:`ctpsa`       :type:`ctpsa`
+:type:`ctpsa`      :type:`number`      :type:`ctpsa`  
+:type:`ctpsa`      :type:`complex`     :type:`ctpsa`
+:type:`ctpsa`      :type:`tpsa`        :type:`ctpsa`  
+:type:`ctpsa`      :type:`ctpsa`       :type:`ctpsa`
+=================  ==================  ===============
 
 Constructors
 ============
@@ -154,68 +177,537 @@ This C Application Programming Interface describes only the C functions declared
 
 .. c:type:: desc_t
 
-   The :c:type:`desc_t` type is an `abstract data type <https://en.wikipedia.org/wiki/Abstract_data_type>`_ (ADT) representing the descriptor shared by all real and complex TPSAs with the same internal structure driven by the number of variables and parameters, and their maximum order.
+   The :c:type:`desc_t` type is an `abstract data type <https://en.wikipedia.org/wiki/Abstract_data_type>`_ (ADT) representing the descriptor shared by all real and complex TPSAs with the same internal structure driven by the number of variables and parameters, and their maximum order(s).
 
 .. c:type:: tpsa_t
 
-   The :c:type:`tpsa_t` type is an ADT representing real :type:
+   The :c:type:`tpsa_t` type is an ADT representing GTPSA with real coefficients of type :c:type:`num_t`.
 
 .. c:type:: ctpsa_t
 
-.. c:const:: ord_t mad_tpsa_default
+   The :c:type:`ctpsa_t` type is an ADT representing GTPSA with complex coefficients of type :c:type:`cpx_t`.
 
-GTPSA
------
+Descriptors
+-----------
 
-extern const  ord_t  mad_tpsa_default;
-extern const  ord_t  mad_tpsa_same;
-extern const desc_t *mad_desc_curr;
+.. constant:: const ord_t mad_tpsa_default
 
-const desc_t* mad_desc_newv(int nv, ord_t mo_);
+   A special constant to use in place of :var:`mo` in TPSA constructors to specify the default maximum order of the descriptor used to build the new TPSA.
+ 
+.. constant:: const ord_t mad_tpsa_same
 
-// if np == 0, same as mad_desc_newv, otherwise
-// mo = max(1, mo_)
-// po = po_ ? min(mo,po_) : mo
-const desc_t* mad_desc_newvp(int nv, int np, ord_t mo_, ord_t po_);
+   A special constant to use in place of :var:`mo` in TPSA constructors to specify the same order as the current TPSA used to build the new TPSA.
 
-// mo = max(no[0:nn-1]), nn = nv+np
-// po = np>0 ? min(mo, max(po_, max( no[nv:nn-1] ))) : mo
-const desc_t* mad_desc_newvpo(int nv, int np, const ord_t no[], ord_t po_);
+.. constant:: const desc_t *mad_desc_curr
 
-// -- dtor
-void  mad_desc_del    (const desc_t *d);
+   A pointer to the current default descriptor. Each new built descriptor becomes auomatically the new default descriptor that can be used to create new TPSA without specifying a descriptor. 
 
-// -- introspection
-int   mad_desc_getnv  (const desc_t *d, ord_t *mo_, int *np_, ord_t *po_); // return nv
-ord_t mad_desc_getno  (const desc_t *d, int nn, ord_t no_[nn]); // return mo
-ord_t mad_desc_maxord (const desc_t *d); // return mo
-ssz_t mad_desc_maxlen (const desc_t *d); // ordlen(mo) == maxlen
-ssz_t mad_desc_ordlen (const desc_t *d, ord_t mo);
-ord_t mad_desc_gtrunc (const desc_t *d, ord_t to);
-void  mad_desc_info   (const desc_t *d, FILE *fp_);
+.. -- ctor
 
-// -- indexes / monomials
-log_t mad_desc_isvalids  (const desc_t *d, ssz_t n,       str_t s    );
-log_t mad_desc_isvalidm  (const desc_t *d, ssz_t n, const ord_t m [n]);
-log_t mad_desc_isvalidsm (const desc_t *d, ssz_t n, const idx_t m [n]);
-idx_t mad_desc_idxs      (const desc_t *d, ssz_t n,       str_t s    );
-idx_t mad_desc_idxm      (const desc_t *d, ssz_t n, const ord_t m [n]);
-idx_t mad_desc_idxsm     (const desc_t *d, ssz_t n, const idx_t m [n]);
-idx_t mad_desc_nxtbyvar  (const desc_t *d, ssz_t n,       ord_t m [n]);
-idx_t mad_desc_nxtbyord  (const desc_t *d, ssz_t n,       ord_t m [n]);
-ord_t mad_desc_mono      (const desc_t *d, ssz_t n,       ord_t m_[n], idx_t i);
+.. c:function:: const desc_t* mad_desc_newv(int nv, ord_t mo)
 
-// global cleanup (warning: no GTSPA must still be in use!)
-void  mad_desc_cleanup(void);
+   Return a descriptor suitable for handling GTPSAs with :var:`nv` variables of :var:`mo` maximum order.
 
+.. c:function:: const desc_t* mad_desc_newvp(int nv, ord_t mo, int np_, ord_t po_)
 
-TPSA
-----
+   Return a descriptor suitable for handling GTPSAs with :var:`nv` variables of :var:`mo` maximum order and :var:`np` parameters of :var:`po` maximum order. If :expr:`np = 0`, it is equivalent to :func:`mad_desc_newv`.
 
-CTPSA
------
+.. c:function:: const desc_t* mad_desc_newvpo(int nv, ord_t mo_, int np_, ord_t po_, const ord_t no_[])
 
-.. ---------------------------------------
+   Return a descriptor suitable for handling GTPSAs with :var:`nv` variables of :var:`mo` maximum order and :var:`np` parameters of :var:`po` maximum order. 
+   The extra array allows to specify the maximum order of each parameters and variables individually. If :expr:`no = null`, it is equivalent to :func:`mad_desc_newvp`.
+
+.. -- dtor
+
+.. c:function:: void mad_desc_del (const desc_t *d)
+
+   Destroy the descriptor pointed by :var:`d`, assuming that no more GTPSAs belong to this descriptor in memory, see also the function :func:`mad_desc_cleanup`. *It is the user's responsibility to ensure that this constraint is satisfied, as the library does not keep track of allocated GTPSAs*.
+
+.. -- introspection
+
+.. c:function:: int mad_desc_getnv (const desc_t *d, ord_t *mo_, int *np_, ord_t *po_)
+
+   Return the number of variables :var:`nv` and optionally their maximum order :var:`mo`, the number of parameters :var:`np` and the their maximum order :var:`po`. 
+
+.. c:function:: ord_t mad_desc_maxord (const desc_t *d, int nn, ord_t no_[nn])
+
+   Return the maximum order :var:`mo` and the maximum order for each variable and parameter in :var:`no`.
+
+.. c:function:: ssz_t mad_desc_maxlen (const desc_t *d, ord_t mo)
+
+   Return the number of coeffients stored, e.g. in an array, by a GTPSA belonging to :var:`d` up to the order :var:`mo`. If :expr:`mo = mad_tpsa_default`, the maximum order is used for :var:`mo`.
+
+.. c:function:: ord_t mad_desc_gtrunc (const desc_t *d, ord_t to)
+
+   Return the current global truncation order of the descriptor :var:`d` and replace it with the new order :var:`to`. The truncation order limits the order of all calculations performed on the GTPSAs that belong to this descriptor.
+
+.. -- indexes / monomials
+
+.. c:function:: log_t mad_desc_isvalids (const desc_t *d, ssz_t n, str_t s)
+                log_t mad_desc_isvalidm (const desc_t *d, ssz_t n, const ord_t m[n])
+                log_t mad_desc_isvalidsm (const desc_t *d, ssz_t n, const idx_t m[n])
+
+   Return :const:`TRUE` if the monomial passed as argument in the string :var:`s` or in the (sparse) monomial :var:`m` is a valid monomial for the descriptor :var:`d`.
+
+.. c:function:: idx_t mad_desc_idxs (const desc_t *d, ssz_t n, str_t s)
+                idx_t mad_desc_idxm (const desc_t *d, ssz_t n, const ord_t m[n])
+                idx_t mad_desc_idxsm (const desc_t *d, ssz_t n, const idx_t m[n])
+
+   Return the index of the coefficient specified by the monomial passed as argument in the string :var:`s` or in the (sparse) monomial :var:`m` for the descriptor :var:`d`.
+
+.. c:function:: idx_t mad_desc_nxtbyvar (const desc_t *d, ssz_t n, ord_t m[n])
+
+   Return the index of the coefficient next to the monomial :var:`m` of length :var:`n` when increasing order by *variable order*, and update the monomial inplace.
+
+.. c:function:: idx_t mad_desc_nxtbyord (const desc_t *d, ssz_t n, ord_t m[n])
+
+   Return the index of the coefficient next to the monomial :var:`m` of length :var:`n` when increasing order by *homogeneous order*, and update the monomial inplace.
+
+.. c:function:: ord_t mad_desc_mono (const desc_t *d, idx_t i, ssz_t n, ord_t m_[n])
+
+   Return the order of the monomial at index :var:`i` and copy the variables and parameters orders into array :var:`m` up to length :var:`n` if provided.
+
+.. // for debugging
+
+.. c:function:: void  mad_desc_info (const desc_t *d, FILE *fp_)
+
+   Print some information stored in the header of the descriptor :var:`d` to the file :var:`fp` for debugging purpose. Default: :expr:`fp_ = stdout`.
+
+.. // global cleanup (warning: no GTSPA must still be in use!)
+
+.. c:function:: void  mad_desc_cleanup(void)
+
+   Destroy all the descriptors created since the start of the application or the last call to this function. A maximum of a 100 descriptors with different GTPSA structures can be created and used simultaneously. *It is the user's responsibility to ensure that no GTPSAs exist in memory, as the library does not keep track of allocated GTPSAs*.
+
+TPSA and CTPSA
+--------------
+
+.. // ctors, dtor, shape
+.. c:function:: tpsa_t* mad_tpsa_newd (const desc_t *d, ord_t mo)
+                ctpsa_t* mad_ctpsa_newd (const desc_t *d, ord_t mo)
+
+.. c:function:: tpsa_t* mad_tpsa_new (const tpsa_t *t, ord_t mo)
+                ctpsa_t* mad_ctpsa_new (const ctpsa_t *t, ord_t mo)
+
+.. c:function:: void mad_tpsa_del (const tpsa_t *t)
+                void mad_ctpsa_del (const ctpsa_t *t)
+
+   Destroy the TPSA pointed by :var:`t`.
+
+.. // introspection
+.. c:function:: const desc_t* mad_tpsa_desc (const tpsa_t *t)
+                const desc_t* mad_ctpsa_desc (const ctpsa_t *t)
+
+.. c:function:: int32_t mad_tpsa_uid (tpsa_t *t, int32_t uid_)
+                int32_t mad_ctpsa_uid (ctpsa_t *t, int32_t uid_)
+
+.. c:function:: ssz_t mad_tpsa_len (const tpsa_t *t)
+                ssz_t mad_ctpsa_len (const ctpsa_t *t)
+
+.. c:function:: str_t mad_tpsa_nam (const tpsa_t *t)
+                str_t mad_ctpsa_nam (const ctpsa_t *t)
+
+.. c:function:: ord_t mad_tpsa_ord (const tpsa_t *t)
+                ord_t mad_ctpsa_ord (const ctpsa_t *t)
+
+.. c:function:: ord_t mad_tpsa_ordv (const tpsa_t *t, ...)
+                ord_t mad_ctpsa_ordv (const ctpsa_t *t, ...)
+
+.. c:function:: ord_t mad_tpsa_ordn (ssz_t n, const tpsa_t *t[n])
+                ord_t mad_ctpsa_ordn (ssz_t n, const ctpsa_t *t[n])
+
+.. // initialization
+.. c:function:: void mad_tpsa_copy (const tpsa_t *t, tpsa_t *r)
+                void mad_ctpsa_copy (const ctpsa_t *t, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_sclord (const tpsa_t *t, tpsa_t *r, log_t inv)
+                void mad_ctpsa_sclord (const ctpsa_t *t, ctpsa_t *r, log_t inv)
+
+.. c:function:: void mad_tpsa_getord (const tpsa_t *t, tpsa_t *r, ord_t ord)
+                void mad_ctpsa_getord (const ctpsa_t *t, ctpsa_t *r, ord_t ord)
+
+.. c:function:: void mad_tpsa_cutord (const tpsa_t *t, tpsa_t *r, int ord)
+                void mad_ctpsa_cutord (const ctpsa_t *t, ctpsa_t *r, int ord)
+
+.. c:function:: idx_t mad_tpsa_maxord (const tpsa_t *t, ssz_t n, idx_t idx_[n])
+                idx_t mad_ctpsa_maxord (const ctpsa_t *t, ssz_t n, idx_t idx_[n])
+
+.. c:function:: void mad_tpsa_convert (const tpsa_t *t, tpsa_t *r, ssz_t n, idx_t t2r_[n], int pb)
+                void mad_ctpsa_convert (const ctpsa_t *t, ctpsa_t *r, ssz_t n, idx_t t2r_[n], int pb)
+
+.. c:function:: void mad_tpsa_setvar (tpsa_t *t, num_t v, idx_t iv_, num_t scl_)
+                void mad_ctpsa_setvar (ctpsa_t *t, cpx_t v, idx_t iv_, cpx_t scl_)
+                void mad_ctpsa_setvar_r (ctpsa_t *t, num_t v_re, num_t v_im, idx_t iv_, num_t scl_re_, num_t scl_im_)
+
+.. c:function:: void mad_tpsa_setnam (tpsa_t *t, str_t nam)
+                void mad_ctpsa_setnam (ctpsa_t *t, str_t nam)
+
+.. c:function:: void mad_tpsa_clear (tpsa_t *t)
+                void mad_ctpsa_clear (ctpsa_t *t)
+
+.. c:function:: log_t mad_tpsa_isnul (const tpsa_t *t)
+                log_t mad_ctpsa_isnul (const ctpsa_t *t)
+
+.. // indexing / monomials (return idx_t = -1 if invalid)
+.. c:function:: ord_t mad_tpsa_mono (const tpsa_t *t, idx_t i, ssz_t n, ord_t m_[n])
+                ord_t mad_ctpsa_mono (const ctpsa_t *t, idx_t i, ssz_t n, ord_t m_[n])
+
+.. c:function:: idx_t mad_tpsa_idxs (const tpsa_t *t, ssz_t n, str_t s)
+                idx_t mad_ctpsa_idxs (const ctpsa_t *t, ssz_t n, str_t s)
+
+.. c:function:: idx_t mad_tpsa_idxm (const tpsa_t *t, ssz_t n, const ord_t m[n])
+                idx_t mad_ctpsa_idxm (const ctpsa_t *t, ssz_t n, const ord_t m[n])
+
+.. c:function:: idx_t mad_tpsa_idxsm (const tpsa_t *t, ssz_t n, const int m[n])
+                idx_t mad_ctpsa_idxsm (const ctpsa_t *t, ssz_t n, const int m[n])
+
+.. c:function:: idx_t mad_tpsa_cycle (const tpsa_t *t, idx_t i, ssz_t n, ord_t m_[n], num_t *v_)
+                idx_t mad_ctpsa_cycle (const ctpsa_t *t, idx_t i, ssz_t n, ord_t m_[n], cpx_t *v_)
+
+.. // accessors
+.. c:function:: num_t mad_tpsa_get0 (const tpsa_t *t)
+                cpx_t mad_ctpsa_get0 (const ctpsa_t *t)
+                void  mad_ctpsa_get0_r (const ctpsa_t *t, cpx_t *r)
+
+.. c:function:: num_t mad_tpsa_geti (const tpsa_t *t, idx_t i)
+                cpx_t mad_ctpsa_geti (const ctpsa_t *t, idx_t i)
+                void  mad_ctpsa_geti_r (const ctpsa_t *t, idx_t i, cpx_t *r)
+
+.. c:function:: num_t mad_tpsa_gets (const tpsa_t *t, ssz_t n, str_t s)
+                cpx_t mad_ctpsa_gets (const ctpsa_t *t, ssz_t n, str_t s)
+                void  mad_ctpsa_gets_r (const ctpsa_t *t, ssz_t n, str_t s, cpx_t *r)
+
+.. c:function:: num_t mad_tpsa_getm (const tpsa_t *t, ssz_t n, const ord_t m[n])
+                cpx_t mad_ctpsa_getm (const ctpsa_t *t, ssz_t n, const ord_t m[n])
+                void  mad_ctpsa_getm_r (const ctpsa_t *t, ssz_t n, const ord_t m[n], cpx_t *r)
+
+.. c:function:: num_t mad_tpsa_getsm (const tpsa_t *t, ssz_t n, const int m[n])
+                cpx_t mad_ctpsa_getsm (const ctpsa_t *t, ssz_t n, const int   m[n])
+                void  mad_ctpsa_getsm_r (const ctpsa_t *t, ssz_t n, const int m[n], cpx_t *r)
+
+.. c:function:: void mad_tpsa_set0 (tpsa_t *t, num_t a, num_t b)
+                void mad_ctpsa_set0 (ctpsa_t *t, cpx_t a, cpx_t b)
+                void mad_ctpsa_set0_r (ctpsa_t *t, num_t a_re, num_t a_im, num_t b_re, num_t b_im)
+
+.. c:function:: void mad_tpsa_seti (tpsa_t *t, idx_t i, num_t a, num_t b)
+                void mad_ctpsa_seti (ctpsa_t *t, idx_t i, cpx_t a, cpx_t b)
+                void mad_ctpsa_seti_r (ctpsa_t *t, idx_t i, num_t a_re, num_t a_im, num_t b_re, num_t b_im)
+
+.. c:function:: void mad_tpsa_sets (tpsa_t *t, ssz_t n, str_t s, num_t a, num_t b)
+                void mad_ctpsa_sets (ctpsa_t *t, ssz_t n, str_t s, cpx_t a, cpx_t b)
+                void mad_ctpsa_sets_r (ctpsa_t *t, ssz_t n, str_t s, num_t a_re, num_t a_im, num_t b_re, num_t b_im)
+
+.. c:function:: void mad_tpsa_setm (tpsa_t *t, ssz_t n, const ord_t m[n], num_t a, num_t b)
+                void mad_ctpsa_setm (ctpsa_t *t, ssz_t n, const ord_t m[n], cpx_t a, cpx_t b)
+                void mad_ctpsa_setm_r (ctpsa_t *t, ssz_t n, const ord_t m[n], num_t a_re, num_t a_im, num_t b_re, num_t b_im)
+
+.. c:function:: void mad_tpsa_setsm (tpsa_t *t, ssz_t n, const int m[n], num_t a, num_t b)
+                void mad_ctpsa_setsm (ctpsa_t *t, ssz_t n, const int   m[n], cpx_t a, cpx_t b)
+                void mad_ctpsa_setsm_r (ctpsa_t *t, ssz_t n, const int m[n], num_t a_re, num_t a_im, num_t b_re, num_t b_im)
+
+.. // accessors vector based
+.. c:function:: void mad_tpsa_getv (const tpsa_t *t, idx_t i, ssz_t n, num_t v[n])
+                void mad_ctpsa_getv (const ctpsa_t *t, idx_t i, ssz_t n, cpx_t v[n])
+
+.. c:function:: void mad_tpsa_setv (tpsa_t *t, idx_t i, ssz_t n, const num_t v[n])
+                void mad_ctpsa_setv (ctpsa_t *t, idx_t i, ssz_t n, const cpx_t v[n])
+
+.. // operators
+.. c:function:: log_t mad_tpsa_equ (const tpsa_t *a, const tpsa_t *b, num_t tol_)
+                log_t mad_ctpsa_equ (const ctpsa_t *a, const ctpsa_t *b, num_t tol_)
+                log_t mad_ctpsa_equt (const ctpsa_t *a, const  tpsa_t *b, num_t tol)
+
+.. c:function:: void mad_tpsa_dif (const tpsa_t *a, const tpsa_t *b, tpsa_t *c)
+                void mad_ctpsa_dif (const ctpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_dift (const ctpsa_t *a, const  tpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_tdif (const  tpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_add (const tpsa_t *a, const tpsa_t *b, tpsa_t *c)
+                void mad_ctpsa_add (const ctpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_addt (const ctpsa_t *a, const  tpsa_t *b, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_sub (const tpsa_t *a, const tpsa_t *b, tpsa_t *c)
+                void mad_ctpsa_sub (const ctpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_subt (const ctpsa_t *a, const  tpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_tsub (const  tpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_mul (const tpsa_t *a, const tpsa_t *b, tpsa_t *c)
+                void mad_ctpsa_mul (const ctpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_mult (const ctpsa_t *a, const  tpsa_t *b, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_div (const tpsa_t *a, const tpsa_t *b, tpsa_t *c)
+                void mad_ctpsa_div (const ctpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_divt (const ctpsa_t *a, const  tpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_tdiv (const  tpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_pow (const tpsa_t *a, const tpsa_t *b, tpsa_t *c)
+                void mad_ctpsa_pow (const ctpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_powt (const ctpsa_t *a, const  tpsa_t *b, ctpsa_t *c)
+                void mad_ctpsa_tpow (const  tpsa_t *a, const ctpsa_t *b, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_powi (const tpsa_t *a, int n, tpsa_t *c)
+                void mad_tpsa_pown (const tpsa_t *a, num_t v, tpsa_t *c)
+                void mad_ctpsa_powi (const ctpsa_t *a, int n, ctpsa_t *c)
+                void mad_ctpsa_pown (const ctpsa_t *a, cpx_t v, ctpsa_t *c)
+                void mad_ctpsa_pown_r (const ctpsa_t *a, num_t v_re, num_t v_im, ctpsa_t *c)
+
+.. // functions
+.. c:function:: num_t mad_tpsa_nrm (const tpsa_t *a)
+                num_t mad_ctpsa_nrm (const ctpsa_t *a)
+
+.. c:function:: void mad_tpsa_abs (const tpsa_t *a, tpsa_t *c)
+
+.. c:function:: void mad_tpsa_sqrt (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_sqrt (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_exp (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_exp (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_log (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_log (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_sincos (const tpsa_t *a, tpsa_t *s, tpsa_t *c)
+                void mad_ctpsa_sincos (const ctpsa_t *a, ctpsa_t *s, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_sin (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_sin (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_cos (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_cos (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_tan (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_tan (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_cot (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_cot (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_sinc (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_sinc (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_sincosh (const tpsa_t *a, tpsa_t *s, tpsa_t *c)
+                void mad_ctpsa_sincosh (const ctpsa_t *a, ctpsa_t *s, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_sinh (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_sinh (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_cosh (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_cosh (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_tanh (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_tanh (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_coth (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_coth (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_sinhc (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_sinhc (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_asin (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_asin (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_acos (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_acos (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_atan (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_atan (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_acot (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_acot (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_asinc (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_asinc (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_asinh (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_asinh (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_acosh (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_acosh (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_atanh (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_atanh (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_acoth (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_acoth (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_asinhc (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_asinhc (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_erf (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_erf (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_erfc (const tpsa_t *a, tpsa_t *c)              
+                void mad_ctpsa_erfc (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_acc (const tpsa_t *a, num_t v, tpsa_t *c)
+                void mad_ctpsa_acc (const ctpsa_t *a, cpx_t v, ctpsa_t *c)
+                void mad_ctpsa_acc_r (const ctpsa_t *a, num_t v_re, num_t v_im, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_scl (const tpsa_t *a, num_t v, tpsa_t *c)
+                void mad_ctpsa_scl (const ctpsa_t *a, cpx_t v, ctpsa_t *c)
+                void mad_ctpsa_scl_r (const ctpsa_t *a, num_t v_re, num_t v_im, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_inv (const tpsa_t *a, num_t v, tpsa_t *c)
+                void mad_ctpsa_inv (const ctpsa_t *a, cpx_t v, ctpsa_t *c)
+                void mad_ctpsa_inv_r (const ctpsa_t *a, num_t v_re, num_t v_im, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_invsqrt (const tpsa_t *a, num_t v, tpsa_t *c)
+                void mad_ctpsa_invsqrt (const ctpsa_t *a, cpx_t v, ctpsa_t *c)
+                void mad_ctpsa_invsqrt_r (const ctpsa_t *a, num_t v_re, num_t v_im, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_hypot (const tpsa_t *x, const tpsa_t *y, tpsa_t *r)
+                void mad_ctpsa_hypot (const ctpsa_t *x, const ctpsa_t *y, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_hypot3 (const tpsa_t *x, const tpsa_t *y, const tpsa_t *z, tpsa_t *r)
+                void mad_ctpsa_hypot3 (const ctpsa_t *x, const ctpsa_t *y, const ctpsa_t *z, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_integ (const tpsa_t *a, tpsa_t *c, int iv)
+                void mad_ctpsa_integ (const ctpsa_t *a, ctpsa_t *c, int iv)
+
+.. c:function:: void mad_tpsa_deriv (const tpsa_t *a, tpsa_t *c, int iv)
+                void mad_ctpsa_deriv (const ctpsa_t *a, ctpsa_t *c, int iv)
+
+.. c:function:: void mad_tpsa_derivm (const tpsa_t *a, tpsa_t *c, ssz_t n, const ord_t m[n])
+                void mad_ctpsa_derivm (const ctpsa_t *a, ctpsa_t *c, ssz_t n, const ord_t m[n])
+
+.. c:function:: void mad_tpsa_poisbra (const tpsa_t *a, const tpsa_t *b, tpsa_t *c, int nv)
+                void mad_ctpsa_poisbra (const ctpsa_t *a, const ctpsa_t *b, ctpsa_t *c, int nv)
+                void mad_ctpsa_poisbrat (const ctpsa_t *a, const tpsa_t *b, ctpsa_t *c, int nv)
+                void mad_ctpsa_tpoisbra (const tpsa_t *a, const ctpsa_t *b, ctpsa_t *c, int nv)
+
+.. c:function:: void mad_tpsa_taylor (const tpsa_t *a, ssz_t n, const num_t coef[n], tpsa_t *c)
+                void mad_ctpsa_taylor (const ctpsa_t *a, ssz_t n, const cpx_t coef[n], ctpsa_t *c)
+
+.. // high level functions (aliasing OK)
+.. c:function:: void mad_tpsa_axpb (num_t a, const tpsa_t *x, num_t b, tpsa_t *r)
+                void mad_ctpsa_axpb (cpx_t a, const ctpsa_t *x, cpx_t b, ctpsa_t *r)
+                void mad_ctpsa_axpb_r (num_t a_re, num_t a_im, const ctpsa_t *x, num_t b_re, num_t b_im, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_axpbypc (num_t a, const tpsa_t *x, num_t b, const tpsa_t *y, num_t c, tpsa_t *r)
+                void mad_ctpsa_axpbypc (cpx_t a, const ctpsa_t *x, cpx_t b, const ctpsa_t *y, cpx_t c, ctpsa_t *r)
+                void mad_ctpsa_axpbypc_r (num_t a_re, num_t a_im, const ctpsa_t *x, num_t b_re, num_t b_im, const ctpsa_t *y, num_t c_re, num_t c_im, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_axypb (num_t a, const tpsa_t *x, const tpsa_t *y, num_t b, tpsa_t *r)
+                void mad_ctpsa_axypb (cpx_t a, const ctpsa_t *x, const ctpsa_t *y, cpx_t b, ctpsa_t *r)
+                void mad_ctpsa_axypb_r (num_t a_re, num_t a_im, const ctpsa_t *x, const ctpsa_t *y, num_t b_re, num_t b_im, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_axypbzpc (num_t a, const tpsa_t *x, const tpsa_t *y, num_t b, const tpsa_t *z, num_t c, tpsa_t *r)
+                void mad_ctpsa_axypbzpc (cpx_t a, const ctpsa_t *x, const ctpsa_t *y, cpx_t b, const ctpsa_t *z, cpx_t c, ctpsa_t *r)
+                void mad_ctpsa_axypbzpc_r (num_t a_re, num_t a_im, const ctpsa_t *x, const ctpsa_t *y, num_t b_re, num_t b_im, const ctpsa_t *z, num_t c_re, num_t c_im, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_axypbvwpc (num_t a, const tpsa_t *x, const tpsa_t *y, num_t b, const tpsa_t *v, const tpsa_t *w, num_t c, tpsa_t *r)
+                void mad_ctpsa_axypbvwpc (cpx_t a, const ctpsa_t *x, const ctpsa_t *y, cpx_t b, const ctpsa_t *v, const ctpsa_t *w, cpx_t c, ctpsa_t *r)
+                void mad_ctpsa_axypbvwpc_r (num_t a_re, num_t a_im, const ctpsa_t *x, const ctpsa_t *y, num_t b_re, num_t b_im, const ctpsa_t *v, const ctpsa_t *w, num_t c_re, num_t c_im, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_ax2pby2pcz2 (num_t a, const tpsa_t *x, num_t b, const tpsa_t *y, num_t c, const tpsa_t *z, tpsa_t *r)
+                void mad_ctpsa_ax2pby2pcz2 (cpx_t a, const ctpsa_t *x, cpx_t b, const ctpsa_t *y, cpx_t c, const ctpsa_t *z, ctpsa_t *r)
+                void mad_ctpsa_ax2pby2pcz2_r (num_t a_re, num_t a_im, const ctpsa_t *x, num_t b_re, num_t b_im, const ctpsa_t *y, num_t c_re, num_t c_im, const ctpsa_t *z, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_axpsqrtbpcx2 (const tpsa_t *x, num_t a, num_t b, num_t c, tpsa_t *r)
+                void mad_ctpsa_axpsqrtbpcx2 (const ctpsa_t *x, cpx_t a, cpx_t b, cpx_t c, ctpsa_t *r)
+                void mad_ctpsa_axpsqrtbpcx2_r (const ctpsa_t *x, num_t a_re, num_t a_im, num_t b_re, num_t b_im, num_t c_re, num_t c_im, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_logaxpsqrtbpcx2 (const tpsa_t *x, num_t a, num_t b, num_t c, tpsa_t *r)
+                void mad_ctpsa_logaxpsqrtbpcx2 (const ctpsa_t *x, cpx_t a, cpx_t b, cpx_t c, ctpsa_t *r)
+                void mad_ctpsa_logaxpsqrtbpcx2_r (const ctpsa_t *x, num_t a_re, num_t a_im, num_t b_re, num_t b_im, num_t c_re, num_t c_im, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_logxdy (const tpsa_t *x, const tpsa_t *y, tpsa_t *r)
+                void mad_ctpsa_logxdy (const ctpsa_t *x, const ctpsa_t *y, ctpsa_t *r)
+
+.. c:function:: void mad_tpsa_vec2fld (ssz_t na, const tpsa_t *a, tpsa_t *mc[na])
+                void mad_ctpsa_vec2fld (ssz_t na, const ctpsa_t *a, ctpsa_t *mc[na])
+
+.. c:function:: void mad_tpsa_fld2vec (ssz_t na, const tpsa_t *ma[na], tpsa_t *c)
+                void mad_ctpsa_fld2vec (ssz_t na, const ctpsa_t *ma[na], ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_fgrad (ssz_t na, const tpsa_t *ma[na], const tpsa_t *b, tpsa_t *c)
+                void mad_ctpsa_fgrad (ssz_t na, const ctpsa_t *ma[na], const ctpsa_t *b, ctpsa_t *c)
+
+.. c:function:: void mad_tpsa_liebra (ssz_t na, const tpsa_t *ma[na], const tpsa_t *mb[na], tpsa_t *mc[na])
+                void mad_ctpsa_liebra (ssz_t na, const ctpsa_t *ma[na], const ctpsa_t *mb[na], ctpsa_t *mc[na])
+
+.. c:function:: void mad_tpsa_exppb (ssz_t na, const tpsa_t *ma[na], const tpsa_t *mb[na], tpsa_t *mc[na])
+                void mad_ctpsa_exppb (ssz_t na, const ctpsa_t *ma[na], const ctpsa_t *mb[na], ctpsa_t *mc[na])
+
+.. c:function:: void mad_tpsa_logpb (ssz_t na, const tpsa_t *ma[na], const tpsa_t *mb[na], tpsa_t *mc[na])
+                void mad_ctpsa_logpb (ssz_t na, const ctpsa_t *ma[na], const ctpsa_t *mb[na], ctpsa_t *mc[na])
+
+.. c:function:: num_t mad_tpsa_mnrm (ssz_t na, const tpsa_t *ma[na])
+                num_t mad_ctpsa_mnrm (ssz_t na, const ctpsa_t *ma[na])
+
+.. c:function:: void mad_tpsa_minv (ssz_t na, const tpsa_t *ma[na], tpsa_t *mc[na])
+                void mad_ctpsa_minv (ssz_t na, const ctpsa_t *ma[na], ctpsa_t *mc[na])
+
+.. c:function:: void mad_tpsa_pminv (ssz_t na, const tpsa_t *ma[na], tpsa_t *mc[na], idx_t select[na])
+                void mad_ctpsa_pminv (ssz_t na, const ctpsa_t *ma[na], ctpsa_t *mc[na], idx_t select[na])
+
+.. c:function:: void mad_tpsa_compose (ssz_t na, const tpsa_t *ma[na], ssz_t nb, const tpsa_t *mb[nb], tpsa_t *mc[na])
+                void mad_ctpsa_compose (ssz_t na, const ctpsa_t *ma[na], ssz_t nb, const ctpsa_t *mb[nb], ctpsa_t *mc[na])
+
+.. c:function:: void mad_tpsa_translate (ssz_t na, const tpsa_t *ma[na], ssz_t nb, const num_t tb[nb], tpsa_t *mc[na])
+                void mad_ctpsa_translate (ssz_t na, const ctpsa_t *ma[na], ssz_t nb, const cpx_t tb[nb], ctpsa_t *mc[na])
+
+.. c:function:: void mad_tpsa_eval (ssz_t na, const tpsa_t *ma[na], ssz_t nb, const num_t tb[nb], num_t tc[na])
+                void mad_ctpsa_eval (ssz_t na, const ctpsa_t *ma[na], ssz_t nb, const cpx_t tb[nb], cpx_t tc[na])
+
+.. c:function:: void mad_tpsa_mconv (ssz_t na, const tpsa_t *ma[na], ssz_t nc, tpsa_t *mc[nc], ssz_t n, idx_t t2r_[n], int pb)
+                void mad_ctpsa_mconv (ssz_t na, const ctpsa_t *ma[na], ssz_t nc, ctpsa_t *mc[nc], ssz_t n, idx_t t2r_[n], int pb)
+
+.. c:function:: void mad_tpsa_print (const tpsa_t *t, str_t name_, num_t eps_, int nohdr_, FILE *stream_)
+                void mad_ctpsa_print (const ctpsa_t *t, str_t name_, num_t eps_, int nohdr_, FILE *stream_)
+
+.. c:function:: tpsa_t* mad_tpsa_scan (FILE *stream_)
+                ctpsa_t* mad_ctpsa_scan (FILE *stream_)
+
+.. c:function:: const desc_t* mad_tpsa_scan_hdr (int *kind_, char name_[NAMSZ], FILE *stream_)
+                const desc_t* mad_ctpsa_scan_hdr (int *kind_, char name_[NAMSZ], FILE *stream_)
+
+.. c:function:: void mad_tpsa_scan_coef (tpsa_t *t, FILE *stream_)
+                void mad_ctpsa_scan_coef (ctpsa_t *t, FILE *stream_)
+
+.. c:function:: log_t mad_tpsa_isvalid (const tpsa_t *t)
+                log_t mad_ctpsa_isvalid (const ctpsa_t *t)
+
+.. c:function:: void mad_tpsa_debug (const tpsa_t *t, str_t name_, str_t fnam_, int line_, FILE *stream_)
+                void mad_ctpsa_debug (const ctpsa_t *t, str_t name_, str_t fnam_, int line_, FILE *stream_)
+
+.. // unsafe operation (mo vs allocated!!)
+.. c:function:: tpsa_t* mad_tpsa_init (tpsa_t *t, const desc_t *d, ord_t mo)
+                ctpsa_t* mad_ctpsa_init (ctpsa_t *t, const desc_t *d, ord_t mo)
+
+TPSA only
+---------
+
+.. c:function:: void mad_tpsa_unit (const tpsa_t *x, tpsa_t *r)
+
+.. c:function:: void mad_tpsa_atan2 (const tpsa_t *y, const tpsa_t *x, tpsa_t *r)
+
+CTPSA only
+----------
+
+.. c:function:: void mad_ctpsa_conj (const ctpsa_t *a, ctpsa_t *c)
+
+.. c:function:: void mad_ctpsa_cplx (const  tpsa_t *re_, const tpsa_t *im_, ctpsa_t *r)
+
+.. c:function:: void mad_ctpsa_real (const ctpsa_t *t,  tpsa_t *r)
+
+.. c:function:: void mad_ctpsa_imag (const ctpsa_t *t,  tpsa_t *r)
+
+.. c:function:: void mad_ctpsa_cabs (const ctpsa_t *t,  tpsa_t *r)
+
+.. c:function:: void mad_ctpsa_carg (const ctpsa_t *t,  tpsa_t *r)
+
+.. c:function:: void mad_ctpsa_unit (const ctpsa_t *t, ctpsa_t *r)
+
+.. c:function:: void mad_ctpsa_rect (const ctpsa_t *t, ctpsa_t *r)
+
+.. c:function:: void mad_ctpsa_polar (const ctpsa_t *t, ctpsa_t *r)
+
+.. ------------------------------------------------------------
+
+References
+==========
+
+.. [GTPSA] L. Deniau, and C. I. Tomoiaga, *"Generalised Truncated Power Series Algebra for Fast Particle Accelerator Transport Maps"*, IPAC2015 Richmond, USA, 2015.
 
 .. rubric:: Footnotes
 

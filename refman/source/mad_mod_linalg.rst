@@ -1205,9 +1205,10 @@ This C Application Programming Interface describes only the C functions declared
 Vector
 ------
 
-.. c:function:: void mad_vec_fill  (num_t x, num_t r[], ssz_t n)
-                void mad_cvec_fill (cpx_t x, cpx_t r[], ssz_t n)
-                void mad_ivec_fill (idx_t x, idx_t r[], ssz_t n)
+.. c:function:: void mad_vec_fill    (num_t x, num_t r[], ssz_t n)
+                void mad_cvec_fill   (cpx_t x, cpx_t r[], ssz_t n)
+                void mad_cvec_fill_r (num_t x_re, num_t x_im, cpx_t r[], ssz_t n)
+                void mad_ivec_fill   (idx_t x, idx_t r[], ssz_t n)
 
    Return the vector :var:`r` of size :var:`n` filled with the value of :var:`x`.
 
@@ -1231,23 +1232,28 @@ Vector
    Return in :var:`r` the indexes of the minimum and maximum values of the elements of the vector :var:`x` of size :var:`n`. If :expr:`absf = TRUE`, the function :func:`abs()` is applied to the elements before comparison.
 
 .. c:function:: num_t mad_vec_eval    (const num_t x[], num_t x0,                           ssz_t n)
+                cpx_t mad_cvec_eval   (const cpx_t x[], cpx_t x0,                           ssz_t n)
                 void  mad_cvec_eval_r (const cpx_t x[], num_t x0_re, num_t x0_im, cpx_t *r, ssz_t n)
 
    Return in :var:`r` or directly the evaluation of the vector :var:`x` of size :var:`n` at the point :var:`x0` using Honer's scheme.
 
 .. c:function:: num_t mad_vec_sum     (const num_t x[],           ssz_t n)
+                cpx_t mad_cvec_sum    (const cpx_t x[],           ssz_t n)
                 void  mad_cvec_sum_r  (const cpx_t x[], cpx_t *r, ssz_t n)
                 num_t mad_vec_ksum    (const num_t x[],           ssz_t n)
+                cpx_t mad_cvec_ksum   (const cpx_t x[],           ssz_t n)
                 void  mad_cvec_ksum_r (const cpx_t x[], cpx_t *r, ssz_t n)
 
    Return in :var:`r` or directly the sum of the values of the elements of the vector :var:`x` of size :var:`n`. The *k* versions use the Neumaier variants of the Kahan sum.
 
 .. c:function:: num_t mad_vec_mean    (const num_t x[],           ssz_t n)
+                cpx_t mad_cvec_mean   (const cpx_t x[],           ssz_t n)
                 void  mad_cvec_mean_r (const cpx_t x[], cpx_t *r, ssz_t n)
 
    Return in :var:`r` or directly the mean of the vector :var:`x` of size :var:`n`.
 
 .. c:function:: num_t mad_vec_var    (const num_t x[],           ssz_t n)
+                cpx_t mad_cvec_var   (const cpx_t x[],           ssz_t n)
                 void  mad_cvec_var_r (const cpx_t x[], cpx_t *r, ssz_t n)
 
    Return in :var:`r` or directly the unbiased variance with 2nd order correction of the vector :var:`x` of size :var:`n`.
@@ -1270,10 +1276,14 @@ Vector
    Return the distance between the vectors :var:`x` and :var:`y` of size :var:`n` equivalent to :expr:`norm(x - y)`.
 
 .. c:function:: num_t mad_vec_dot      (const num_t x[], const num_t y[]          , ssz_t n)
+                cpx_t mad_cvec_dot     (const cpx_t x[], const cpx_t y[]          , ssz_t n)
                 void  mad_cvec_dot_r   (const cpx_t x[], const cpx_t y[], cpx_t *r, ssz_t n)
+                cpx_t mad_cvec_dotv    (const cpx_t x[], const num_t y[]          , ssz_t n)
                 void  mad_cvec_dotv_r  (const cpx_t x[], const num_t y[], cpx_t *r, ssz_t n)
                 num_t mad_vec_kdot     (const num_t x[], const num_t y[]          , ssz_t n)
+                cpx_t mad_cvec_kdot    (const cpx_t x[], const cpx_t y[]          , ssz_t n)
                 void  mad_cvec_kdot_r  (const cpx_t x[], const cpx_t y[], cpx_t *r, ssz_t n)
+                cpx_t mad_cvec_kdotv   (const cpx_t x[], const num_t y[]          , ssz_t n)
                 void  mad_cvec_kdotv_r (const cpx_t x[], const num_t y[], cpx_t *r, ssz_t n)
 
    Return in :var:`r` or directly the dot product between the vectors :var:`x` and :var:`y` of size :var:`n`. The *k* versions use the Neumaier variants of the Kahan sum.
@@ -1297,10 +1307,12 @@ Vector
 
 .. c:function:: void mad_vec_add     (const num_t x[], const num_t y[]       , num_t r[], ssz_t n)
                 void mad_vec_addn    (const num_t x[],       num_t y         , num_t r[], ssz_t n)
+                void mad_vec_addc    (const num_t x[],       cpx_t y         , cpx_t r[], ssz_t n)
                 void mad_vec_addc_r  (const num_t x[], num_t y_re, num_t y_im, cpx_t r[], ssz_t n)
                 void mad_cvec_add    (const cpx_t x[], const cpx_t y[]       , cpx_t r[], ssz_t n)
                 void mad_cvec_addv   (const cpx_t x[], const num_t y[]       , cpx_t r[], ssz_t n)
                 void mad_cvec_addn   (const cpx_t x[],       num_t y         , cpx_t r[], ssz_t n)
+                void mad_cvec_addc   (const cpx_t x[],       cpx_t y         , cpx_t r[], ssz_t n)
                 void mad_cvec_addc_r (const cpx_t x[], num_t y_re, num_t y_im, cpx_t r[], ssz_t n)
                 void mad_ivec_add    (const idx_t x[], const idx_t y[]       , idx_t r[], ssz_t n)
                 void mad_ivec_addn   (const idx_t x[],       idx_t y         , idx_t r[], ssz_t n)
@@ -1310,10 +1322,12 @@ Vector
 .. c:function:: void mad_vec_sub     (const num_t x[], const num_t y[]       , num_t r[], ssz_t n)
                 void mad_vec_subv    (const num_t x[], const cpx_t y[]       , cpx_t r[], ssz_t n)
                 void mad_vec_subn    (const num_t y[],       num_t x         , num_t r[], ssz_t n)
+                void mad_vec_subc    (const num_t y[],       cpx_t x         , cpx_t r[], ssz_t n)
                 void mad_vec_subc_r  (const num_t y[], num_t x_re, num_t x_im, cpx_t r[], ssz_t n)
                 void mad_cvec_sub    (const cpx_t x[], const cpx_t y[]       , cpx_t r[], ssz_t n)
                 void mad_cvec_subv   (const cpx_t x[], const num_t y[]       , cpx_t r[], ssz_t n)
                 void mad_cvec_subn   (const cpx_t y[],       num_t x         , cpx_t r[], ssz_t n)
+                void mad_cvec_subc   (const cpx_t y[],       cpx_t x         , cpx_t r[], ssz_t n)
                 void mad_cvec_subc_r (const cpx_t y[], num_t x_re, num_t x_im, cpx_t r[], ssz_t n)
                 void mad_ivec_sub    (const idx_t x[], const idx_t y[]       , idx_t r[], ssz_t n)
                 void mad_ivec_subn   (const idx_t y[],       idx_t x         , idx_t r[], ssz_t n)
@@ -1322,10 +1336,12 @@ Vector
 
 .. c:function:: void mad_vec_mul     (const num_t x[], const num_t y[]       , num_t r[], ssz_t n)
                 void mad_vec_muln    (const num_t x[],       num_t y         , num_t r[], ssz_t n)
+                void mad_vec_mulc    (const num_t x[],       cpx_t y         , cpx_t r[], ssz_t n)
                 void mad_vec_mulc_r  (const num_t x[], num_t y_re, num_t y_im, cpx_t r[], ssz_t n)
                 void mad_cvec_mul    (const cpx_t x[], const cpx_t y[]       , cpx_t r[], ssz_t n)
                 void mad_cvec_mulv   (const cpx_t x[], const num_t y[]       , cpx_t r[], ssz_t n)
                 void mad_cvec_muln   (const cpx_t x[],       num_t y         , cpx_t r[], ssz_t n)
+                void mad_cvec_mulc   (const cpx_t x[],       cpx_t y         , cpx_t r[], ssz_t n)
                 void mad_cvec_mulc_r (const cpx_t x[], num_t y_re, num_t y_im, cpx_t r[], ssz_t n)
                 void mad_ivec_mul    (const idx_t x[], const idx_t y[]       , idx_t r[], ssz_t n)
                 void mad_ivec_muln   (const idx_t x[],       idx_t y         , idx_t r[], ssz_t n)
@@ -1335,10 +1351,12 @@ Vector
 .. c:function:: void mad_vec_div     (const num_t x[], const num_t y[]       , num_t r[], ssz_t n)
                 void mad_vec_divv    (const num_t x[], const cpx_t y[]       , cpx_t r[], ssz_t n)
                 void mad_vec_divn    (const num_t y[],       num_t x         , num_t r[], ssz_t n)
+                void mad_vec_divc    (const num_t y[],       cpx_t x         , cpx_t r[], ssz_t n)
                 void mad_vec_divc_r  (const num_t y[], num_t x_re, num_t x_im, cpx_t r[], ssz_t n)
                 void mad_cvec_div    (const cpx_t x[], const cpx_t y[]       , cpx_t r[], ssz_t n)
                 void mad_cvec_divv   (const cpx_t x[], const num_t y[]       , cpx_t r[], ssz_t n)
                 void mad_cvec_divn   (const cpx_t y[],       num_t x         , cpx_t r[], ssz_t n)
+                void mad_cvec_divc   (const cpx_t y[],       cpx_t x         , cpx_t r[], ssz_t n)
                 void mad_cvec_divc_r (const cpx_t y[], num_t x_re, num_t x_im, cpx_t r[], ssz_t n)
                 void mad_ivec_divn   (const idx_t x[],       idx_t y         , idx_t r[], ssz_t n)
 
@@ -1397,6 +1415,7 @@ Matrix
    Roll in place the values of the elements of the matrix :var:`x` of sizes :expr:`[m, n]` by :var:`mroll` and :var:`nroll`.
 
 .. c:function:: void mad_mat_eye    (num_t x[], num_t v,                ssz_t m, ssz_t n, ssz_t ldr)
+                void mad_cmat_eye   (cpx_t x[], cpx_t v,                ssz_t m, ssz_t n, ssz_t ldx)
                 void mad_cmat_eye_r (cpx_t x[], num_t v_re, num_t v_im, ssz_t m, ssz_t n, ssz_t ldr)
                 void mad_imat_eye   (idx_t x[], idx_t v,                ssz_t m, ssz_t n, ssz_t ldr)
 
@@ -1460,8 +1479,10 @@ Matrix
    Fill the matrix :var:`r` of sizes :var:`[m, n]` with the division of the matrx :var:`x` of sizes :var:`[m, p]` by the matrix :var:`y` of sizes :var:`[n, p]`. The conditional number :var:`rcond` is used by the solver to determine the effective rank of non-square systems. It returns the rank of the system.
 
 .. c:function:: int mad_mat_invn    (const num_t y[], num_t x               , num_t r[], ssz_t m, ssz_t n, num_t rcond)
+                int mad_mat_invc    (const num_t y[], cpx_t x               , cpx_t r[], ssz_t m, ssz_t n, num_t rcond)
                 int mad_mat_invc_r  (const num_t y[], num_t x_re, num_t x_im, cpx_t r[], ssz_t m, ssz_t n, num_t rcond)
                 int mad_cmat_invn   (const cpx_t y[], num_t x               , cpx_t r[], ssz_t m, ssz_t n, num_t rcond)
+                int mad_cmat_invc   (const cpx_t y[], cpx_t x               , cpx_t r[], ssz_t m, ssz_t n, num_t rcond)
                 int mad_cmat_invc_r (const cpx_t y[], num_t x_re, num_t x_im, cpx_t r[], ssz_t m, ssz_t n, num_t rcond)
 
    Fill the matrix :var:`r` of sizes :var:`[n, m]` with the inverse of the matrix :var:`y` of sizes :var:`[m, n]` scaled by the scalar :var:`x`. The conditional number :var:`rcond` is used by the solver to determine the effective rank of non-square systems. It returns the rank of the system.
