@@ -31,6 +31,11 @@ The :var:`sequence` object provides the following attributes:
 **minlen**
    A *number* specifying the minimal length :literal:`[m]` when checking for negative drifts or when generating *implicit* drifts between elements in :math:`s`-iterators returned by the method :literal:`:siter`. This attribute is automatically set to :math:`10^{-6}` m when a sequence is created within the MADX environment. (default: :math:`10^{-6}`)
 
+**aperture**
+    A *mappable* specifying the default aperture to consider when it's missing at element level, e.g. in implicit drift. See Track command for default aperture. 
+
+    Example: :expr:`aperture = {kind='square', 10}`.
+
 **beam** 
    An attached :var:`beam`. (default: :const:`nil`)
 

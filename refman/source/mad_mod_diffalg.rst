@@ -7,14 +7,14 @@
 Differential Algebra
 ********************
 
-This chapter describes real :type:`tpsa` and complex :type:`ctpsa` objects as supported by MAD-NG. The module for the `Generalized Truncated Power Series Algebra <https://accelconf.web.cern.ch/ipac2015/papers/mopje039.pdf>`_ [GTPSA]_ that represents parametric multivariate truncated `Taylor series <https://en.wikipedia.org/wiki/Taylor_series>`_ is not exposed, only the contructors are visible from the :mod:`MAD` environment and thus, TPSAs are handled directly by their methods or by the generic functions of the same name from the module :mod:`MAD.gmath`. Note that both :type:`tpsa` and :type:`ctpsa` are defined as C structure for direct compliance with the C API.
+This chapter describes real :type:`tpsa` and complex :type:`ctpsa` objects as supported by MAD-NG. The module for the `Generalized Truncated Power Series Algebra <https://accelconf.web.cern.ch/ipac2015/papers/mopje039.pdf>`_ [GTPSA]_ that represents parametric multivariate truncated `Taylor series <https://en.wikipedia.org/wiki/Taylor_series>`_ is not exposed, only the contructors are visible from the :mod:`MAD` environment and thus, GTPSAs are handled directly by their methods or by the generic functions of the same name from the module :mod:`MAD.gmath`. Note that both :type:`tpsa` and :type:`ctpsa` are defined as C structure for direct compliance with the C API.
 
 Introduction
 ============
 
 TPSAs are numerical objects representing :math:`n`-th degrees Taylor polynomial approximation of some functions :math:`f(x)` about :math:`x=a`. They are a powerful differential algebra tool for solving physics problems described by differential equations and for `perturbation theory <https://en.wikipedia.org/wiki/Perturbation_theory>`_, but also for estimating uncertainties, modelling multidimensional distributions or calculating multivariate derivatives for optimization. There are often misunderstandings about their accuracy and limitations, so it is useful to clarify some of these aspects.
 
-To begin with, GTPSAs represent multivariate Taylor series truncated at order :math:`n`, and thus behave like :math:`n`-th degrees multivariate polynomials with coefficients in :math:`\mathbb{R}` or :math:`\mathbb{C}`. MAD-NG supports GTPSAs with thousands of variables and/or parameters of arbitrary order each, up to a maximum total order of 63, but Taylor series with alternating signs in their coefficients can quickly be subject to numerical instabilities and `catastrophic cancellation <https://en.wikipedia.org/wiki/Catastrophic_cancellation>`_ as orders increase.
+To begin with, TPSAs represent multivariate Taylor series truncated at order :math:`n`, and thus behave like :math:`n`-th degrees multivariate polynomials with coefficients in :math:`\mathbb{R}` or :math:`\mathbb{C}`. MAD-NG supports GTPSAs with thousands of variables and/or parameters of arbitrary order each, up to a maximum total order of 63, but Taylor series with alternating signs in their coefficients can quickly be subject to numerical instabilities and `catastrophic cancellation <https://en.wikipedia.org/wiki/Catastrophic_cancellation>`_ as orders increase.
 
 Other methods are not better and suffer from the same problem and more, such as symbolic differentiation, which can lead to inefficient code due to the size of the analytical expressions, or numerical differentiation, which can introduce round-off errors in the discretisation process and cancellation. Both classical methods are more problematic when computing high order derivatives, where complexity and errors increase.
 
@@ -63,7 +63,7 @@ By extension, a TPSA in the two variables :math:`x` and :math:`y` at order 2 in 
                    + 2\frac{\partial^2 f}{\partial x\partial y}\bigg\rvert_{(a,b)}\!\!\!\!\!\!\!(x-a)(y-b)
                    + \frac{\partial^2 f}{\partial y^2}\bigg\rvert_{(a,b)}\!\!\!\!\!\!\!(y-b)^2\right)
 
-where the large brackets are grouping the terms in `homogeneous polynomials <https://en.wikipedia.org/wiki/Homogeneous_polynomial>`_, as stored in the :type:`tpsa` and :type:`ctpsa` objects. The central term of the second order :math:`2\frac{\partial^2 f}{\partial x\partial y}` emphasises the reason why the function :math:`f` must be analytic and independent of the integration path as it implies :math:`\frac{\partial^2 f}{\partial x\partial y} = \frac{\partial^2 f}{\partial y\partial x}` and stores the value (scaled by :math:`\frac{1}{2}`) as the coefficient of the monomial :math:`x^1 y^1`. This is an important consideration to keep in mind regarding TPSA, but it is not a pactical limitation due to the `conservative nature <https://en.wikipedia.org/wiki/Conservative_vector_field>`_ of our applications described by `Hamiltonian vector fields <https://en.wikipedia.org/wiki/Hamiltonian_vector_field>`_.
+where the large brackets are grouping the terms in `homogeneous polynomials <https://en.wikipedia.org/wiki/Homogeneous_polynomial>`_, as stored in the :type:`tpsa` and :type:`ctpsa` objects. The central term of the second order :math:`2\frac{\partial^2 f}{\partial x\partial y}` emphasises the reason why the function :math:`f` must be analytic and independent of the integration path as it implies :math:`\frac{\partial^2 f}{\partial x\partial y} = \frac{\partial^2 f}{\partial y\partial x}` and stores the value (scaled by :math:`\frac{1}{2}`) as the coefficient of the monomial :math:`x^1 y^1`. This is an important consideration to keep in mind regarding GTPSA, but it is not a pactical limitation due to the `conservative nature <https://en.wikipedia.org/wiki/Conservative_vector_field>`_ of our applications described by `Hamiltonian vector fields <https://en.wikipedia.org/wiki/Hamiltonian_vector_field>`_.
 
 The generalization to a TPSA of :math:`\nu` variables :math:`X` at order :math:`n` nearby the point :math:`A` in the :math:`\nu`-dimensional domain of the function :math:`f`, noted :math:`T_f^n(X;A)`, has the following representation:
 
@@ -77,9 +77,9 @@ An important point to mention here is related to the *multinomial coefficient* a
 Approximation
 -------------
 
-As already said, the TPSAs themselves do not perform approximations for orders :math:`0\,..n` and the Taylor's theorem gives an explicit form of the remainder for the truncation error of higher orders, while all derivatives are computed using AD. AD relies on the fact that any computer program can execute a sequence of elementary arithmetic operations and functions, and apply the chain rule to them repeatedly to automatically compute the derivatives to machine precision.
+As already said, the TPSAs themselves do not perform approximations for orders :math:`0\,..n` and the Taylor's theorem gives an explicit form of the remainder for the truncation error of higher orders, while all derivatives are computed to machine precision using AD. AD relies on the fact that any computer program can execute a sequence of elementary arithmetic operations and functions, and apply the chain rule to them repeatedly to automatically compute the exact derivatives.
 
-So when TPSAs introduce appromixation errors? When they are used as *interpolation functions* to approximate by substitution or perturbation, values at positions :math:`a+h` away from their initial point :math:`a`:
+So when TPSAs do introduce appromixation errors? When they are used as *interpolation functions* to approximate by substitution or perturbation, values at positions :math:`a+h` away from their initial evaluation point :math:`a`:
 
 .. math::
    T_f^n(x+h;a) = \sum_{k=0}^{n} \frac{f_{a}^{(k)}}{k!} (x-a+h)^k 
@@ -89,7 +89,7 @@ So when TPSAs introduce appromixation errors? When they are used as *interpolati
 where the approximation error at order :math:`k` is given by:
 
 .. math::
-   \left|f^{(k)}_{a+h} - f^{(k)}_a\right| \approx \frac{1}{|2h|} \left|\frac{\text{d}^k T_f^n(x;a+h)}{\text{d} x^k} - \frac{\text{d}^k T_f^n(x+h;a)}{\text{d} x^k}\right| + {\cal O}(k+1)
+   \left|f^{(k)}_{a+h} - f^{(k)}_a\right| = \frac{1}{|2h|} \left|\frac{\text{d}^k T_f^n(x;a+h)}{\text{d} x^k} - \frac{\text{d}^k T_f^n(x+h;a)}{\text{d} x^k}\right| + {\cal O}(k+1)
 
 In summary, operations and functions on TPSAs are exact while TPSAs used as functions lead to approximations even within the radius of convergence, unlike infinite Taylor series. MAD-NG never uses TPSAs as interpolation functions, but of course the module does provide users with methods for interpolating functions.
 
@@ -100,7 +100,7 @@ MAD-NG is a tracking code that never composes elements maps during tracking, but
 
 Users may be tempted to compute or compose elements maps to model whole elements or even large lattice sections before applying them to some input differential maps in order to speed up tracking or parallelise computations. But this approach leads to the two types of approximations that we have just explained: the resulting map is not only truncated, thus loosing local feed-down effects implied by e.g. a translation from orbit :math:`x` to :math:`x+h(s)` along the path :math:`s` or equivalently by the misalignment of the elements, but the derivatives are also approximated for each particle orbit by the global composition calculated on a nearby orbit, typically the zero orbit like in MAD-X. So as the addition of floating point numbers is not associative, the composition of truncated maps is not associative too.
 
-The following equations show the successive refinement of the type of calculations performed by the tracking codes, starting from the worst but common approximations at the top-left to the more general and accurate functional application without approximation at the bottom-right, as computed by MAD-NG:
+The following equations show the successive refinement of the type of calculations performed by the tracking codes, starting from the worst but common approximations at the top-left to the more general and accurate functional application without approximation or expansion at the bottom-right, as computed by MAD-NG:
 
 .. math::
    ({\mathcal M}_n \circ \cdots \circ {\mathcal M}_2 \circ {\mathcal M}_1) (X_0)
@@ -108,7 +108,9 @@ The following equations show the successive refinement of the type of calculatio
      &\ne \widetilde{\mathcal M}_n(\cdots (\widetilde{\mathcal M}_2 (\widetilde{\mathcal M}_1 (X_0)))\cdots) \\
      &\ne {\cal F}_n(\cdots ({\cal F}_2 ({\cal F}_1 (X_0)))\cdots) 
 
-where :math:`{\mathcal M}_i` is the :math:`i`-th map computed at some *a priori* orbit (zero orbit), :math:`\widetilde{\mathcal M}_i` is the :math:`i`-th map computed at the input orbit :math:`X_{i-1}` which still implies some expansion, and finally :math:`{\mathcal F}_i` is the functional application of the full-fledged physics of the :math:`i`-th map without any intermediate expansion, i.e. without calculating explicitly an intermediate differential map, and with all the required knownledge including the input orbit :math:`X_{i-1}` to perform the exact calculation.
+where :math:`{\mathcal M}_i` is the :math:`i`-th map computed for some *a priori* input map (e.g. identity map), :math:`\widetilde{\mathcal M}_i` is the :math:`i`-th map computed at the input map :math:`X_{i-1}` which still implies some intermediate expansion and order limitations due to the use of per-order explicit equations, and finally :math:`{\mathcal F}_i` is the functional application of the full-fledged physics of the :math:`i`-th map to the input map :math:`X_{i-1}` without any intermediate expansion, composition or order limitation. The drawback is that the functional approach can only be achieved with TPSAs, whereas the previous alternatives can be realised with explicit equations, but remain very complicated for non-linear orders, or even inaccessible.
+
+Some codes use a hybrid scheme, such as MAD-X which uses the top-left approximation to represent the concatenated maps of an element at the zero orbit *a priori* [#f1]_, and uses the second order of this map to translate its first order onto the orbit *a posteriori*, thus reducing the approximation made for very small orbits where one order is sufficient.
 
 However, although MAD-NG only performs functional map applications (last right equation above) and never compute element maps or uses TPSAs as interpolation functions, it could be prone to small truncation errors during the computation of the non-linear normal forms which involves the composition of many orbitless maps, potentially breaking symplecticity of the resulting transformation for the last order.
 
@@ -117,25 +119,26 @@ The modelling of multidimensional beam distributions is also possible with TPSAs
 Performance
 -----------
 
-In principle, TPSAs should have equivalent performance to matrix/tensors for low orders and small number of variables, perhaps slightly slower at order 1 or 2 as the management of these data structures involves complex code and additional memory allocations. But from order 3 and higher, TPSA-based codes outperform matrix/tensor codes because the number of coefficients remains much smaller as shown in :numref:`fig.tpsa.size` and :numref:`fig.tensor.size`, and the complexity of the elementary operations (resp. multiplication) depends linearly (resp. quadratically) on the size of these data structures.
+In principle, TPSAs should have equivalent performance to matrix/tensors for low orders and small number of variables, perhaps slightly slower at order 1 or 2 as the management of these data structures involves complex code and additional memory allocations. But from order 3 and higher, GTPSA-based codes outperform matrix/tensor codes because the number of coefficients remains much smaller as shown in :numref:`fig.tpsa.size` and :numref:`fig.tensor.size`, and the complexity of the elementary operations (resp. multiplication) depends linearly (resp. quadratically) on the size of these data structures.
 
 .. _fig.tpsa.size:
 .. figure:: fig/tpsa-sizes.png
-   :figwidth: 75%
+   :figwidth: 85%
    :align: center
 
    Number of coefficients in TPSAs for maps with :math:`\nu` variables at order :math:`n` is :math:`\nu {\scriptstyle\begin{pmatrix} n+\nu \\[-1ex] \nu \end{pmatrix}} = \frac{(n+\nu)!}{n!(\nu-1)!}`.
 
 .. _fig.tensor.size:
 .. figure:: fig/tensor-sizes.png
+   :figwidth: 85%
    :align: center
 
-   Number of coefficients in tensors for maps with :math:`\nu` variables at order :math:`n` is :math:`\nu\sum_{k=0}^n \nu^{k+1} = \frac{\nu^2(\nu^{n+1}-1)}{\nu-1}`.
+   Number of coefficients in tensors for maps with :math:`\nu` variables at order :math:`n` is :math:`\sum_{k=0}^n \nu^{k+1} = \frac{\nu(\nu^{n+1}-1)}{\nu-1}`.
 
 Types promotion
 ===============
 
-The TPSA operations may involve other data types like real and complex numbers leading to many combinations of types. In order to simplify the descriptions, the generic names :var:`num`, :var:`cpx` and :var:`idx` (indexes) are used for real, complex and integer numbers respectively, and :var:`tpsa` and :var:`ctpsa` for real and complex TPSA respectively. For example, the sum of a complex number :var:`cpx` and a real TPSA :var:`tpsa` gives a complex TPSA :var:`ctpsa`. The case of :var:`idx` means that a :type:`number` will be interpreted as an index and automatically rounded if it does not hold an integer value. The following table summarizes all valid combinations of types for binary operations involving at least one TPSA type:
+The GTPSA operations may involve other data types like real and complex numbers leading to many combinations of types. In order to simplify the descriptions, the generic names :var:`num`, :var:`cpx` and :var:`idx` (indexes) are used for real, complex and integer numbers respectively, and :var:`tpsa` and :var:`ctpsa` for real and complex GTPSA respectively. For example, the sum of a complex number :var:`cpx` and a real GTPSA :var:`tpsa` gives a complex GTPSA :var:`ctpsa`. The case of :var:`idx` means that a :type:`number` will be interpreted as an index and automatically rounded if it does not hold an integer value. The following table summarizes all valid combinations of types for binary operations involving at least one GTPSA type:
 
 =================  ==================  ===============
 Left Operand Type  Right Operand Type  Result Type
@@ -158,17 +161,227 @@ Left Operand Type  Right Operand Type  Result Type
 Constructors
 ============
 
+The constructors for GTPSA are directly available from the :mod:`MAD` environment. Note that real and complex GTPSAs of zero order are allowed and behave like scalars, but descriptors with zero as maximum order are not allowed. GTPSA are thread-safe but not the descriptors, i.e. :func:`gtpsad` and :func:`gtpsad_del` should only be called by the master thread.
+
+.. function:: tpsa ([td_,] mo_)
+              ctpsa ([td_,] mo_)
+
+   Return a real or complex GTPSA filled with zeros. If the GTPSA descriptor :var:`td` is omitted, the current descriptor is used, see :func:`gtpsad`. If :var:`mo` is omitted, the maximum order of the descriptor is used. 
+
+.. function:: gtpsad (nv_, mo_, np_, po_, no_)
+              gtpsad ({nv=, mo=, np=, po=, no=})
+
+   Return a descriptor suitable for creating and using real or complex GTPSA with the structure defined by the arguments where:
+
+   - :var:`nv` defines the number of variables.
+
+   - :var:`mo` defines the maximum order of variables.
+
+   - :var:`np` defines the number of parameters.
+
+   - :var:`po` defines the maximum order of parameters, and it must be lower than :var:`mo`.
+
+   - :var:`no` defines the maximum order of variables and parameters individually. The list must define :var:`nv+np` :math:`\leq 100000` orders.
+
+   The returned descriptor is automatically set as the new default descriptor used to create GTPSA when :var:`td` is not supplied to :func:`tpsa` and :func:`ctpsa`. It is also saved in a list of registered descriptors to be returned by :func:`gtpsad` when the same structure is requested multiple times, i.e. descriptors are unique for a given input.
+
+   Default: :expr:`nv=6`, :expr:`mo=1`, :expr:`np=0`, :expr:`po=1`, :expr:`no=nil`
+
+.. function:: gtpsad_del (td_)
+
+   Destroy the descriptor :var:`td`, assuming that there are no more GTPSAs belonging to that descriptor in memory. If :var:`td` is omitted, all registered descriptors will be destroyed. *It is the user's responsibility to ensure that this constraint is satisfied, as MAD-NG does not keep track of created GTPSAs*. Using GTPSA belonging to released descriptors results in undefined behavior, most likely a "segmentation fault".
+
+   In principle, very few descriptors are created during a run. MAD-NG can handle up to 100 different descriptors at a time. Therefore, a common policy is to never release descriptors, or to release them all before exiting the process, e.g. to detect memory leaks.
+
+Attributes
+==========
+
+.. constant:: tpsa.mo
+
+   The maximum order of the real or complex GTPSA, which may be lower than the maximum order reported by its descriptor.
+
+.. constant:: tpsa.uid
+
+   A 32-bit integer useful to store user-defined id.
+
+.. constant:: tpsa.d
+
+   The descriptor of the real or complex GTPSA.
+
 Functions
 =========
+
+.. function:: is_tpsa (a)
+              is_ctpsa (a)
+
+   Return :const:`true` if :var:`a` is respectively a real or complex GTPSA, :const:`false` otherwise. These functions are only available from the module :mod:`MAD.typeid`.
+
+.. function:: isa_tpsa (a)
+
+   Return :const:`true` if :var:`a` is a real or complex GTPSA (i.e. is-a GTPSA), :const:`false` otherwise. This function is only available from the module :mod:`MAD.typeid`.
+
+.. function:: is_gtpsad (a)
+
+   Return :const:`true` if :var:`a` is a descriptor for real or complex GTPSA, :const:`false` otherwise. This function is only available from the module :mod:`MAD.typeid`.
 
 Methods
 =======
 
+Sizes and Indexing
+------------------
+
+Getters and Setters
+-------------------
+
+Cloning
+-------
+
+.. function:: tpsa:copy (r_)
+
+   Return a GTPSA or :var:`r` filled with a copy of the real or complex GTPSA :var:`tpsa`.
+
+.. function:: tpsa:same (v_, mo_)
+
+   Return a GTPSA with elements of the type of :var:`v` and with :var:`mo` maximum order. Default: :expr:`v_ = tpsa:get0()`, :expr:`mo_ = tpsa.mo`.
+
+Operator-like Methods
+---------------------
+
+Special Methods
+---------------
+
+Input and Output
+----------------
+
 Operators
 =========
 
+.. function:: #tpsa
+
+   Return the size of the real or complex GTPSA :var:`tpsa`, i.e. the number of coefficients stored.
+
+.. function:: -tpsa
+
+   Return a real or complex GTPSA resulting from the unary minus applied individually to all elements of the GTPSA :var:`tpsa`.
+
+.. function:: num + tpsa
+              tpsa + num
+              tpsa + tpsa2
+
+   Return a :type:`matrix` resulting from the sum of the left and right operands that must have compatible sizes. If one of the operand is a scalar, the operator will be applied individually to all elements of the matrix.
+
+.. function:: num + ctpsa
+              cpx + tpsa
+              cpx + ctpsa
+              tpsa + cpx
+              tpsa + ctpsa
+              ctpsa + num
+              ctpsa + cpx
+              ctpsa + tpsa
+              ctpsa + ctpsa2
+
+   Return a :type:`cmatrix` resulting from the sum of the left and right operands that must have compatible sizes. If one of the operand is a scalar, the operator will be applied individually to all elements of the matrix.
+
+.. function:: num - tpsa
+              tpsa - num
+              tpsa - tpsa2
+
+   Return a :type:`matrix` resulting from the difference of the left and right operands that must have compatible sizes. If one of the operand is a scalar, the operator will be applied individually to all elements of the matrix.
+
+.. function:: num - ctpsa
+              cpx - tpsa
+              cpx - ctpsa
+              tpsa - cpx
+              tpsa - ctpsa
+              ctpsa - num
+              ctpsa - cpx
+              ctpsa - tpsa
+              ctpsa - ctpsa2
+
+   Return a :type:`cmatrix` resulting from the difference of the left and right operands that must have compatible sizes. If one of the operand is a scalar, the operator will be applied individually to all elements of the matrix.
+
+.. function:: num * tpsa
+              tpsa * num
+              tpsa * tpsa2
+
+   Return a :type:`matrix` resulting from the product of the left and right operands that must have compatible sizes. If one of the operand is a scalar, the operator will be applied individually to all elements of the matrix. If the two operands are matrices, the mathematical `matrix multiplication <https://en.wikipedia.org/wiki/Matrix_multiplication>`_ is performed.
+
+.. function:: num * ctpsa
+              cpx * tpsa
+              cpx * ctpsa
+              tpsa * cpx
+              tpsa * ctpsa
+              ctpsa * num
+              ctpsa * cpx
+              ctpsa * tpsa
+              ctpsa * ctpsa2
+
+   Return a :type:`cmatrix` resulting from the product of the left and right operands that must have compatible sizes. If one of the operand is a scalar, the operator will be applied individually to all elements of the matrix. If the two operands are matrices, the mathematical `matrix multiplication <https://en.wikipedia.org/wiki/Matrix_multiplication>`_ is performed.
+
+.. function:: num / tpsa
+              tpsa / num
+              tpsa / tpsa2
+
+   Return a :type:`matrix` resulting from the division of the left and right operands that must have compatible sizes. If the right operand is a scalar, the operator will be applied individually to all elements of the matrix. If the left operand is a scalar the operation :expr:`x/Y` is converted to :expr:`x (I/Y)` where :var:`I` is the identity matrix with compatible sizes. If the right operand is a matrix, the operation :expr:`X/Y` is performed using a system solver based on LU, QR or LQ factorisation depending on the shape of the system. 
+
+.. function:: num / ctpsa
+              cpx / tpsa
+              cpx / ctpsa
+              tpsa / cpx
+              tpsa / ctpsa
+              ctpsa / num
+              ctpsa / cpx
+              ctpsa / tpsa
+              ctpsa / ctpsa2
+
+   Return a :type:`cmatrix` resulting from the division of the left and right operands that must have compatible sizes. If the right operand is a scalar, the operator will be applied individually to all elements of the matrix. If the left operand is a scalar the operation :expr:`x/Y` is converted to :expr:`x (I/Y)` where :var:`I` is the identity matrix with compatible sizes. If the right operand is a matrix, the operation :expr:`X/Y` is performed using a system solver based on LU, QR or LQ factorisation depending on the shape of the system.
+
+.. function:: num ^ tpsa
+              tpsa ^ num
+              tpsa ^ tpsa2
+
+   Return a :type:`matrix` or :type:`cmatrix` resulting from :var:`n` products of the square input matrix by itself. If :var:`n` is negative, the inverse of the matrix is used for the product.
+
+.. function:: num ^ ctpsa
+              cpx ^ tpsa
+              cpx ^ ctpsa
+              tpsa ^ cpx
+              tpsa ^ ctpsa
+              ctpsa ^ num
+              ctpsa ^ cpx
+              ctpsa ^ tpsa
+              ctpsa ^ ctpsa2
+
+   Return a :type:`matrix` or :type:`cmatrix` resulting from :var:`n` products of the square input matrix by itself. If :var:`n` is negative, the inverse of the matrix is used for the product.
+
+.. function:: num == tpsa
+              num == ctpsa
+              cpx == tpsa
+              cpx == ctpsa            
+              tpsa == num
+              tpsa == cpx
+              tpsa == tpsa2
+              tpsa == ctpsa
+              ctpsa == num
+              ctpsa == cpx
+              ctpsa == tpsa
+              ctpsa == ctpsa2
+
+   Return :const:`false` if the left and right operands have incompatible sizes or if any element differ in a one-to-one comparison, :const:`true` otherwise. If one of the operand is a scalar, the operator will be applied individually to all elements of the matrix.
+
+.. function:: num < tpsa
+              num <= tpsa
+              tpsa < num
+              tpsa <= num
+              tpsa < tpsa2
+              tpsa <= tpsa2
+
+   Return :const:`false` if the left and right operands have incompatible sizes or if any element differ in a one-to-one comparison, :const:`true` otherwise. If one of the operand is a scalar, the operator will be applied individually to all elements of the matrix.
+
 Iterators
 =========
+
+.. TODO: cycle
 
 C API
 =====
@@ -177,7 +390,7 @@ This C Application Programming Interface describes only the C functions declared
 
 .. c:type:: desc_t
 
-   The :c:type:`desc_t` type is an `abstract data type <https://en.wikipedia.org/wiki/Abstract_data_type>`_ (ADT) representing the descriptor shared by all real and complex TPSAs with the same internal structure driven by the number of variables and parameters, and their maximum order(s).
+   The :c:type:`desc_t` type is an `abstract data type <https://en.wikipedia.org/wiki/Abstract_data_type>`_ (ADT) representing the descriptor shared by all real and complex GTPSAs with the same internal structure driven by the number of variables and parameters, and their maximum order(s).
 
 .. c:type:: tpsa_t
 
@@ -192,15 +405,15 @@ Descriptors
 
 .. constant:: const ord_t mad_tpsa_default
 
-   A special constant to use in place of :var:`mo` in TPSA constructors to specify the default maximum order of the descriptor used to build the new TPSA.
+   A special constant to use in place of :var:`mo` in GTPSA constructors to specify the default maximum order of the descriptor used to build the new GTPSA.
  
 .. constant:: const ord_t mad_tpsa_same
 
-   A special constant to use in place of :var:`mo` in TPSA constructors to specify the same order as the current TPSA used to build the new TPSA.
+   A special constant to use in place of :var:`mo` in GTPSA constructors to specify the same order as the current GTPSA used to build the new GTPSA.
 
 .. constant:: const desc_t *mad_desc_curr
 
-   A pointer to the current default descriptor. Each new built descriptor becomes auomatically the new default descriptor that can be used to create new TPSA without specifying a descriptor. 
+   A pointer to the current default descriptor. Each new built descriptor becomes auomatically the new default descriptor that can be used to create new GTPSA without specifying a descriptor. 
 
 .. -- ctor
 
@@ -292,7 +505,7 @@ TPSA and CTPSA
 .. c:function:: void mad_tpsa_del (const tpsa_t *t)
                 void mad_ctpsa_del (const ctpsa_t *t)
 
-   Destroy the TPSA pointed by :var:`t`.
+   Destroy the GTPSA pointed by :var:`t`.
 
 .. // introspection
 .. c:function:: const desc_t* mad_tpsa_desc (const tpsa_t *t)
@@ -452,10 +665,11 @@ TPSA and CTPSA
                 void mad_ctpsa_pown_r (const ctpsa_t *a, num_t v_re, num_t v_im, ctpsa_t *c)
 
 .. // functions
+.. c:function:: void mad_tpsa_unit (const tpsa_t *a, tpsa_t *c)
+                void mad_ctpsa_unit (const ctpsa_t *a, ctpsa_t *c)
+
 .. c:function:: num_t mad_tpsa_nrm (const tpsa_t *a)
                 num_t mad_ctpsa_nrm (const ctpsa_t *a)
-
-.. c:function:: void mad_tpsa_abs (const tpsa_t *a, tpsa_t *c)
 
 .. c:function:: void mad_tpsa_sqrt (const tpsa_t *a, tpsa_t *c)
                 void mad_ctpsa_sqrt (const ctpsa_t *a, ctpsa_t *c)
@@ -677,14 +891,12 @@ TPSA and CTPSA
 TPSA only
 ---------
 
-.. c:function:: void mad_tpsa_unit (const tpsa_t *x, tpsa_t *r)
+.. c:function:: void mad_tpsa_abs (const tpsa_t *a, tpsa_t *c)
 
 .. c:function:: void mad_tpsa_atan2 (const tpsa_t *y, const tpsa_t *x, tpsa_t *r)
 
 CTPSA only
 ----------
-
-.. c:function:: void mad_ctpsa_conj (const ctpsa_t *a, ctpsa_t *c)
 
 .. c:function:: void mad_ctpsa_cplx (const  tpsa_t *re_, const tpsa_t *im_, ctpsa_t *r)
 
@@ -692,15 +904,22 @@ CTPSA only
 
 .. c:function:: void mad_ctpsa_imag (const ctpsa_t *t,  tpsa_t *r)
 
+.. c:function:: void mad_ctpsa_conj (const ctpsa_t *t, ctpsa_t *r)
+
 .. c:function:: void mad_ctpsa_cabs (const ctpsa_t *t,  tpsa_t *r)
 
 .. c:function:: void mad_ctpsa_carg (const ctpsa_t *t,  tpsa_t *r)
 
-.. c:function:: void mad_ctpsa_unit (const ctpsa_t *t, ctpsa_t *r)
-
 .. c:function:: void mad_ctpsa_rect (const ctpsa_t *t, ctpsa_t *r)
 
 .. c:function:: void mad_ctpsa_polar (const ctpsa_t *t, ctpsa_t *r)
+
+F API
+=====
+
+The Fortran Application Programming Interface provides declarations, i.e. a Fortran interface, for all functions in the C API using the types and features of the :mod:`iso_c_binding` module introduced in Fortran 2003 (but effective only with GNU Fortran 2018 and later). For more details, see the C headers or the file :file:`gtpsa.f90`.
+
+The following type sizes are provided by the module :mod:`GTPSA` to simplify the translation and the manipulation of their C equivalent, namely :type:`integer(c_idx_t)`, :type:`integer(c_ssz_t)`, :type:`integer(c_ord_t)`, :type:`real(c_num_t)`, :type:`complex(c_cpx_t)`, as well as the constant :const:`c_eos` for buidling null-terminating C strings, and the constant :const:`c_null` for initializing C null pointers.
 
 .. ------------------------------------------------------------
 
@@ -711,4 +930,4 @@ References
 
 .. rubric:: Footnotes
 
-.. .. [#f1] The situation may be slightly different in RF cavities depending on the model used.
+.. [#f1] The drift element will be expanded around the orbit if the newly added 'exact' option is specified to the Twiss command.

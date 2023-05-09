@@ -7,40 +7,41 @@ The :literal:`survey` command provides a simple interface to the *geometric* tra
 .. _fig.survey.synop:
 
 .. code-block:: lua
-	:caption: Synopsis of the :literal:`survey` command with default setup.
+    :caption: Synopsis of the :literal:`survey` command with default setup.
+    :name: fig-surv-synop
 
-	mtbl, mflw [, eidx] = survey { 
-		sequence=sequ,  -- sequence (required) 
-		range=nil,  	-- range of tracking (or sequence.range) 
-		dir=1,  	-- s-direction of tracking (1 or -1) 
-		s0=0,  		-- initial s-position offset [m] 
-		X0=0,  		-- initial coordinates x, y, z [m] 
-		A0=0,  		-- initial angles theta, phi, psi [rad] or matrix W0 
-		nturn=1,  	-- number of turns to track 
-		nstep=-1,  	-- number of elements to track 
-		nslice=1,  	-- number of slices (or weights) for each element 
-		implicit=false, -- slice implicit elements too (e.g. plots) 
-		misalign=false, -- consider misalignment 
-		save=true,  	-- create mtable and save results 
-		title=nil,  	-- title of mtable (default seq.name) 
-		observe=0,  	-- save only in observed elements (every n turns) 
-		savesel=fnil,  	-- save selector (predicate) 
-		savemap=false,  -- save the orientation matrix W in the column __map 
-		atentry=fnil,  	-- action called when entering an element 
-		atslice=fnil,  	-- action called after each element slices 
-		atexit=fnil,  	-- action called when exiting an element 
-		atsave=fnil,  	-- action called when saving in mtable 
-		atdebug=fnil,  	-- action called when debugging the element maps 
-		info=nil,  	-- information level (output on terminal) 
-		debug=nil, 	-- debug information level (output on terminal) 
-		usrdef=nil,  	-- user defined data attached to the mflow 
-		mflow=nil,  	-- mflow, exclusive with other attributes except nstep 
-	}
+    mtbl, mflw [, eidx] = survey { 
+        sequence=sequ,  -- sequence (required) 
+        range=nil,      -- range of tracking (or sequence.range) 
+        dir=1,          -- s-direction of tracking (1 or -1) 
+        s0=0,           -- initial s-position offset [m] 
+        X0=0,           -- initial coordinates x, y, z [m] 
+        A0=0,           -- initial angles theta, phi, psi [rad] or matrix W0 
+        nturn=1,        -- number of turns to track 
+        nstep=-1,       -- number of elements to track 
+        nslice=1,       -- number of slices (or weights) for each element 
+        implicit=false, -- slice implicit elements too (e.g. plots) 
+        misalign=false, -- consider misalignment 
+        save=true,      -- create mtable and save results 
+        title=nil,      -- title of mtable (default seq.name) 
+        observe=0,      -- save only in observed elements (every n turns) 
+        savesel=fnil,   -- save selector (predicate) 
+        savemap=false,  -- save the orientation matrix W in the column __map 
+        atentry=fnil,   -- action called when entering an element 
+        atslice=fnil,   -- action called after each element slices 
+        atexit=fnil,    -- action called when exiting an element 
+        atsave=fnil,    -- action called when saving in mtable 
+        atdebug=fnil,   -- action called when debugging the element maps 
+        info=nil,       -- information level (output on terminal) 
+        debug=nil,      -- debug information level (output on terminal) 
+        usrdef=nil,     -- user defined data attached to the mflow 
+        mflow=nil,      -- mflow, exclusive with other attributes except nstep 
+    }
+
+.. _sec.survey.synop:
 
 Command synopsis
 ----------------
-.. _sec.survey.synop:
-
 
 The :literal:`survey` command format is summarized in :numref:`fig.survey.synop`, including the default setup of the attributes. The :literal:`survey` command supports the following attributes:
 
