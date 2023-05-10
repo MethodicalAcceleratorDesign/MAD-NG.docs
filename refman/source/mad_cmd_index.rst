@@ -1,6 +1,6 @@
-###################
-ELEMENTS & COMMANDS
-###################
+########
+COMMANDS
+########
 
 .. toctree::
    :maxdepth: 2
