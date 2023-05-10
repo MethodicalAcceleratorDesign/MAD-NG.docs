@@ -724,23 +724,24 @@ Misalignment
 The misalignments are *mappable* defined at the entry of an element by the following attributes, see the :doc:`track <mad_cmd_track>` command for details:
 
 **dx, dy, ds**
-	 A *number* specifying the :math:`x`\ , :math:`y`\ , :math:`s`\ -displacement at the element entry [m], see :numref:`fig-gen-dispxs` and :numref:`fig-gen-dispys` . (default: :const:`0`).
+	A *number* specifying the :math:`x`\ , :math:`y`\ , :math:`s`\ -displacement at the element entry [m], see :numref:`fig-gen-dispxs` and :numref:`fig-gen-dispys` . (default: :const:`0`).
 
 **dtheta**
-	 A *number* specifying the :math:`y`-rotation angle (azimuthal) at the element entry [rad], see :numref:`fig-gen-dispxs`. (default: :const:`0`).
+	A *number* specifying the :math:`y`-rotation angle (azimuthal) at the element entry [rad], see :numref:`fig-gen-dispxs`. (default: :const:`0`).
 
 **dphi**
-	 A *number* specifying the :math:`-x`-rotation angle (elevation) at the entry of the element [rad], see :numref:`fig-gen-dispxy` . (default: :const:`0`).
+	A *number* specifying the :math:`-x`-rotation angle (elevation) at the entry of the element [rad], see :numref:`fig-gen-dispxy` . (default: :const:`0`).
 
 **dpsi**
-	 A *number* specifying the :math:`s`-rotation angle (roll) at the element entry [rad], see :numref:`fig-gen-dispxy` . (default: :const:`0`).
+	A *number* specifying the :math:`s`-rotation angle (roll) at the element entry [rad], see :numref:`fig-gen-dispxy` . (default: :const:`0`).
 
-Two kinds of misalignments are available for an element and summed beforehand:
+Two kinds of misalignments are available for a given element and summed beforehand:
 
+*	The *absolute* misalignments of the element versus its local reference frame, also named *permanent* misalignments, and specified by its :literal:`misalign` attribute. These misalignments are always considered.
 
-*	 The *absolute* misalignments of the element versus its local reference frame, and specified by its :literal:`misalign` attribute. These misalignments are always considered.
+*	The *relative* misalignments of the element versus a given sequence, and specified by the sequence *method* :meth:`:misalign`. These misalignments are held by the sequence for the elemen, and can be enabled or disabled by the command settings.
 
-*	 The *relative* misalignments of the element versus a given sequence, and specified by the *method* :meth:`:misalign` of :var:`sequence`. These misalignments can be considered or not depending of command settings.
+The relative and absolute misalignments are applied in this order for the outward to inward direction.
 
 .. figure:: fig/elm_dsplmnt_xs.jpg
 	:name: fig-gen-dispxs
