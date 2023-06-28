@@ -15,5 +15,6 @@ LANGUAGE
    /mad_gen_sequence.rst
    /mad_gen_mtable.rst
    /mad_gen_madx.rst
+   /mad_gen_python.rst
 
 
