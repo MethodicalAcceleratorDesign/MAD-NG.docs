@@ -119,7 +119,7 @@ The modelling of multidimensional beam distributions is also possible with TPSAs
 Performance
 -----------
 
-In principle, TPSAs should have equivalent performance to matrix/tensors for low orders and small number of variables, perhaps slightly slower at order 1 or 2 as the management of these data structures involves complex code and additional memory allocations. But from order 3 and higher, GTPSA-based codes outperform matrix/tensor codes because the number of coefficients remains much smaller as shown in :numref:`fig.tpsa.size` and :numref:`fig.tensor.size`, and the complexity of the elementary operations (resp. multiplication) depends linearly (resp. quadratically) on the size of these data structures.
+In principle, TPSAs should have equivalent performance to matrix/tensors for low orders and small number of variables, perhaps slightly slower at order 1 or 2 as the management of these data structures involves complex code and additional memory allocations. But from order 3 and higher, GTPSA-based codes outperform matrix/tensor codes because the number of coefficients remains much smaller as shown in :numref:`fig.tpsa.size`, :numref:`fig.tensor.size` and :numref:`fig.matrix.size`, and the complexity of the elementary operations (resp. multiplication) depends linearly (resp. quadratically) on the size of these data structures.
 
 .. _fig.tpsa.size:
 .. figure:: fig/tpsa-sizes.png
@@ -134,6 +134,22 @@ In principle, TPSAs should have equivalent performance to matrix/tensors for low
    :align: center
 
    Number of coefficients in tensors for maps with :math:`\nu` variables at order :math:`n` is :math:`\sum_{k=0}^n \nu^{k+1} = \frac{\nu(\nu^{n+1}-1)}{\nu-1}`.
+
+.. _fig.matrix.size:
+.. figure:: fig/matrix-sizes.png
+   :figwidth: 98%
+   :align: center
+
+   Number of coefficients in matrices for maps with :math:`\nu` variables at order :math:`n` is :math:`\nu (1+n)^{\nu}`.
+
+Multiplication could be improved further by using multidimensional FFTs on the matrix representation to take advantage of the complexity :math:`{\cal O}(n_m \log n_m)` compared to the complexity :math:`{\cal O}(n_p^2)` for multivariate polynomials. But as we can see in :numref:`fig.tpsa.size` and :numref:`fig.matrix.size`, the number of coefficients :math:`n_m` and :math:`n_p` to be considered respectively in the complexity formula is not the same! The ratio of the number of operations required by the two approaches is expressed in the table :numref:`fig.tpsa_matrix.ratio`, where a number less than 1 means that multivariate polynomial multiplication involves more operations than multi-dimensional FFTs on (much larger) matrices. The yellow and green cells indicate where the FFT method might be faster, taking into account the three FFTs and a rough estimate of the extra operations needed to copy the GTPSAs to the intermediate large matrices back and forth, and to perform the complex multiplication in the frequency domain in :math:`{\cal O}(n_m)`. However, these operations are highly dependent on the efficiency of the CPU and memory in performing high bandwith cache transactions. Given that our use cases mainly involve 6 or more variables, and given the exponential growth in matrix sizes with the number of variables :math:`\nu`, only green cells *could be suitable* to benefit from the FFT approach, knowning that matrices with 7 variables at 12th order use 0.5GB of memory each...
+
+.. _fig.tpsa_matrix.ratio:
+.. figure:: fig/tpsa_matrix-mul_op_ratio.png
+   :figwidth: 81%
+   :align: center
+
+   Ratio of elementary operations between :math:`\nu`-dimentional matrix multiplication using FFTs in :math:`3 n_m (2+\log n_m)` versus multivariate polynomial multiplication in :math:`n_p^2`.
 
 Types promotion
 ===============

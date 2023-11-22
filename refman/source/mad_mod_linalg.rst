@@ -712,6 +712,10 @@ Operator-like Methods
 
    Equivalent to :expr:`mat.div(1, mat, r_, rcond_)`. 
 
+.. function:: mat:pinv ([r_,] rcond_, ncond_)
+
+   Return a real or complex matrix or :var:`r` resulting from the pseudo-inverse of the matrix :var:`mat` using its SVD factorisation returned by :expr:`mat:svd(rcond_)`, followed by the rank of the system. The positive (resp. negative) integer :var:`ncond` specifies the number of smallest (resp. largest) singular values to be discarded.
+
 .. function:: mat:pow (n, r_)
 
    Equivalent to :expr:`mat ^ n` with the possibility to place the result in :var:`r`.
