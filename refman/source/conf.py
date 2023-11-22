@@ -14,9 +14,9 @@ lexers['mad'] = MadLexer()
 
 master_doc = 'index'
 project = 'MAD-NG Reference Manual'
-copyright = '2022, Laurent Deniau'
+copyright = '2023, Laurent Deniau'
 author = 'Laurent Deniau'
-version = release = '0.9.6'
+version = release = '0.9.7'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -116,7 +116,7 @@ latex_elements = {
     \\end{center}
     \\end{abstract}
 
-    \\keywords{Methodical Accelerator Design; Accelerator beam physics; Scientific computing; JIT compiler; C and Lua programming.}
+    \\keywords{Methodical Accelerator Design; Accelerator beam physics; Scientific computing; JIT compiler; C/C++ and Lua programming.}
 
     \\maketitle""",
     'extraclassoptions': "oneside"
