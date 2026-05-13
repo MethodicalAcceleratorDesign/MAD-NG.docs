@@ -34,7 +34,7 @@ Functions                        Return values                                  
 :func:`atan(x,r_)`               :math:`\tan^{-1} x`
 :func:`atan2(x,y,r_)`            :math:`\tan^{-1} \frac{x}{y}`
 :func:`atanh(x,r_)`              :math:`\tanh^{-1} x`                                     :c:func:`atanh`
-:func:`ceil(x,r_)`               :math:`\lceil x \rceil`                                  
+:func:`ceil(x,r_)`               :math:`\lceil x \rceil`
 :func:`cos(x,r_)`                :math:`\cos x`
 :func:`cosh(x,r_)`               :math:`\cosh x`
 :func:`cot(x,r_)`                :math:`\cot x`
@@ -68,7 +68,7 @@ Functions                        Return values                                  
 Generic Complex-like Functions
 ------------------------------
 
-Complex-like generic functions forward the call to the method of the same name from the first argument when the latter is not a :type:`number`, otherwise it implements a real-like compatibility layer using the equivalent representation :math:`z=x+0i`. The optional argument :var:`r_` represents a destination for results with reference semantic, i.e. avoiding memory allocation, which is ignored by results with value semantic. 
+Complex-like generic functions forward the call to the method of the same name from the first argument when the latter is not a :type:`number`, otherwise it implements a real-like compatibility layer using the equivalent representation :math:`z=x+0i`. The optional argument :var:`r_` represents a destination for results with reference semantic, i.e. avoiding memory allocation, which is ignored by results with value semantic.
 
 =======================  ==================================
 Functions                Return values
@@ -114,13 +114,13 @@ Generic Error-like Functions
 Error-like generic functions forward the call to the method of the same name from the first argument when the latter is not a :type:`number`, otherwise it calls C wrappers to the corresponding functions from the `Faddeeva library <http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package>`_ from the MIT (see :file:`mad_num.c`). The optional argument :var:`r_` represents a destination for results with reference semantic, i.e. avoiding memory allocation, which is ignored by results with value semantic.
 
 ==========================  ==========================================================  ========================
-Functions                   Return values                                               C functions  
+Functions                   Return values                                               C functions
 ==========================  ==========================================================  ========================
-:func:`erf(z,rtol_,r_)`     :math:`\frac{2}{\sqrt\pi}\int_0^z e^{-t^2} dt`              :c:func:`mad_num_erf`      
-:func:`erfc(z,rtol_,r_)`    :math:`1-\operatorname{erf}(z)`                             :c:func:`mad_num_erfc`     
-:func:`erfi(z,rtol_,r_)`    :math:`-i\operatorname{erf}(i z)`                           :c:func:`mad_num_erfi`     
-:func:`erfcx(z,rtol_,r_)`   :math:`e^{z^2}\operatorname{erfc}(z)`                       :c:func:`mad_num_erfcx`    
-:func:`wf(z,rtol_,r_)`      :math:`e^{-z^2}\operatorname{erfc}(-i z)`                   :c:func:`mad_num_wf`       
+:func:`erf(z,rtol_,r_)`     :math:`\frac{2}{\sqrt\pi}\int_0^z e^{-t^2} dt`              :c:func:`mad_num_erf`
+:func:`erfc(z,rtol_,r_)`    :math:`1-\operatorname{erf}(z)`                             :c:func:`mad_num_erfc`
+:func:`erfi(z,rtol_,r_)`    :math:`-i\operatorname{erf}(i z)`                           :c:func:`mad_num_erfi`
+:func:`erfcx(z,rtol_,r_)`   :math:`e^{z^2}\operatorname{erfc}(z)`                       :c:func:`mad_num_erfcx`
+:func:`wf(z,rtol_,r_)`      :math:`e^{-z^2}\operatorname{erfc}(-i z)`                   :c:func:`mad_num_wf`
 :func:`dawson(z,rtol_,r_)`  :math:`\frac{-i\sqrt\pi}{2}e^{-z^2}\operatorname{erf}(iz)`  :c:func:`mad_num_dawson`
 ==========================  ==========================================================  ========================
 
@@ -147,19 +147,20 @@ Basic functions for arc and cord lengths conversion rely on the following elemen
 
     l_{\text{arc}}  &= a r = \frac{l_{\text{cord}}}{\operatorname{sinc} \frac{a}{2}}
 
-    l_{\text{cord}} &= 2 r \sin \frac{a}{2} = l_{\text{arc}} \operatorname{sinc} \frac{a}{2} 
+    l_{\text{cord}} &= 2 r \sin \frac{a}{2} = l_{\text{arc}} \operatorname{sinc} \frac{a}{2}
 
 where :math:`r` stands for the radius and :math:`a` for the angle of the `Circular Sector <https://en.wikipedia.org/wiki/Circular_sector>`_.
+The auxiliary projected length used by :func:`arc2len()`, :func:`cord2len()`, :func:`len2arc()` and :func:`len2cord()` is :math:`l_{\text{len}} = l_{\text{cord}} \cos \frac{a}{2}`.
 
 =====================  =====================================
 Functions              Return values
 =====================  =====================================
 :func:`arc2cord(l,a)`  :math:`l_{\text{arc}} \operatorname{sinc} \frac{a}{2}`
-:func:`arc2len(l,a)`   :math:`l_{\text{arc}} \operatorname{sinc} \frac{a}{2}\, \cos a`
+:func:`arc2len(l,a)`   :math:`l_{\text{arc}} \operatorname{sinc} \frac{a}{2}\, \cos \frac{a}{2}`
 :func:`cord2arc(l,a)`  :math:`\frac{l_{\text{cord}}}{\operatorname{sinc} \frac{a}{2}}`
-:func:`cord2len(l,a)`  :math:`l_{\text{cord}} \cos a`
-:func:`len2arc(l,a)`   :math:`\frac{l}{\operatorname{sinc} \frac{a}{2}\, cos a}`
-:func:`len2cord(l,a)`  :math:`\frac{l}{\cos a}`
+:func:`cord2len(l,a)`  :math:`l_{\text{cord}} \cos \frac{a}{2}`
+:func:`len2arc(l,a)`   :math:`\frac{l}{\operatorname{sinc} \frac{a}{2}\, \cos \frac{a}{2}}`
+:func:`len2cord(l,a)`  :math:`\frac{l}{\cos \frac{a}{2}}`
 =====================  =====================================
 
 .. ----------------------------------------------
@@ -210,12 +211,12 @@ Functions for logical operators are wrappers to associated logical operators.
 =================  ===============================================================  ===============
 Functions          Return values                                                    Operator string
 =================  ===============================================================  ===============
-:func:`lfalse()`   :const:`true`                                                    :const:`"T"`                                
-:func:`ltrue()`    :const:`false`                                                   :const:`"F"`                          
-:func:`lnot(x)`    :math:`\lnot x`                                                  :const:`"!"`                      
-:func:`lbool(x)`   :math:`\lnot\lnot x`                                             :const:`"!!"`                       
-:func:`land(x,y)`  :math:`x \land y`                                                :const:`"&&"`                       
-:func:`lor(x,y)`   :math:`x \lor y`                                                 :const:`"||"`                       
+:func:`lfalse()`   :const:`true`                                                    :const:`"T"`
+:func:`ltrue()`    :const:`false`                                                   :const:`"F"`
+:func:`lnot(x)`    :math:`\lnot x`                                                  :const:`"!"`
+:func:`lbool(x)`   :math:`\lnot\lnot x`                                             :const:`"!!"`
+:func:`land(x,y)`  :math:`x \land y`                                                :const:`"&&"`
+:func:`lor(x,y)`   :math:`x \lor y`                                                 :const:`"||"`
 :func:`lnum(x)`    :math:`\lnot x\rightarrow 0`, :math:`\lnot\lnot x\rightarrow 1`  :const:`"!#"`
 =================  ===============================================================  ===============
 
@@ -259,41 +260,41 @@ Bitwise Functions
 Functions for bitwise operations are those from the LuaJIT module :mod:`bit` and imported into the module :mod:`MAD.gfunc` for convenience, see http://bitop.luajit.org/api.html for details. Note that all these functions have *value semantic* and normalise their arguments to the numeric range of a 32 bit integer before use.
 
 ====================  ====================================================
-Functions             Return values         
+Functions             Return values
 ====================  ====================================================
-:func:`tobit(x)`      Return the normalized value of :var:`x` to the range of a 32 bit integer      
-:func:`tohex(x,n_)`   Return the hex string of :var:`x` with :var:`n` digits (:math:`n<0` use caps)    
-:func:`bnot(x)`       Return the bitwise reverse of :var:`x` bits    
-:func:`band(x,...)`   Return the bitwise *AND* of all arguments     
-:func:`bor(x,...)`    Return the bitwise *OR* of all arguments 
+:func:`tobit(x)`      Return the normalized value of :var:`x` to the range of a 32 bit integer
+:func:`tohex(x,n_)`   Return the hex string of :var:`x` with :var:`n` digits (:math:`n<0` use caps)
+:func:`bnot(x)`       Return the bitwise reverse of :var:`x` bits
+:func:`band(x,...)`   Return the bitwise *AND* of all arguments
+:func:`bor(x,...)`    Return the bitwise *OR* of all arguments
 :func:`bxor(x,...)`   Return the bitwise *XOR* of all arguments
-:func:`lshift(x,n)`   Return the bitwise left shift of :var:`x` by :var:`n` bits with 0-bit shift-in     
+:func:`lshift(x,n)`   Return the bitwise left shift of :var:`x` by :var:`n` bits with 0-bit shift-in
 :func:`rshift(x,n)`   Return the bitwise right shift of :var:`x` by :var:`n` bits with 0-bit shift-in
 :func:`arshift(x,n)`  Return the bitwise right shift of :var:`x` by :var:`n` bits with sign bit shift-in
-:func:`rol(x,n)`      Return the bitwise left rotation of :var:`x` by :var:`n` bits      
-:func:`ror(x,n)`      Return the bitwise right rotation of :var:`x` by :var:`n` bits     
-:func:`bswap(x)`      Return the swapped bytes of :var:`x`, i.e. convert big endian to/from little endian       
+:func:`rol(x,n)`      Return the bitwise left rotation of :var:`x` by :var:`n` bits
+:func:`ror(x,n)`      Return the bitwise right rotation of :var:`x` by :var:`n` bits
+:func:`bswap(x)`      Return the swapped bytes of :var:`x`, i.e. convert big endian to/from little endian
 ====================  ====================================================
 
 Flags Functions
 ---------------
 
-A flag is 32 bit unsigned integer used to store up to 32 binary states with the convention that :const:`0` means disabled/cleared and :const:`1` means enabled/set. Functions on flags are useful aliases to, or combination of, bitwise operations to manipulate their states (i.e. their bits). Flags are mainly used by the object model to keep track of hidden and user-defined states in a compact and efficient format. 
+A flag is 32 bit unsigned integer used to store up to 32 binary states with the convention that :const:`0` means disabled/cleared and :const:`1` means enabled/set. Functions on flags are useful aliases to, or combination of, bitwise operations to manipulate their states (i.e. their bits). Flags are mainly used by the object model to keep track of hidden and user-defined states in a compact and efficient format.
 
 ===================  ====================================================
-Functions            Return values         
+Functions            Return values
 ===================  ====================================================
 :func:`bset(x,n)`    Return the flag :var:`x` with state :var:`n` enabled
-:func:`bclr(x,n)`    Return the flag :var:`x` with state :var:`n` disabled   
-:func:`btst(x,n)`    Return :const:`true` if state :var:`n` is enabled in :var:`x`, :const:`false` otherwise      
-:func:`fbit(n)`      Return a flag with only state :var:`n` enabled    
+:func:`bclr(x,n)`    Return the flag :var:`x` with state :var:`n` disabled
+:func:`btst(x,n)`    Return :const:`true` if state :var:`n` is enabled in :var:`x`, :const:`false` otherwise
+:func:`fbit(n)`      Return a flag with only state :var:`n` enabled
 :func:`fnot(x)`      Return the flag :var:`x` with all states flipped
 :func:`fset(x,...)`  Return the flag :var:`x` with disabled states flipped if enabled in any flag passed as argument
-:func:`fcut(x,...)`  Return the flag :var:`x` with enabled states flipped if disabled in any flag passed as argument 
+:func:`fcut(x,...)`  Return the flag :var:`x` with enabled states flipped if disabled in any flag passed as argument
 :func:`fclr(x,f)`    Return the flag :var:`x` with enabled states flipped if enabled in :var:`f`
-:func:`ftst(x,f)`    Return :const:`true` if all states enabled in :var:`f` are enabled in :var:`x`, :const:`false` otherwise 
-:func:`fall(x)`      Return :const:`true` if all states are enabled in :var:`x`, :const:`false` otherwise       
-:func:`fany(x)`      Return :const:`true` if any state is enabled in :var:`x`, :const:`false` otherwise    
+:func:`ftst(x,f)`    Return :const:`true` if all states enabled in :var:`f` are enabled in :var:`x`, :const:`false` otherwise
+:func:`fall(x)`      Return :const:`true` if all states are enabled in :var:`x`, :const:`false` otherwise
+:func:`fany(x)`      Return :const:`true` if any state is enabled in :var:`x`, :const:`false` otherwise
 ===================  ====================================================
 
 Special Functions
@@ -302,21 +303,21 @@ Special Functions
 The module :mod:`MAD.gfunc` provides some useful functions when passed as argument or composed with other functions.
 
 ======================  ====================================================
-Functions               Return values         
+Functions               Return values
 ======================  ====================================================
-:func:`narg(...)`       Return the number of arguments      
-:func:`ident(...)`      Return all arguments unchanged, i.e. functional identity    
-:func:`fnil()`          Return :const:`nil`, i.e. functional nil    
+:func:`narg(...)`       Return the number of arguments
+:func:`ident(...)`      Return all arguments unchanged, i.e. functional identity
+:func:`fnil()`          Return :const:`nil`, i.e. functional nil
 :func:`ftrue()`         Return :const:`true`, i.e. functional true
 :func:`ffalse()`        Return :const:`false`, i.e. functional false
 :func:`fzero()`         Return :const:`0`, i.e. functional zero
-:func:`fone()`          Return :const:`1`, i.e. functional one     
+:func:`fone()`          Return :const:`1`, i.e. functional one
 :func:`first(a)`        Return first argument and discard the others
 :func:`second(a,b)`     Return second argument and discard the others
-:func:`third(a,b,c)`    Return third argument and discard the others      
-:func:`swap(a,b)`       Return first and second arguments swapped and discard the other arguments   
-:func:`swapv(a,b,...)`  Return first and second arguments swapped followed by the other arguments        
-:func:`echo(...)`       Return all arguments unchanged after echoing them on stdout       
+:func:`third(a,b,c)`    Return third argument and discard the others
+:func:`swap(a,b)`       Return first and second arguments swapped and discard the other arguments
+:func:`swapv(a,b,...)`  Return first and second arguments swapped followed by the other arguments
+:func:`echo(...)`       Return all arguments unchanged after echoing them on stdout
 ======================  ====================================================
 
 C API
@@ -364,7 +365,7 @@ These functions are provided for performance reason and compliance with the C AP
 
    Return the error function of the :type:`number` :var:`x`.
 
-.. c:function:: num_t mad_num_erfc (num_t x, num_t relerr) 
+.. c:function:: num_t mad_num_erfc (num_t x, num_t relerr)
 
    Return the complementary error function of the :type:`number` :var:`x`.
 
@@ -390,6 +391,6 @@ References
 .. rubric:: Footnotes
 
 .. [#f1] For *true* Functional Programming, see the module :mod:`MAD.lfun`, a binding of the `LuaFun <https://github.com/luafun/luafun>`_  library adapted to the ecosystem of MAD-NG.
-.. [#f2] Default: :expr:`v_ = 1`. 
+.. [#f2] Default: :expr:`v_ = 1`.
 .. [#f3] Sign and sign1 functions take care of special cases like ±0, ±inf and ±NaN.
 .. [#f4] Element-wise operators are not available directly in the programming language, here we use the Matlab-like notation for convenience.

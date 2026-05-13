@@ -66,16 +66,16 @@ Operator-like Methods
 ---------------------
 
 =================  ===================   ===================  =============================
-Functions          Return values         Metamethods          C functions                         
+Functions          Return values         Metamethods          C functions
 =================  ===================   ===================  =============================
-:func:`z:unm()`    :math:`-z`            :func:`__unm(z,_)`                                
-:func:`z:add(z2)`  :math:`z + z_2`       :func:`__add(z,z2)`                               
-:func:`z:sub(z2)`  :math:`z - z_2`       :func:`__sub(z,z2)`                               
-:func:`z:mul(z2)`  :math:`z \cdot z_2`   :func:`__mul(z,z2)`                               
+:func:`z:unm()`    :math:`-z`            :func:`__unm(z,_)`
+:func:`z:add(z2)`  :math:`z + z_2`       :func:`__add(z,z2)`
+:func:`z:sub(z2)`  :math:`z - z_2`       :func:`__sub(z,z2)`
+:func:`z:mul(z2)`  :math:`z \cdot z_2`   :func:`__mul(z,z2)`
 :func:`z:div(z2)`  :math:`z / z_2`       :func:`__div(z,z2)`  :c:func:`mad_cpx_div_r` [#f1]_
 :func:`z:mod(z2)`  :math:`z \mod z_2`    :func:`__mod(z,z2)`  :c:func:`mad_cpx_mod_r`
 :func:`z:pow(z2)`  :math:`z ^ {z_2}`     :func:`__pow(z,z2)`  :c:func:`mad_cpx_pow_r`
-:func:`z:eq(z2)`   :math:`z = z_2`       :func:`__eq(z,z2)`                                
+:func:`z:eq(z2)`   :math:`z = z_2`       :func:`__eq(z,z2)`
 =================  ===================   ===================  =============================
 
 Real-like Methods
@@ -84,7 +84,7 @@ Real-like Methods
 =============================  ====================================================================  ============================
 Functions                      Return values                                                         C functions
 =============================  ====================================================================  ============================
-:func:`z:abs()`                :math:`|z|`                                                           :c:func:`mad_cpx_abs_r`
+:func:`z:abs()`                :math:`|\Re(z)|+i\,|\Im(z)|`                                          :c:func:`mad_cpx_abs_r`
 :func:`z:acos()`               :math:`\cos^{-1} z`                                                   :c:func:`mad_cpx_acos_r`
 :func:`z:acosh()`              :math:`\cosh^{-1} z`                                                  :c:func:`mad_cpx_acosh_r`
 :func:`z:acot()`               :math:`\cot^{-1} z`                                                   :c:func:`mad_cpx_atan_r`
@@ -95,35 +95,37 @@ Functions                      Return values                                    
 :func:`z:asinhc()`             :math:`\frac{\sinh^{-1} z}{z}`                                        :c:func:`mad_cpx_asinhc_r`
 :func:`z:atan()`               :math:`\tan^{-1} z`                                                   :c:func:`mad_cpx_atan_r`
 :func:`z:atanh()`              :math:`\tanh^{-1} z`                                                  :c:func:`mad_cpx_atanh_r`
-:func:`z:ceil()`               :math:`\lceil\Re(z)\rceil+i\,\lceil\Im(z)\rceil`        
+:func:`z:ceil()`               :math:`\lceil\Re(z)\rceil+i\,\lceil\Im(z)\rceil`
 :func:`z:cos()`                :math:`\cos z`                                                        :c:func:`mad_cpx_cos_r`
 :func:`z:cosh()`               :math:`\cosh z`                                                       :c:func:`mad_cpx_cosh_r`
 :func:`z:cot()`                :math:`\cot z`                                                        :c:func:`mad_cpx_tan_r`
 :func:`z:coth()`               :math:`\coth z`                                                       :c:func:`mad_cpx_tanh_r`
 :func:`z:exp()`                :math:`\exp z`                                                        :c:func:`mad_cpx_exp_r`
-:func:`z:floor()`              :math:`\lfloor\Re(z)\rfloor+i\,\lfloor\Im(z)\rfloor`      
-:func:`z:frac()`               :math:`z - \operatorname{trunc}(z)`           
-:func:`z:hypot(z2)`            :math:`\sqrt{z^2+z_2^2}`                                              [#f2]_         
-:func:`z:hypot3(z2,z3)`        :math:`\sqrt{z^2+z_2^2+z_3^2}`                                        [#f2]_  
+:func:`z:floor()`              :math:`\lfloor\Re(z)\rfloor+i\,\lfloor\Im(z)\rfloor`
+:func:`z:frac()`               :math:`z - \operatorname{trunc}(z)`
+:func:`z:hypot(z2)`            :math:`\sqrt{z^2+z_2^2}`                                              [#f2]_
+:func:`z:hypot3(z2,z3)`        :math:`\sqrt{z^2+z_2^2+z_3^2}`                                        [#f2]_
 :func:`z:inv(v_)`              :math:`\frac{v}{z}`                                                   :c:func:`mad_cpx_inv_r` [#f1]_
 :func:`z:invsqrt(v_)`          :math:`\frac{v}{\sqrt z}`                                             :c:func:`mad_cpx_invsqrt_r` [#f1]_
 :func:`z:log()`                :math:`\log z`                                                        :c:func:`mad_cpx_log_r`
 :func:`z:log10()`              :math:`\log_{10} z`                                                   :c:func:`mad_cpx_log10_r`
 :func:`z:powi(n)`              :math:`z^n`                                                           :c:func:`mad_cpx_powi_r`
-:func:`z:round()`              :math:`\lfloor\Re(z)\rceil+i\,\lfloor\Im(z)\rceil`     
+:func:`z:round()`              :math:`\lfloor\Re(z)\rceil+i\,\lfloor\Im(z)\rceil`
 :func:`z:sin()`                :math:`\sin z`                                                        :c:func:`mad_cpx_sin_r`
 :func:`z:sinc()`               :math:`\frac{\sin z}{z}`                                              :c:func:`mad_cpx_sinc_r`
 :func:`z:sinh()`               :math:`\sinh z`                                                       :c:func:`mad_cpx_sinh_r`
 :func:`z:sinhc()`              :math:`\frac{\sinh z}{z}`                                             :c:func:`mad_cpx_sinhc_r`
-:func:`z:sqr()`                :math:`z \cdot z`                                                                                     
+:func:`z:sqr()`                :math:`z \cdot z`
 :func:`z:sqrt()`               :math:`\sqrt{z}`                                                      :c:func:`mad_cpx_sqrt_r`
 :func:`z:tan()`                :math:`\tan z`                                                        :c:func:`mad_cpx_tan_r`
 :func:`z:tanh()`               :math:`\tanh z`                                                       :c:func:`mad_cpx_tanh_r`
-:func:`z:trunc()`              :math:`\operatorname{trunc} \Re(z)+i\,\operatorname{trunc} \Im(z)`                                
+:func:`z:trunc()`              :math:`\operatorname{trunc} \Re(z)+i\,\operatorname{trunc} \Im(z)`
 :func:`z:unit()`               :math:`\frac{z}{|z|}`                                                 :c:func:`mad_cpx_unit_r`
 =============================  ====================================================================  ============================
 
 In methods :func:`inv()` and :func:`invsqrt()`, default is :expr:`v_ = 1`.
+
+For the scalar modulus :math:`|z|`, use the generic function :func:`cabs(z)`.
 
 Complex-like Methods
 --------------------
@@ -133,14 +135,14 @@ Functions          Return values                                   C functions
 =================  ==============================================  ==========================
 :func:`z:cabs()`   :math:`|z|`                                     :c:func:`mad_cpx_abs_r`
 :func:`z:carg()`   :math:`\arg z`                                  :c:func:`mad_cpx_arg_r`
-:func:`z:conj()`   :math:`z^*`                                     
+:func:`z:conj()`   :math:`z^*`
 :func:`z:fabs()`   :math:`|\Re(z)|+i\,|\Im(z)|`
-:func:`z:imag()`   :math:`\Im(z)`                                     
+:func:`z:imag()`   :math:`\Im(z)`
 :func:`z:polar()`  :math:`|z|\,e^{i \arg z}`                       :c:func:`mad_cpx_polar_r`
 :func:`z:proj()`   :math:`\operatorname{proj}(z)`                  :c:func:`mad_cpx_proj_r`
-:func:`z:real()`   :math:`\Re(z)`                                     
+:func:`z:real()`   :math:`\Re(z)`
 :func:`z:rect()`   :math:`\Re(z)\cos \Im(z)+i\,\Re(z)\sin \Im(z)`  :c:func:`mad_cpx_rect_r`
-:func:`z:reim()`   :math:`\Re(z), \Im(z)`                                     
+:func:`z:reim()`   :math:`\Re(z), \Im(z)`
 =================  ==============================================  ==========================
 
 Error-like Methods
@@ -149,7 +151,7 @@ Error-like Methods
 Error-like methods call C wrappers to the corresponding functions from the `Faddeeva library <http://ab-initio.mit.edu/Faddeeva>`_ from the MIT, considered as one of the most accurate and fast implementation over the complex plane [FADDEEVA]_ (see :file:`mad_num.c`).
 
 =======================  ==========================================================  ======================
-Functions                Return values                                               C functions  
+Functions                Return values                                               C functions
 =======================  ==========================================================  ======================
 :func:`z:erf(rtol_)`     :math:`\frac{2}{\sqrt\pi}\int_0^z e^{-t^2} dt`              :c:func:`mad_cpx_erf_r`
 :func:`z:erfc(rtol_)`    :math:`1-\operatorname{erf}(z)`                             :c:func:`mad_cpx_erfc_r`
@@ -395,6 +397,5 @@ References
 
 .. rubric:: Footnotes
 
-.. [#f1] Division and inverse use a robust and fast complex division algorithm, see [CPXDIV]_ and [CPXDIV2]_ for details. 
+.. [#f1] Division and inverse use a robust and fast complex division algorithm, see [CPXDIV]_ and [CPXDIV2]_ for details.
 .. [#f2] Hypot and hypot3 methods use a trivial implementation that may lead to numerical overflow/underflow.
-

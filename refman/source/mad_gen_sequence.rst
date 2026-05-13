@@ -179,7 +179,7 @@ The :var:`sequence` object provides the following methods:
    A *method* :literal:`([name])` returning a new sequence from the sequence reversed, and named from the optional *string* :literal:`name` (default: :literal:`self.name..'_rev'`).
 
 **cycle**
-   A *method* :literal:`(a)` returning the sequence itself after checking that :literal:`a` is a valid reference using :literal:`:index_of(a)`, and storing it in the :literal:`__cycle` attribute, 
+   A *method* :literal:`(a)` returning the sequence itself after checking that :literal:`a` is a valid reference using :literal:`:index_of(a)` and that it resolves to a *marker*, and storing it in the :literal:`__cycle` attribute,
    itself erased by the methods editing the sequence like :literal:`:install`, :literal:`:replace`, :literal:`:remove`, :literal:`:share`, and :literal:`:unique`.
 
 **share**
@@ -199,8 +199,8 @@ The :var:`sequence` object provides the following methods:
    are created within the :literal:`MADX` environment.
 
 **copy**
-   A *method* :literal:`([name], [owner])` returning a new sequence from a copy of :literal:`self`, with the optional :literal:`name` and the optional attribute :literal:`owner` set. 
-   If the sequence is a view, so will be the copy unless :literal:`owner == true`.
+   A *method* :literal:`([name])` returning a new sequence from a copy of :literal:`self`, with the optional :literal:`name` set.
+   If the sequence is a view, the copy is also a view.
 
 **set_readonly**
    Set the sequence as read-only, including its columns.

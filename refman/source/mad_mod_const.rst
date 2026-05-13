@@ -5,7 +5,7 @@
 Constants
 *********
 
-This chapter describes some constants uniquely defined as macros in the C header :file:`mad_cst.h` and available from modules :mod:`MAD.constant` and :mod:`MAD._C` (C API) as floating point double precision variables. 
+This chapter describes some constants uniquely defined as macros in the C header :file:`mad_cst.h` and available from modules :mod:`MAD.constant` and :mod:`MAD._C` (C API) as floating point double precision variables.
 
 Numerical Constants
 ===================
@@ -13,7 +13,7 @@ Numerical Constants
 .. index::
    Numerical constants
 
-These numerical constants are provided by the system libraries. Note that the constant :const:`huge` differs from :const:`math.huge`, which corresponds in fact to :const:`inf`. 
+These numerical constants are provided by the system libraries. Note that the constant :const:`huge` differs from :const:`math.huge`, which corresponds in fact to :const:`inf`.
 
 ===================  ======================  =========================  ======================
 MAD constants        C macros                C constants                Values
@@ -72,8 +72,8 @@ This section describes some physical constants uniquely defined as macros in the
 MAD constants    C macros             C constants              Values
 ===============  ===================  =======================  ======================
 :const:`minlen`  :c:macro:`P_MINLEN`  :const:`mad_cst_MINLEN`  Min length tolerance, default :math:`10^{-10}` in :unit:`[m]`
-:const:`minang`  :c:macro:`P_MINANG`  :const:`mad_cst_MINANG`  Min angle tolerance, default :math:`10^{-10}` in :unit:`[1/m]`
-:const:`minstr`  :c:macro:`P_MINSTR`  :const:`mad_cst_MINSTR`  Min strength tolerance, default :math:`10^{-10}` in :unit:`[rad]`
+:const:`minang`  :c:macro:`P_MINANG`  :const:`mad_cst_MINANG`  Min angle tolerance, default :math:`10^{-10}` in :unit:`[rad]`
+:const:`minstr`  :c:macro:`P_MINSTR`  :const:`mad_cst_MINSTR`  Min strength tolerance, default :math:`10^{-10}` in :unit:`[1/m]`
 ===============  ===================  =======================  ======================
 
 The following table lists some physical constants from the `CODATA 2018 <https://physics.nist.gov/cuu/pdf/wall_2018.pdf>`_ sheet.
@@ -87,6 +87,7 @@ MAD constants      C macros               C constants                Values
 :const:`qelect`    :c:macro:`P_QELECT`    :const:`mad_cst_QELECT`    Elementary electric charge, :math:`e` in :unit:`[C]`
 :const:`hbar`      :c:macro:`P_HBAR`      :const:`mad_cst_HBAR`      Reduced Plack's constant, :math:`\hbar` in :unit:`[GeV.s]`
 :const:`amass`     :c:macro:`P_AMASS`     :const:`mad_cst_AMASS`     Unified atomic mass, :math:`m_u\,c^2` in :unit:`[GeV]`
+:const:`umass`     :c:macro:`P_AMASS`     :const:`mad_cst_AMASS`     Alias of :const:`amass`
 :const:`emass`     :c:macro:`P_EMASS`     :const:`mad_cst_EMASS`     Electron mass, :math:`m_e\,c^2` in :unit:`[GeV]`
 :const:`pmass`     :c:macro:`P_PMASS`     :const:`mad_cst_PMASS`     Proton mass, :math:`m_p\,c^2` in :unit:`[GeV]`
 :const:`nmass`     :c:macro:`P_NMASS`     :const:`mad_cst_NMASS`     Neutron mass, :math:`m_n\,c^2` in :unit:`[GeV]`

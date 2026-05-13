@@ -17,7 +17,7 @@ The :literal:`mtable` object provides the following attributes:
 	 A *string* specifying the type of the mtable (often) set to the name of the command that created it, like :literal:`survey`, :var:`track` or :var:`twiss`. (default: :literal:`'user'`).
 
 **title**
-	 A *string* specifying the title of the mtable (often) set to the attribute :literal:`title` of the command that created it. (default: :literal:`'no-title'`).
+	 A *string* specifying the title of the mtable when one is attached by the creator. Commands may set it explicitly, but it is not part of the base mtable defaults.
 
 **origin**
 	 A *string* specifying the origin of the mtable. (default: :literal:`"MAD version os arch"`).
@@ -33,7 +33,7 @@ The :literal:`mtable` object provides the following attributes:
 
 **header**
 	 A *list* specifying the augmented attributes names (and their order) used by default for the header when writing the mtable to files. Augmented meaning that the *list* is concatenated to the *list* held by the parent mtable during initialization. 
-	 (default: :literal:`{'name', 'type', 'title', 'origin', 'date', 'time', 'refcol'}`).
+	 (default: :literal:`{'name', 'type', 'origin', 'date', 'time', 'refcol'}`).
 
 **column**
 	 A *list* specifying the augmented columns names (and their order) used by default for the columns when writing the mtable to files. Augmented meaning that the *list* is concatenated to the *list* held by the parent mtable during initialization. (default: :const:`nil`).
@@ -41,11 +41,8 @@ The :literal:`mtable` object provides the following attributes:
 **novector**
 	 A *logical* specifying to not convert (:literal:`novector == true`) columns containing only numbers to vectors during the insertion of the second row. The attribute can also be a *list* specifying the columns names to remove from the specialization. If the *list* is empty or :literal:`novector ~= true`, all numeric columns will be converted to vectors, and support all methods and operations from the :doc:`linear algebra <mad_mod_linalg>` module. (default: :const:`nil`).
 
-**owner**
-	 A *logical* specifying if an *empty* mtable is a view with no data (:literal:`owner ~= true`), or a mtable holding data (:literal:`owner == true`). (default: :const:`nil`).
-
 **reserve**
-	 A *number* specifying an estimate of the maximum number of rows stored in the mtable. If the value is underestimated, the mtable will still expand on need. (default: :literal:`8`).
+	 A *number* specifying an estimate of the maximum number of rows stored in the mtable. If the value is underestimated, the mtable will still expand on need. (default: :literal:`100`).
 
 
 **Warning**: the following private and read-only attributes are present in all mtables and should *never be used, set or changed*; breaking this rule would lead to an *undefined behavior*:
@@ -87,7 +84,7 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`(idx, [ref])` returning a *string* corresponding to the (mangled) *value* from the reference column of the row at the index :literal:`idx`, or :const:`nil`. A row *value* appearing more than once in the reference column will be mangled with an absolute count, e.g. :literal:`mq[3]`, or a relative count versus the reference row determined by :literal:`:index_of(ref)`, e.g. :literal:`mq{-2}`.
 
 **index_of**
-	 A *method*	:literal:`(a, [ref], [dir])` returning a *number* corresponding to the positive index of the row determined by the first argument or :const:`nil`. If :literal:`a` is a *number* (or a *string* representing a *number*), it is interpreted as the index of the row and returned as a second *number*. If :literal:`a` is a *string*, it is interpreted as the (mangled) *value* of the row in the reference column as returned by :literal:`:name_of`. Finally, :literal:`a` can be a *reference* to an element to search for **if** the mtable has both, an attached sequence, and a column named :literal:`'eidx'` mapping the indexes of the elements to the attached sequence. [#f1]_ The argument :literal:`ref` (default: :const:`nil`) specifies the reference row determined by :literal:`:index_of(ref)` to use for relative indexes, for decoding mangled values with relative counts, or as the reference row to start searching from. The argument :literal:`dir` (default: :const:`1`) specifies the direction of the search with values :const:`1` (forward), :literal:`-1` (backward), or :const:`0` (no direction), which correspond respectively to the rounding methods :literal:`ceil`, :literal:`floor` and :literal:`round` from the lua math module.
+	 A *method*	:literal:`(a, [ref], [dir])` returning a *number* corresponding to the positive index of the row determined by the first argument or :const:`nil`. If :literal:`a` is a *number* (or a *string* representing a *number*), it is interpreted as the index of the row and returned as a second *number*. If :literal:`a` is a *string*, it is interpreted as the (mangled) *value* of the row in the reference column as returned by :literal:`:name_of`. Finally, :literal:`a` can be a *reference* to an element to search for **if** the mtable has both, an attached sequence, and a column named :literal:`'eidx'` mapping the indexes of the elements to the attached sequence. [#f1]_ The argument :literal:`ref` (default: :const:`nil`) specifies the reference row determined by :literal:`:index_of(ref)` to use for relative indexes, for decoding mangled values with relative counts, or as the reference row to start searching from. The argument :literal:`dir` (default: :const:`0`) specifies the direction of the search with values :const:`1` (forward), :literal:`-1` (backward), or :const:`0` (no direction), which correspond respectively to the rounding methods :literal:`ceil`, :literal:`floor` and :literal:`round` from the lua math module.
 
 **range_of**
 	 A *method*	:literal:`([rng], [ref], [dir])` returning three *number*\ s corresponding to the positive indexes *start* and *end* of the range and its direction *dir* (default: :const:`1`), or :const:`nil` for an empty range. If :literal:`rng` is omitted, it returns :const:`1`, :literal:`#self`, :const:`1`, or :literal:`#self`, :const:`1`, :literal:`-1` if :literal:`dir` is negative. If :literal:`rng` is a *number* or a *string* with no :literal:`'/'` separator, it is interpreted as *start* and *end*, both determined by :literal:`:index_of`. If :literal:`rng` is a *string* containing the separator :literal:`'/'`, it is split in two *string*\ s interpreted as *start* and *end*, both determined by :literal:`:index_of`. If :literal:`rng` is a *list*, it will be interpreted as { *start*, *end*, :literal:`[ref]`, :literal:`[dir]` }, both determined by :literal:`:index_of`. The arguments :literal:`ref` and :literal:`dir` are forwarded to all invocations of :literal:`:index_of` with a higher precedence than ones in the *list* :literal:`rng`, and a runtime error is raised if the method returns :const:`nil`, i.e. to disambiguate between a valid empty range and an invalid range.
@@ -165,19 +162,19 @@ The :literal:`mtable` object provides the following methods:
 	 A *method*	:literal:`([rng], [sel])` returning the mtable itself after removing the rows determined by :literal:`:filter([rng], [sel], true)`.
 
 **sort**
-	 A *method*	:literal:`(cmp, [rng], [sel])` returning the mtable itself after sorting the rows at the indexes determined by :literal:`:filter([rng], [sel], true)` using the ordering *callable* :literal:`cmp(row1, row2)`. The arguments :literal:`row1` and :literal:`row2` are *mappable* (proxies) referring to the current rows being compared and providing access to the columns values for the comparison. [#f3]_ The argument :literal:`cmp` can be specified in a compact ordering form as a *string* that will be converted to an ordering *callable* by the function :literal:`str2cmp` from the :doc:`utility <mad_mod_numrange>` module. For example, the *string* "-y,x" will be converted by the method to the following *lambda* :literal:`\\r1,r2 -> r1.y > r2.y or r1.y == r2.y and r1.x < r2.x`, where :literal:`y` and :literal:`x` are the columns used to sort the mtable in descending (`-`) and ascending (:literal:`+`) order respectively. The compact ordering form is not limited in the number of columns and avoids making mistakes in the comparison logic when many columns are involved.
+	 A *method*	:literal:`(cmp, [rng], [sel])` returning the mtable itself after sorting the rows at the indexes determined by :literal:`:filter([rng], [sel], true)` using the ordering *callable* :literal:`cmp(row1, row2)`. The arguments :literal:`row1` and :literal:`row2` are *mappable* (proxies) referring to the current rows being compared and providing access to the columns values for the comparison. [#f3]_ The argument :literal:`cmp` can be specified in a compact ordering form as a *string* that will be converted to an ordering *callable* by the function :literal:`str2cmp` from the :doc:`utility <mad_mod_miscfuns>` module. For example, the *string* "-y,x" will be converted by the method to the following *lambda* :literal:`\\r1,r2 -> r1.y > r2.y or r1.y == r2.y and r1.x < r2.x`, where :literal:`y` and :literal:`x` are the columns used to sort the mtable in descending (`-`) and ascending (:literal:`+`) order respectively. The compact ordering form is not limited in the number of columns and avoids making mistakes in the comparison logic when many columns are involved.
 
 **cycle**
 	 A *method*	:literal:`(a)` returning the mtable itself after checking that :literal:`a` is a valid reference using :literal:`:index_of(a)`, and storing it in the :literal:`__cycle` attribute, itself erased by the methods editing the mtable like :literal:`:insert`, :literal:`:remove` or :literal:`:sort`.
 
 **copy**
-	 A *method*	:literal:`([name], [owner])` returning a new mtable from a copy of :literal:`self`, with the optional :literal:`name` and the optional attribute :literal:`owner` set. If the mtable is a view, so will be the copy unless :literal:`owner == true`.
+	 A *method*	:literal:`([name])` returning a new mtable from a copy of :literal:`self`, with the optional :literal:`name` set. Copies preserve whether the source is a view or a table holding its own data; there is no :literal:`owner` override on copy.
 
 **is_view**
 	 A *method*	:literal:`()` returning :const:`true` if the mtable is a view over another mtable data, :const:`false` otherwise.
 
 **set_readonly**
-	 Set the mtable as read-only, including the columns and the rows proxies.
+	 Set the mtable object as read-only. This protects the object attributes themselves, but does not freeze the row and column data proxies nor the row and column editing methods backed by the internal table data.
 
 **read**
 	 A *method*	:literal:`([filname])` returning a new instance of :literal:`self` filled with the data read from the file determined by :literal:`openfile(filename, 'r', {'.tfs','.txt','.dat'})` from the :doc:`utility <mad_mod_miscfuns>` module. This method can read columns containing the data types *nil*, *boolean*, *number*, *complex number*, (numerical) *range*, and (quoted) *string*. The header can also contain tables saved as *string* and decoded with *function* :literal:`str2tbl` from the :doc:`utility <mad_mod_miscfuns>` module.
@@ -231,7 +228,7 @@ The :literal:`mtable` object provides the following metamethods:
 
 
 **__init**
-	 A *metamethod*	:literal:`()` called by the constructor to build the mtable from the column names stored in its *list* part and some attributes, like :literal:`owner`, :literal:`reserve` and :literal:`novector`.
+	 A *metamethod*	:literal:`()` called by the constructor to build the mtable from the column names stored in its *list* part and some attributes, like :literal:`reserve` and :literal:`novector`.
 
 **__copy**
 	 A *metamethod*	:literal:`()` similar to the *method* :literal:`copy`.
@@ -248,7 +245,7 @@ MTables creation
 
 During its creation as an *object*, an mtable can defined its attributes as any object, and the *list* of its column names, which will be cleared after its initialization. Any column name in the *list* that is enclosed by braces is designated as the refererence column for the dictionnary that provides fast row indexing, and the attribute :literal:`refcol` is set accordingly.
 
-Some attributes are considered during the creation by the *metamethod* :literal:`__init`, like :literal:`owner`, :literal:`reserve` and :literal:`novector`, and some others are initialized with defined values like :literal:`type`, :literal:`title`, :literal:`origin`, :literal:`date`, :literal:`time`, and :literal:`refcol`. The attributes :literal:`header` and :literal:`column` are concatenated with the the parent ones to build incrementing *list* of attributes names and columns names used by default when writing the mtable to files, and these lists are not provided as arguments.
+Some attributes are considered during the creation by the *metamethod* :literal:`__init`, like :literal:`reserve` and :literal:`novector`, and some others are initialized with defined values like :literal:`type`, :literal:`origin`, :literal:`date`, :literal:`time`, and :literal:`refcol`. The attributes :literal:`header` and :literal:`column` are concatenated with the the parent ones to build incrementing *list* of attributes names and columns names used by default when writing the mtable to files, and these lists are not provided as arguments. The older :literal:`owner` creation attribute is no longer supported.
 
 The following example shows how to create a mtable form a *list* of column names add rows:
 
@@ -334,7 +331,7 @@ Ranging a mtable triggers a complex look up mechanism where the arguments will b
 
 The mtable iterators are created by the method :literal:`:iter`, based on the method :literal:`:range_of` as mentioned in its description and includes an extra *number* of turns as for the method :literal:`:length_of`, and a direction :const:`1` (forward) or :literal:`-1` (backward) for the iteration.
 
-The method :literal:`:foreach` uses the iterator returned by :literal:`:iter` with a range as its sole argument to loop over the rows where to apply the predicate before executing the action. The methods :literal:`:select`, :literal:`:deselect`, :literal:`:filter`, :literal:`:insert`, and :literal:`:remove` are all based directly or indirectly on the :literal:`:foreach` method. Hence, to iterate backward over a mtable range, these methods have to use either its *list* form or a numerical range. For example the invocation :literal:`tbl:foreach(\\r -> print(r.name), {-2, 2, nil, -1})` will iterate backward over the entire mtable excluding the first and last rows, equivalently to the invocation :literal:`tbl:foreach(\\r -> print(r.name), -2..2..-1)`.
+The method :literal:`:foreach` uses the iterator returned by :literal:`:iter` with a range as its sole argument to loop over the rows where to apply the predicate before executing the action. The methods :literal:`:select`, :literal:`:deselect`, :literal:`:filter`, :literal:`:insert`, and :literal:`:remove` are all based directly or indirectly on the :literal:`:foreach` method. Hence, to iterate backward over a mtable range, these methods have to use either its *list* form or a numerical :type:`range`. For example the invocation :literal:`tbl:foreach(\\r -> print(r.name), {-2, 2, nil, -1})` iterates backward over the entire mtable excluding the first and last rows.
 
 The following example shows how to access to the rows with the :literal:`:foreach` method:
 
@@ -348,7 +345,7 @@ The following example shows how to access to the rows with the :literal:`:foreac
 	                   + { 'p11', 3.1, 4.2 }
 	
 	local act = \r -> print(r.name, r.y)
-	tbl:foreach(act, -2..2..-1)
+	tbl:foreach(act, {-2, 2, nil, -1})
 	-- display:  p13   3.2
 	!            p12   2.2
 	tbl:foreach(act, "p11[1]/p11[2]")
@@ -381,18 +378,25 @@ The following example shows how the :var:`track` command, i.e. :literal:`self` h
 
 .. code-block::
 	
-	local header = { -- extra attributes to save in track headers
-	  'direction', 'observe', 'implicit', 'misalign', 'deltap', 'lost' }
+	local header = { -- extra attributes saved in track headers
+	  'direction', 'observe', 'implicit', 'misalign',
+	  'radiate', 'particle', 'energy', 'deltap', 'lost' }
 	
-	local function make_mtable (self, range, nosave)
-	  local title, dir, observe, implicit, misalign, deltap, savemap in self
-	  local sequ, nrow = self.sequence, nosave and 0 or 16
+	local function make_mtable (self, range)
+	  local range, nturn, dir, observe, reserve, implicit, misalign, radiate, taper,
+	        deltap, savemap in self
+	  local sequ = self.sequence
+	  local beam = self.beam or sequ.beam
+	  local par, nrj = beam.particle, beam.energy
+	  local nrow = reserve > 0 and reserve or
+	               min(1e5, max(1e2, sequ:length_of(range, nturn, dir)))
 	
 	  return mtable(sequ.name, { -- keep column order!
-	    type='track', title=title, header=header,
+	    type='track', header=header,
 	    direction=dir, observe=observe, implicit=implicit, misalign=misalign,
-	    deltap=deltap, lost=0, range=range, reserve=nrow, __seq=sequ,
-	    {'name'}, 'kind', 's', 'l', 'id', 'x', 'px', 'y', 'py', 't', 'pt',
+	    radiate=radiate, taper=taper, particle=par, energy=nrj, deltap=deltap,
+	    lost=0, range=range, reserve=nrow, __seq=sequ,
+	    {'name'}, 'kind', 's', 'l', 'id', 'x', 'px', 'y', 'py', 't', 'pt', 'pc', 'ktap',
 	    'slc', 'turn', 'tdir', 'eidx', 'status', savemap and '__map' or nil })
 	end
 

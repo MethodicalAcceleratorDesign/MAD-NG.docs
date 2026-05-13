@@ -133,6 +133,8 @@ Generic Functions
 
 .. function:: totable (a, ...)
 
+   Return :var:`a` converted to a :type:`table`. Tables are returned unchanged, scalars become single-item tables, objects with tablable semantic delegate to their :expr:`__totable` metamethod, and iterables are collected into a list. This generic function therefore forwards to object-specific conversions such as :func:`mat:totable()`, :func:`rng:totable()` or :func:`mono:totable()`.
+
 .. function:: toboolean (a)
 
 Special Functions
@@ -145,5 +147,3 @@ Special Functions
 .. function:: runonce (fun, ...)
 
 .. function:: collectlocal (fun_, env_)
-
-

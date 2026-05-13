@@ -6,7 +6,7 @@
 Linear Algebra
 **************
 
-This chapter describes the real :type:`matrix`, complex :type:`cmatrix` and integer :type:`imatrix` objects as supported by MAD-NG. The module for `Vector <https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics)>`_ and `Matrix <https://en.wikipedia.org/wiki/Matrix_(mathematics)>`_ is not exposed, only the contructors are visible from the :mod:`MAD` environment and thus, matrices are handled directly by their methods or by the generic functions of the same name from the module :mod:`MAD.gmath`. The :type:`imatrix`, i.e. matrix of integers, are mainly used for indexing other types of matrix and therefore supports only a limited subset of the features. Column and row vectors are shortcuts for :math:`[n\times 1]` and :math:`[1\times n]` matrices respectively. Note that :type:`matrix`, :type:`cmatrix` and :type:`imatrix` are all defined as C structures containing their elements in `row-major order <https://en.wikipedia.org/wiki/Row-_and_column-major_order>`_ for direct compliance with the C API. 
+This chapter describes the real :type:`matrix`, complex :type:`cmatrix` and integer :type:`imatrix` objects as supported by MAD-NG. The module for `Vector <https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics)>`_ and `Matrix <https://en.wikipedia.org/wiki/Matrix_(mathematics)>`_ is not exposed, only the contructors are visible from the :mod:`MAD` environment and thus, matrices are handled directly by their methods or by the generic functions of the same name from the module :mod:`MAD.gmath`. The :type:`imatrix`, i.e. matrix of integers, are mainly used for indexing other types of matrix and therefore supports only a limited subset of the features. Column and row vectors are shortcuts for :math:`[n\times 1]` and :math:`[1\times n]` matrices respectively. Note that :type:`matrix`, :type:`cmatrix` and :type:`imatrix` are all defined as C structures containing their elements in `row-major order <https://en.wikipedia.org/wiki/Row-_and_column-major_order>`_ for direct compliance with the C API.
 
 Types promotion
 ===============
@@ -17,21 +17,21 @@ The matrix operations may involve other data types like real and complex numbers
 Left Operand Type  Right Operand Type  Result Type
 =================  ==================  ===============
 :type:`number`     :type:`imatrix`     :type:`imatrix`
-:type:`imatrix`    :type:`number`      :type:`imatrix`  
+:type:`imatrix`    :type:`number`      :type:`imatrix`
 :type:`imatrix`    :type:`imatrix`     :type:`imatrix`
-                                       
-:type:`number`     :type:`matrix`      :type:`matrix` 
-:type:`matrix`     :type:`number`      :type:`matrix`  
-:type:`matrix`     :type:`matrix`      :type:`matrix`  
-                                       
+
+:type:`number`     :type:`matrix`      :type:`matrix`
+:type:`matrix`     :type:`number`      :type:`matrix`
+:type:`matrix`     :type:`matrix`      :type:`matrix`
+
 :type:`number`     :type:`cmatrix`     :type:`cmatrix`
-:type:`complex`    :type:`matrix`      :type:`cmatrix` 
+:type:`complex`    :type:`matrix`      :type:`cmatrix`
 :type:`complex`    :type:`cmatrix`     :type:`cmatrix`
 :type:`matrix`     :type:`complex`     :type:`cmatrix`
 :type:`matrix`     :type:`cmatrix`     :type:`cmatrix`
-:type:`cmatrix`    :type:`number`      :type:`cmatrix`  
+:type:`cmatrix`    :type:`number`      :type:`cmatrix`
 :type:`cmatrix`    :type:`complex`     :type:`cmatrix`
-:type:`cmatrix`    :type:`matrix`      :type:`cmatrix`  
+:type:`cmatrix`    :type:`matrix`      :type:`cmatrix`
 :type:`cmatrix`    :type:`cmatrix`     :type:`cmatrix`
 =================  ==================  ===============
 
@@ -44,13 +44,13 @@ The constructors for vectors and matrices are directly available from the :mod:`
               cvector(nrow)
               ivector(nrow)
 
-   Return a real, complex or integer column vector (i.e. a matrix of size :math:`[n_{\text{row}}\times 1]`) filled with zeros. If :var:`nrow` is a table, it is equivalent to :expr:`vector(#nrow):fill(nrow)`. 
+   Return a real, complex or integer column vector (i.e. a matrix of size :math:`[n_{\text{row}}\times 1]`) filled with zeros. If :var:`nrow` is a table, it is equivalent to :expr:`vector(#nrow):fill(nrow)`.
 
 .. function::  matrix(nrow, ncol_)
               cmatrix(nrow, ncol_)
               imatrix(nrow, ncol_)
 
-   Return a real, complex or integer matrix of size :math:`[n_{\text{row}}\times n_{\text{col}}]` filled with zeros. If :var:`nrow` is a table, it is equivalent to :expr:`matrix(#nrow, #nrow[1] or 1):fill(nrow)`, and ignoring :var:`ncol`. Default: :expr:`ncol_ = rnow`. 
+   Return a real, complex or integer matrix of size :math:`[n_{\text{row}}\times n_{\text{col}}]` filled with zeros. If :var:`nrow` is a table, it is equivalent to :expr:`matrix(#nrow, #nrow[1] or 1):fill(nrow)`, and ignoring :var:`ncol`. Default: :expr:`ncol_ = rnow`.
 
 .. function:: linspace([start_,] stop, size_)
 
@@ -142,11 +142,11 @@ Sizes and Indexing
 
 .. function:: mat:getij (ij_, ri_, rj_)
 
-   Return two :type:`ivector` or :var:`ri` and :var:`rj` containing the indexes :expr:`(i,j)` extracted from the :type:`iterable` :var:`ij` for the real, complex or integer matrix :var:`mat`. If :var:`ij` is a number, the two returned items are also numbers. This method is the reverse method of :func:`mat:getidx()` to convert 1D indexes into 2D indexes for the given matrix sizes. Default: :expr:`ij_ = 1..#mat`.
+   Return two :type:`ivector` or :var:`ri` and :var:`rj` containing the indexes :expr:`(i,j)` extracted from the :type:`iterable` :var:`ij` for the real, complex or integer matrix :var:`mat`. If :var:`ij` is a number, the two returned items are also numbers. This method is the reverse method of :func:`mat:getidx()` to convert 1D indexes into 2D indexes for the given matrix sizes. Default: :expr:`ij_ = range(1,#mat)`.
 
 .. function:: mat:getidx (ir_, jc_, rij_)
 
-   Return an :type:`ivector` or :var:`rij` containing :expr:`#ir * #jc` vector indexes in row-major order given by the :type:`iterable` :var:`ir` and :var:`jc` of the real, complex or integer matrix :var:`mat`, followed by :var:`ir` and :var:`jc` potentially set from defaults. If both :var:`ir` and :var:`jc` are numbers, it returns a single number. This method is the reverse method of :func:`mat:getij()` to convert 2D indexes into 1D indexes for the given matrix sizes. Default: :expr:`ir_ = 1..nrow`, :expr:`jc_ = 1..ncol`.
+   Return an :type:`ivector` or :var:`rij` containing :expr:`#ir * #jc` vector indexes in row-major order given by the :type:`iterable` :var:`ir` and :var:`jc` of the real, complex or integer matrix :var:`mat`, followed by :var:`ir` and :var:`jc` potentially set from defaults. If both :var:`ir` and :var:`jc` are numbers, it returns a single number. This method is the reverse method of :func:`mat:getij()` to convert 2D indexes into 1D indexes for the given matrix sizes. Default: :expr:`ir_ = range(1,nrow)`, :expr:`jc_ = range(1,ncol)`.
 
 .. function:: mat:getdidx (k_)
 
@@ -173,7 +173,7 @@ Getters and Setters
 
 .. function:: mat:getvec (ij_, r_)
 
-   Return a column vector or :var:`r` containing the values of the elements at the vector indexes given by the :type:`iterable` :var:`ij` of the real, complex or integer matrix :var:`mat`, i.e. interpreting the matrix as a vector. Default: :expr:`ij_ = 1..#mat`.
+   Return a column vector or :var:`r` containing the values of the elements at the vector indexes given by the :type:`iterable` :var:`ij` of the real, complex or integer matrix :var:`mat`, i.e. interpreting the matrix as a vector. Default: :expr:`ij_ = range(1,#mat)`.
 
 .. function:: mat:setvec (ij_, a, p_, s_)
 
@@ -185,16 +185,16 @@ Getters and Setters
 
    - if :var:`a` is a :type:`callable`, then :var:`a` is considered as a *stateless iterator*, and the matrix will be filled with the values :var:`v` returned by iterating :expr:`s, v = a(p, s)`.
 
-   Default: :expr:`ij_ = 1..#mat`.
+   Default: :expr:`ij_ = range(1,#mat)`.
 
 .. function:: mat:insvec (ij, a)
 
    Return the real, complex or integer matrix :var:`mat` after inserting the elements at the vector indexes given by the :type:`iterable` :var:`ij`, i.e. interpreting the matrix as a vector, with the values given by :var:`a` depending of its kind:
-   
+
    - if :var:`a` is a :type:`scalar`, it is will be used repetitively.
 
    - if :var:`a` is an :type:`iterable` then the matrix will be filled with values from :var:`a[n]` for :expr:`1 <= n <= #a`.
-   
+
    The elements after the inserted indexes are shifted toward the end of the matrix in row-major order and discarded if they go beyond the last index.
 
 .. function:: mat:remvec (ij)
@@ -224,17 +224,17 @@ Getters and Setters
 .. function:: mat:inssub (ir_, jc_, a)
 
    Return the real, complex or integer matrix :var:`mat` after inserting elements at the indexes :expr:`(i,j)` given by the :type:`iterable` :var:`ir` and :var:`jc` with the values given by :var:`a` depending of its kind:
-   
+
    - if :var:`a` is a :type:`scalar`, it is will be used repetitively.
 
    - if :var:`a` is an :type:`iterable` then the rows and columns will be filled with values from :var:`a[n]` for :expr:`1 <= n <= #a` and recycled repetitively if :expr:`#a < #ir * #ic`.
- 
+
    The values after the inserted indexes are pushed toward the end of the matrix, i.e. interpreting the matrix as a vector, and discarded if they go beyond the last index. If :expr:`ir = nil`, :expr:`jc ~= nil` and :var:`a` is a 1D :type:`iterable`, then the latter is used to filled the matrix in the column-major order. Default: as :func:`mat:getidx()`.
 
 .. function:: mat:remsub (ir_, jc_)
 
    Return the real, complex or integer matrix :var:`mat` after removing the rows and columns at the indexes given by the :type:`iterable` :var:`ir` and :var:`jc` and reshaping the matrix accordingly. Default: as :func:`mat:getidx()`.
-  
+
 .. function:: mat:swpsub (ir_, jc_, ir2_, jc2_)
 
    Return the real, complex or integer matrix :var:`mat` after swapping the elements at indexes given by the iterable :type:`iterable` :var:`ir` and :var:`jc` with the elements at indexes given by :type:`iterable` :var:`ir2` and :var:`jc2`. Default: as :func:`mat:getidx()`.
@@ -306,26 +306,26 @@ Cloning and Reshaping
 
    Same as :func:`mat:reshape()` except that :var:`nr` must be explicitly provided as this method allows for a larger size than :var:`mat` current size. A typical use of this method is to expand a vector after an explicit shrinkage, while keeping track of its original size, e.g. similar to :expr:`vector(100) :reshape(1):seti(1,1) :_reshapeto(2):seti(2,1)` that would raise an *"index out of bounds"* error without the call to :func:`_reshapeto()`. Default :expr:`nc_ = 1`.
 
-   *WARNING: This method is unsafe and may crash MAD-NG with, e.g. a* `Segmentation fault <https://en.wikipedia.org/wiki/Segmentation_fault>`__ *, if wrongly used. It is the responsibility of the user to ensure that* :var:`mat` *was created with a size greater than or equal to the new size.* 
+   *WARNING: This method is unsafe and may crash MAD-NG with, e.g. a* `Segmentation fault <https://en.wikipedia.org/wiki/Segmentation_fault>`__ *, if wrongly used. It is the responsibility of the user to ensure that* :var:`mat` *was created with a size greater than or equal to the new size.*
 
 Matrix Properties
 -----------------
 
 .. function:: mat:is_const (tol_)
 
-   Return true if all elements are equal within the tolerance :var:`tol`, false otherwise. Default: :expr:`tol_ = 0`. 
+   Return true if all elements are equal within the tolerance :var:`tol`, false otherwise. Default: :expr:`tol_ = 0`.
 
 .. function:: mat:is_real (tol_)
 
-   Return true if the imaginary part of all elements are equal to zero within the tolerance :var:`tol`, false otherwise. Default: :expr:`tol_ = 0`. 
+   Return true if the imaginary part of all elements are equal to zero within the tolerance :var:`tol`, false otherwise. Default: :expr:`tol_ = 0`.
 
 .. function:: mat:is_imag (tol_)
 
-   Return true if the real part of all elements are equal to zero within the tolerance :var:`tol`, false otherwise. Default: :expr:`tol_ = 0`. 
+   Return true if the real part of all elements are equal to zero within the tolerance :var:`tol`, false otherwise. Default: :expr:`tol_ = 0`.
 
 .. function:: mat:is_diag (tol_)
 
-   Return true if all elements off the diagonal are equal to zero within the tolerance :var:`tol`, false otherwise. Default: :expr:`tol_ = 0`. 
+   Return true if all elements off the diagonal are equal to zero within the tolerance :var:`tol`, false otherwise. Default: :expr:`tol_ = 0`.
 
 .. function:: mat:is_symm ([tol_,] [sk_,] c_)
 
@@ -384,7 +384,7 @@ Filling and Moving
      - otherwise :var:`a` is considered as a *generator*, and the matrix will be filled with values returned by calling :expr:`a(mat:get(i,j), i, j)`.
 
    - if :var:`a` is an :type:`iterable` then:
-   
+
       - if :var:`a[1]` is also an :type:`iterable`, the matrix will be filled with the values from :var:`a[i][j]` for :expr:`1 <= i <= nrow` and :expr:`1 <= j <= ncol`, i.e. treated as a 2D container.
 
       - otherwise the matrix will be filled with values from :var:`a[n]` for :expr:`1 <= n <= #mat`, i.e. treated as a 1D container.
@@ -392,7 +392,7 @@ Filling and Moving
 .. function:: mat:rev (d_)
 
    Reverse the elements of the matrix :var:`mat` according to the direction :var:`d`:
-   
+
    - If :expr:`d = 'vec'`, it reverses the entire matrix.
    - If :expr:`d = 'row'`, it reverses each row.
    - If :expr:`d = 'col'`, it reverses each column.
@@ -402,7 +402,7 @@ Filling and Moving
 
 .. function:: mat:roll (nr_, nc_)
 
-   Return the real, complex or integer matrix :var:`mat` after rolling its rows by :var:`nr` :math:`\in \mathbb{Z}` and then columns by :var:`nc` :math:`\in \mathbb{Z}`. Default: :expr:`nr_ = 0`, :expr:`nc_ = 0`.  
+   Return the real, complex or integer matrix :var:`mat` after rolling its rows by :var:`nr` :math:`\in \mathbb{Z}` and then columns by :var:`nc` :math:`\in \mathbb{Z}`. Default: :expr:`nr_ = 0`, :expr:`nc_ = 0`.
 
 .. function:: mat:movev (i, j, k, r_)
 
@@ -419,11 +419,11 @@ Mapping and Folding
 
 .. function:: mat:foreach ([ij_,] f)
 
-   Return the real, complex or integer matrix :var:`mat` after applying the :type:`callable` :var:`f` to the elements at the indexes given by the :type:`iterable` :var:`ij` using :expr:`f(mat[n], n)`, i.e. interpreting the matrix as a vector. Default: :expr:`ij_ = 1..#mat`.
+   Return the real, complex or integer matrix :var:`mat` after applying the :type:`callable` :var:`f` to the elements at the indexes given by the :type:`iterable` :var:`ij` using :expr:`f(mat[n], n)`, i.e. interpreting the matrix as a vector. Default: :expr:`ij_ = range(1,#mat)`.
 
 .. function:: mat:filter ([ij_,] p, r_)
 
-   Return a matrix or :var:`r` filled with the values of the elements of the real, complex or integer matrix :var:`mat` at the indexes given by the :type:`iterable` :var:`ij` if they are selected by the :type:`callable` `predicate <https://en.wikipedia.org/wiki/First-order_logic>`_ :var:`p` using :expr:`p(mat[n], n) = true`, i.e. interpreting the matrix as a vector. This method returns next to the matrix, a :type:`table` if :var:`r` is a table or a :type:`ivector` otherwise, containing the indexes of the selected elements returned. Default: :expr:`ij_ = 1..#mat`.
+   Return a matrix or :var:`r` filled with the values of the elements of the real, complex or integer matrix :var:`mat` at the indexes given by the :type:`iterable` :var:`ij` if they are selected by the :type:`callable` `predicate <https://en.wikipedia.org/wiki/First-order_logic>`_ :var:`p` using :expr:`p(mat[n], n) = true`, i.e. interpreting the matrix as a vector. This method returns next to the matrix, a :type:`table` if :var:`r` is a table or a :type:`ivector` otherwise, containing the indexes of the selected elements returned. Default: :expr:`ij_ = range(1,#mat)`.
 
 .. function:: mat:filter_out ([ij_,] p, r_)
 
@@ -431,7 +431,7 @@ Mapping and Folding
 
 .. function:: mat:map ([ij_,] f, r_)
 
-   Return a matrix or :var:`r` filled with the values returned by the :type:`callable` (or the operator string) :var:`f` applied to the elements of the real, complex or integer matrix :var:`mat` at the indexes given by the :type:`iterable` :var:`ij` using :expr:`f(mat[n], n)`, i.e. interpreting the matrix as a vector. If :expr:`r = 'in'` or :expr:`r = nil` and :expr:`ij ~= nil` then it is assigned :var:`mat`, i.e. map in place. If :expr:`r = nil` still, then the type of the returned matrix is determined by the type of the value returned by :func:`f()` called once before mapping. Default: :expr:`ij_ = 1..#mat`.
+   Return a matrix or :var:`r` filled with the values returned by the :type:`callable` (or the operator string) :var:`f` applied to the elements of the real, complex or integer matrix :var:`mat` at the indexes given by the :type:`iterable` :var:`ij` using :expr:`f(mat[n], n)`, i.e. interpreting the matrix as a vector. If :expr:`r = 'in'` or :expr:`r = nil` and :expr:`ij ~= nil` then it is assigned :var:`mat`, i.e. map in place. If :expr:`r = nil` still, then the type of the returned matrix is determined by the type of the value returned by :func:`f()` called once before mapping. Default: :expr:`ij_ = range(1,#mat)`.
 
 .. function:: mat:map2 (y, [ij_,] f, r_)
 
@@ -439,7 +439,7 @@ Mapping and Folding
 
 .. function:: mat:map3 (y, z, [ij_,] f, r_)
 
-   Equivalent to :func:`mat:map()` but with three arguments passed to :var:`f`, i.e. using :expr:`f(mat[n], y[n], z[n], n)`. Note that :var:`f` cannot be an operator string, as only unary and binary operators are avalaible in such form. 
+   Equivalent to :func:`mat:map()` but with three arguments passed to :var:`f`, i.e. using :expr:`f(mat[n], y[n], z[n], n)`. Note that :var:`f` cannot be an operator string, as only unary and binary operators are avalaible in such form.
 
 .. function:: mat:foldl (f, [x0_,] [d_,] r_)
 
@@ -691,7 +691,7 @@ Operator-like Methods
 .. function:: mat:tmul (mat2, r_)
 
    Equivalent to :expr:`mat:t() * mat2` with the possibility to place the result in :var:`r`.
-   
+
 .. function:: mat:mult (mat2, r_)
 
    Equivalent to :expr:`mat * mat2:t()` with the possibility to place the result in :var:`r`.
@@ -699,7 +699,7 @@ Operator-like Methods
 .. function:: mat:dmul (mat2, r_)
 
    Equivalent to :expr:`mat:getdiag():diag() * mat2` with the possibility to place the result in :var:`r`. If :var:`mat` is a vector, it will be interpreted as the diagonal of a square matrix like in :func:`mat:diag()`, i.e. omitting :func:`mat:getdiag()` is the previous expression.
-   
+
 .. function:: mat:muld (mat2, r_)
 
    Equivalent to :expr:`mat * mat2:getdiag():diag()` with the possibility to place the result in :var:`r`. If :var:`mat2` is a vector, it will be interpreted as the diagonal of a square matrix like in :func:`mat2:diag()`, i.e. omitting :func:`mat2:getdiag()` is the previous expression.
@@ -710,7 +710,7 @@ Operator-like Methods
 
 .. function:: mat:inv ([r_,] rcond_)
 
-   Equivalent to :expr:`mat.div(1, mat, r_, rcond_)`. 
+   Equivalent to :expr:`mat.div(1, mat, r_, rcond_)`.
 
 .. function:: mat:pinv ([r_,] [rcond_,] ncond_)
 
@@ -729,9 +729,9 @@ Operator-like Methods
    Equivalent to :expr:`mat .. mat2` with the possibility to place the result in :var:`r` and to specify the direction of the concatenation:
 
    - If :expr:`d = 'vec'`, it concatenates the matrices (appended as vectors)
-   - If :expr:`d = 'row'`, it concatenates the rows (horizontal) 
+   - If :expr:`d = 'row'`, it concatenates the rows (horizontal)
    - If :expr:`d = 'col'`, it concatenates the columns (vectical)
-   
+
    Default: :var:`d_ = 'row'`.
 
 Special Methods
@@ -779,7 +779,7 @@ Special Methods
 .. function:: mat:center (d_)
 
    Return the centered matrix :var:`mat` to have zero mean equivalent to :expr:`mat:sub(mat:mean(),mat)`. The direction :var:`d` indicates how the centering must be performed:
-   
+
    - If :expr:`d = 'vec'`, it centers the entire matrix by substracting its mean.
    - If :expr:`d = 'row'`, it centers each row by substracting their mean.
    - If :expr:`d = 'col'` , it centers each column by substracting their mean.
@@ -872,7 +872,7 @@ Solvers and Decompositions
 
 .. function:: mat:eigen (vr_, vl_)
 
-   Return the complex vector filled with the eigenvalues followed by the by the status :var:`info` and the two optional real or complex matrices :var:`vr` and :var:`vl` containing the right and the *transposed* left eigenvectors resulting from the `Eigen Decomposition <https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix>`_ of the real or complex square matrix :var:`mat`. The eigenvectors are normalized to have unit Euclidean norm and their largest component real, and satisfy :math:`A v_r = \lambda v_r` and :math:`v_l^\tau A = \lambda v_l^\tau`.
+   Return the complex vector filled with the eigenvalues followed by the by the status :var:`info` and the two optional real or complex matrices :var:`vr` and :var:`vl` containing the right and left eigenvectors resulting from the `Eigen Decomposition <https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix>`_ of the real or complex square matrix :var:`mat`. The eigenvectors are normalized to have unit Euclidean norm and their largest component real, and satisfy :math:`A v_r = \lambda v_r` and :math:`A^\tau v_l = \lambda v_l`.
 
 .. function:: mat:det ()
 
@@ -910,7 +910,7 @@ The methods described is this section are based on the `FFTW <https://fftw.org>`
 
 .. function:: mat:nfft (p_, r_)
 
-   Return the complex vector, matrix or :var:`r` resulting from the 1D or 2D *Nonequispaced* `Fourier Transform <https://en.wikipedia.org/wiki/Fourier_transform>`_ of the real or complex vector or matrix :var:`mat` respectively at :var:`p` time nodes. 
+   Return the complex vector, matrix or :var:`r` resulting from the 1D or 2D *Nonequispaced* `Fourier Transform <https://en.wikipedia.org/wiki/Fourier_transform>`_ of the real or complex vector or matrix :var:`mat` respectively at :var:`p` time nodes.
 
 .. function:: mat:infft (p_, r_)
 
@@ -932,10 +932,10 @@ The methods described is this section are based on the `FFTW <https://fftw.org>`
 
    Return the real or complex vector or matrix resulting from the zero padding of the matrix :var:`mat` extended to the sizes :var:`nr` and :var:`nc`, following the direction :var:`d`:
 
-   - If :expr:`d = 'vec'`, it pads the zeros at the end of the matrix equivalent :expr:`x:same(nr,nc) :setvec(1..#x,x)`, i.e. interpreting the matrix as a vector. 
-   - If :expr:`d = 'row'`, it pads the zeros at the end of the rows equivalent :expr:`x:same(x.nrow,nc) :setsub(1..x.nrow,1..x.ncol,x)`, i.e. ignoring :var:`nr`. 
-   - If :expr:`d = 'col'`, it pads the zeros at the end of the columns equivalent :expr:`x:same(nr,x.ncol) :setsub(1..x.nrow,1..x.ncol,x)`, i.e. ignoring :var:`nc`. 
-   - otherwise, it pads the zeros at the end of the rows and the columns equivalent to :expr:`x:same(nr,nc) :setsub(1..x.nrow,1..x.ncol,x)`. 
+   - If :expr:`d = 'vec'`, it pads the zeros at the end of the matrix equivalent to :expr:`x:same(nr,nc):setvec(range(1,#x),x)`, i.e. interpreting the matrix as a vector.
+   - If :expr:`d = 'row'`, it pads the zeros at the end of the rows equivalent to :expr:`x:same(x.nrow,nc):setsub(range(1,x.nrow),range(1,x.ncol),x)`, i.e. ignoring :var:`nr`.
+   - If :expr:`d = 'col'`, it pads the zeros at the end of the columns equivalent to :expr:`x:same(nr,x.ncol):setsub(range(1,x.nrow),range(1,x.ncol),x)`, i.e. ignoring :var:`nc`.
+   - otherwise, it pads the zeros at the end of the rows and the columns equivalent to :expr:`x:same(nr,nc):setsub(range(1,x.nrow),range(1,x.ncol),x)`.
 
    If the zero padding does not change the size of :var:`mat`, the orignal :var:`mat` is returned unchanged.
 
@@ -1006,7 +1006,7 @@ Conversions
 
 .. function:: mat:totable ([d_,] r_)
 
-   Return the table or :var:`r` containing the real, complex or integer matrix converted to tables, i.e. one per row unless :var:`mat` is a vector or the direction :expr:`d = 'vec'`.  
+   Return the table or :var:`r` containing the real, complex or integer matrix converted to a table. Default: :expr:`d = 'vec'`, i.e. the matrix is flattened in row-major order. If :var:`mat` is not a vector and :expr:`d ~= 'vec'`, the result is a table of rows.
 
 Input and Output
 ----------------
@@ -1117,7 +1117,7 @@ Operators
               mat / num
               mat / mat2
 
-   Return a :type:`matrix` resulting from the division of the left and right operands that must have compatible sizes. If the right operand is a scalar, the operator will be applied individually to all elements of the matrix. If the left operand is a scalar the operation :expr:`x/Y` is converted to :expr:`x (I/Y)` where :var:`I` is the identity matrix with compatible sizes. If the right operand is a matrix, the operation :expr:`X/Y` is performed using a system solver based on LU, QR or LQ factorisation depending on the shape of the system. 
+   Return a :type:`matrix` resulting from the division of the left and right operands that must have compatible sizes. If the right operand is a scalar, the operator will be applied individually to all elements of the matrix. If the left operand is a scalar the operation :expr:`x/Y` is converted to :expr:`x (I/Y)` where :var:`I` is the identity matrix with compatible sizes. If the right operand is a matrix, the operation :expr:`X/Y` is performed using a system solver based on LU, QR or LQ factorisation depending on the shape of the system.
 
 .. function:: num / cmat
               cpx / mat
@@ -1161,7 +1161,7 @@ Operators
               num == cmat
               num == imat
               cpx == mat
-              cpx == cmat            
+              cpx == cmat
               mat == num
               mat == cpx
               mat == mat2
@@ -1199,12 +1199,12 @@ Iterators
 .. function:: ipairs(mat)
    :noindex:
 
-   Return an :type:`ipairs` iterator suitable for generic :const:`for` loops. The returned values are those given by :func:`mat[i]`. 
+   Return an :type:`ipairs` iterator suitable for generic :const:`for` loops. The returned values are those given by :func:`mat[i]`.
 
 C API
 =====
 
-This C Application Programming Interface describes only the C functions declared in the scripting language and used by the higher level functions and methods presented before in this chapter. For more functions and details, see the C headers. The :const:`const` vectors and matrices are inputs, while the non-:const:`const` vectors and matrices are outpouts or are modified *inplace*. 
+This C Application Programming Interface describes only the C functions declared in the scripting language and used by the higher level functions and methods presented before in this chapter. For more functions and details, see the C headers. The :const:`const` vectors and matrices are inputs, while the non-:const:`const` vectors and matrices are outpouts or are modified *inplace*.
 
 Vector
 ------
@@ -1302,7 +1302,7 @@ Vector
 
 .. c:function:: void mad_cvec_conj (const cpx_t x[], cpx_t r[], ssz_t n)
 
-   Return in :var:`r` the conjugate of the complex vector :var:`x` of size :var:`n`. 
+   Return in :var:`r` the conjugate of the complex vector :var:`x` of size :var:`n`.
 
 .. c:function:: void mad_vec_abs  (const num_t x[], num_t r[], ssz_t n)
                 void mad_cvec_abs (const cpx_t x[], num_t r[], ssz_t n)
@@ -1405,12 +1405,12 @@ Matrix
                 void mad_cmat_rev (cpx_t x[], ssz_t m, ssz_t n, int d)
                 void mad_imat_rev (idx_t x[], ssz_t m, ssz_t n, int d)
 
-   Reverse in place the matrix :var:`x` following the direction :expr:`d in {0,1,2,3}` for respectively the entire matrix, each row, each column and the diagonal.  
+   Reverse in place the matrix :var:`x` following the direction :expr:`d in {0,1,2,3}` for respectively the entire matrix, each row, each column and the diagonal.
 
 .. c:function:: void mad_mat_center  (num_t x[], ssz_t m, ssz_t n, int d)
                 void mad_cmat_center (cpx_t x[], ssz_t m, ssz_t n, int d)
 
-   Center in place the matrix :var:`x` following the direction :expr:`d in {0,1,2,3}` for respectively the entire matrix, each row, each column and the diagonal.  
+   Center in place the matrix :var:`x` following the direction :expr:`d in {0,1,2,3}` for respectively the entire matrix, each row, each column and the diagonal.
 
 .. c:function:: void mad_mat_roll  (num_t x[], ssz_t m, ssz_t n, int mroll, int nroll)
                 void mad_cmat_roll (cpx_t x[], ssz_t m, ssz_t n, int mroll, int nroll)
@@ -1533,7 +1533,7 @@ Matrix
 .. c:function:: int mad_mat_eigen  (const num_t x[], cpx_t w[], num_t vl[], num_t vr[], ssz_t n)
                 int mad_cmat_eigen (const cpx_t x[], cpx_t w[], cpx_t vl[], cpx_t vr[], ssz_t n)
 
-   Fill the column vector :var:`w` of size :var:`n` with the eigenvalues followed by the status :var:`info` and the two optional matrices :var:`vr` and :var:`vl` of sizes :expr:`[n, n]` containing the left and right eigenvectors resulting from the `Eigen Decomposition <https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix>`_ of the square matrix :var:`x` of sizes :expr:`[n, n]`. The eigenvectors are normalized to have unit Euclidean norm and their largest component real, and satisfy :math:`X v_r = \lambda v_r` and :math:`v_l X = \lambda v_l`.
+   Fill the column vector :var:`w` of size :var:`n` with the eigenvalues followed by the status :var:`info` and the two optional matrices :var:`vr` and :var:`vl` of sizes :expr:`[n, n]` containing the right and left eigenvectors resulting from the `Eigen Decomposition <https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix>`_ of the square matrix :var:`x` of sizes :expr:`[n, n]`. The eigenvectors are normalized to have unit Euclidean norm and their largest component real, and satisfy :math:`X v_r = \lambda v_r` and :math:`X^\tau v_l = \lambda v_l`.
 
 .. c:function:: int mad_mat_det  (const num_t x[], num_t *r, ssz_t n)
                 int mad_cmat_det (const cpx_t x[], cpx_t *r, ssz_t n)
@@ -1566,12 +1566,12 @@ Matrix
 .. c:function:: void mad_mat_sympconj (const num_t x[], num_t r[], ssz_t n)
                 void mad_cmat_sympconj(const cpx_t x[], cpx_t r[], ssz_t n)
 
-   Return in :var:`r` the symplectic 'conjugate' of the vector :var:`x` of size :var:`n`. 
+   Return in :var:`r` the symplectic 'conjugate' of the vector :var:`x` of size :var:`n`.
 
 .. c:function:: num_t mad_mat_symperr  (const num_t x[], num_t r_[], ssz_t n, num_t *tol_)
                 num_t mad_cmat_symperr (const cpx_t x[], cpx_t r_[], ssz_t n, num_t *tol_)
 
-   Return the norm of the symplectic error and fill the optional matrix :var:`r` with the symplectic deviation of the matrix :var:`x`. The optional argument :var:`tol` is used as the tolerance to check if the matrix :var:`x` is symplectic or not, and saves the result as :const:`0` (non-symplectic) or :const:`1` (symplectic) within tol for output. 
+   Return the norm of the symplectic error and fill the optional matrix :var:`r` with the symplectic deviation of the matrix :var:`x`. The optional argument :var:`tol` is used as the tolerance to check if the matrix :var:`x` is symplectic or not, and saves the result as :const:`0` (non-symplectic) or :const:`1` (symplectic) within tol for output.
 
 .. c:function:: void mad_vec_dif  (const num_t x[], const num_t y[], num_t r[], ssz_t n)
                 void mad_vec_difv (const num_t x[], const cpx_t y[], cpx_t r[], ssz_t n)
@@ -1654,7 +1654,7 @@ References
 
 .. [#f1] For *true* Functional Programming, see the module :mod:`MAD.lfun`, a binding of the `LuaFun <https://github.com/luafun/luafun>`_  library adapted to the ecosystem of MAD-NG.
 
-.. [#f2] The solvers are based, among others, on the following Lapack drivers: 
+.. [#f2] The solvers are based, among others, on the following Lapack drivers:
 
    - :func:`dgesv()` and :func:`zgesv()` for LU factorization.
    - :func:`dgelsy()` and :func:`zgelsy()` for QR or LQ factorization.
@@ -1663,4 +1663,4 @@ References
    - :func:`dgglse()` and :func:`zgglse()` for equality-constrained linear Least Squares problems.
    - :func:`dggglm()` and :func:`zggglm()` for general Gauss-Markov linear model problems.
 
-.. [#f3] MICADO stands for "Minimisation des CArrés des Distortions d'Orbite" in french. 
+.. [#f3] MICADO stands for "Minimisation des CArrés des Distortions d'Orbite" in french.

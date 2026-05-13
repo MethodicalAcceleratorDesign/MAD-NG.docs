@@ -15,48 +15,57 @@ The :var:`twiss` command format is summarized in :numref:`fig-twiss-synop`, incl
 	:caption: Synopsis of the :var:`twiss` command with default setup.
 
 
-	mtbl, mflw [, eidx] = twiss { 
-		sequence=sequ,  -- sequence (required) 
-		beam=nil, 	-- beam (or sequence.beam, required) 
-		range=nil,  	-- range of tracking (or sequence.range) 
-		dir=nil,  	-- s-direction of tracking (1 or -1) 
+	mtbl, mflw [, eidx] = twiss {
+		sequence=sequ,  -- sequence (required)
+		beam=nil, 	-- beam (or sequence.beam, required)
+		range=nil,  	-- range of tracking (or sequence.range)
+		dir=nil,  	-- s-direction of tracking (1 or -1)
 		s0=nil,  	-- initial s-position offset [m]
-		X0=nil,  	-- initial coordinates (or damap(s), or beta block(s)) 
-		O0=nil,  	-- initial coordinates of reference orbit 
-		deltap=nil,  	-- initial deltap(s) 
-		chrom=false,  	-- compute chromatic functions by finite difference 
-		coupling=false, -- compute optical functions for non-diagonal modes 
-		nturn=nil,  	-- number of turns to track 
-		nstep=nil,  	-- number of elements to track 
-		nslice=nil,  	-- number of slices (or weights) for each element 
-		mapdef=true,  	-- setup for damap (or list of, true => {}) 
-		method=nil,  	-- method or order for integration (1 to 8) 
-		model=nil,  	-- model for integration ('DKD' or 'TKT') 
-		ptcmodel=nil,  	-- use strict PTC thick model (override option) 
-		implicit=nil,  	-- slice implicit elements too (e.g. plots) 
-		misalign=nil,  	-- consider misalignment 
-		fringe=nil,  	-- enable fringe fields (see element.flags.fringe) 
-		radiate=nil,  	-- radiate at slices 
-		totalpath=nil,  -- variable 't' is the totalpath 
-		save=true,  	-- create mtable and save results 
-		title=nil,  	-- title of mtable (default seq.name) 
-		observe=0,  	-- save only in observed elements (every n turns) 
-		savesel=nil,  	-- save selector (predicate) 
-		savemap=nil,  	-- save damap in the column __map 
-		atentry=nil,  	-- action called when entering an element 
-		atslice=nil,  	-- action called after each element slices 
-		atexit=nil,  	-- action called when exiting an element 
-		ataper=nil,  	-- action called when checking for aperture 
-		atsave=nil,  	-- action called when saving in mtable 
-		atdebug=fnil,  	-- action called when debugging the element maps 
-		codiff=nil,  	-- finite differences step for jacobian 
-		coiter=nil,  	-- maximum number of iterations 
-		cotol=nil,  	-- closed orbit tolerance (i.e.|dX|) 
-		X1=nil,  	-- optional final coordinates translation 
-		info=nil,  	-- information level (output on terminal) 
-		debug=nil, 	-- debug information level (output on terminal) 
-		usrdef=nil,  	-- user defined data attached to the mflow 
-		mflow=nil,  	-- mflow, exclusive with other attributes 
+		X0=nil,  	-- initial coordinates (or damap(s), or beta block(s))
+		O0=nil,  	-- initial coordinates of reference orbit
+		deltap=nil,  	-- initial deltap(s)
+		chrom=false,  	-- compute chromatic functions by finite difference
+		coupling=false, -- compute optical functions for non-diagonal modes
+		trkopt=false,  	-- compute selected parametric optical functions
+		trkrdt=false,  	-- compute selected resonance driving terms
+		nturn=nil,  	-- number of turns to track
+		nstep=nil,  	-- number of elements to track
+		nslice=nil,  	-- number of slices (or weights) for each element
+		method=nil,  	-- method or order for integration (1 to 8)
+		model=nil,  	-- model for integration ('DKD' or 'TKT')
+		mapdef=2,  	-- setup for damap (or list of, true => {xy=1})
+		secnmul=nil,  	-- curved-multipole expansion for bends
+		implicit=nil,  	-- slice implicit elements too (e.g. plots)
+		misalign=nil,  	-- consider misalignment
+		aperture=nil,  	-- default aperture
+		fringe=nil,  	-- enable fringe fields (see element.flags.fringe)
+		frngmax=nil,  	-- maximum multipole fringe field order
+		radiate=nil,  	-- radiate at slices
+		nocavity=nil,  	-- disable rfcavities
+		totalpath=nil,  -- variable 't' is the totalpath
+		cmap=nil,  	-- use C/C++ maps when available
+		ptcmodel=nil,  	-- nil=MADNG, true=PTC, false=MADX
+		save=true,  	-- create mtable and save results
+		aper=nil,  	-- check for aperture
+		observe=0,  	-- save only in observed elements (every n turns)
+		savesel=nil,  	-- save selector (predicate)
+		savemap=nil,  	-- save damap in the column __map
+		saveanf=nil,  	-- save analysed normal form in the column __nf
+		atentry=nil,  	-- action called when entering an element
+		atslice=nil,  	-- action called after each element slices
+		atexit=nil,  	-- action called when exiting an element
+		ataper=nil,  	-- action called when checking for aperture
+		atsave=nil,  	-- action called when saving in mtable
+		atdebug=nil,  	-- action called when debugging the element maps
+		apersel=nil,  	-- aperture selector (predicate)
+		costp=nil,  	-- finite-difference scale for Jacobian
+		coitr=nil,  	-- maximum number of iterations
+		cotol=nil,  	-- closed orbit tolerance (i.e.|dX|)
+		O1=nil,  	-- optional final coordinates translation
+		info=nil,  	-- information level (output on terminal)
+		debug=nil, 	-- debug information level (output on terminal)
+		usrdef=nil,  	-- user defined data attached to the mflow
+		mflow=nil,  	-- mflow, exclusive with other attributes
 	}
 
 The :var:`twiss` command supports the following attributes:
@@ -64,7 +73,7 @@ The :var:`twiss` command supports the following attributes:
 .. _twiss.attr:
 
 **sequence**
-	The *sequence* to track. (no default, required). 
+	The *sequence* to track. (no default, required).
 
 	Example: :expr:`sequence = lhcb1`.
 
@@ -74,207 +83,219 @@ The :var:`twiss` command supports the following attributes:
 	Example: :expr:`beam = beam 'lhcbeam' { beam-attributes }`.
 
 **range**
-	A *range* specifying the span of the sequence track. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute :attr:`seq.range`. (default: :const:`nil`). 
+	A *range* specifying the span of the sequence track. If no range is provided, the command looks for a range attached to the sequence, i.e. the attribute :attr:`seq.range`. (default: :const:`nil`).
 
 	Example: :expr:`range = "S.DS.L8.B1/E.DS.R8.B1"`.
 
 **dir**
-	The :math:`s`-direction of the tracking: :const:`1` forward, :const:`-1` backward. (default: :const:`nil`). 
+	The :math:`s`-direction of the tracking: :const:`1` forward, :const:`-1` backward. (default: :const:`nil`).
 
 	Example: :expr:`dir = -1`.
 
 **s0**
-	A *number* specifying the initial :math:`s`-position offset. (default: :const:`nil`). 
+	A *number* specifying the initial :math:`s`-position offset. (default: :const:`nil`).
 
 	Example: :expr:`s0 = 5000`.
 
 **X0**
-	A *mappable* (or a list of *mappable*) specifying initial coordinates :literal:`{x,px,y,py, t,pt}`, damap, or beta0 block for each tracked object, i.e. particle or damap. The beta0 blocks are converted to damaps, while the coordinates are converted to damaps only if :literal:`mapdef` is specified, but both will use :literal:`mapdef` to setup the damap constructor. A closed orbit will be automatically searched for damaps built from coordinates. Each tracked object may also contain a :var:`beam` to override the reference beam, and a *logical* :literal:`nosave` to discard this object from being saved in the mtable. (default: :const:`0`). 
+	A *mappable* (or a list of *mappable*) specifying initial coordinates :literal:`{x,px,y,py, t,pt}`, damap, or beta0 block for each tracked object, i.e. particle or damap. The beta0 blocks are converted to damaps, while the coordinates are converted to damaps only if :literal:`mapdef` is specified, but both will use :literal:`mapdef` to setup the damap constructor. A closed orbit will be automatically searched for damaps built from coordinates. Each tracked object may also contain a :var:`beam` to override the reference beam, and a *logical* :literal:`nosave` to discard this object from being saved in the mtable. (default: :const:`nil`).
 
 	Example: :expr:`X0 = { x=1e-3, px=-1e-5 }`.
 
-**O0** 
-	A *mappable* specifying initial coordinates :literal:`{x,px,y,py,t,pt}` of the reference orbit around which X0 definitions take place. If it has the attribute :literal:`cofind == true`, it will be used as an initial guess to search for the reference closed orbit. (default: :const:`0`). 
+**O0**
+	A *mappable* specifying initial coordinates :literal:`{x,px,y,py,t,pt}` of the reference orbit around which X0 definitions take place. If it has the attribute :literal:`cofind == true`, it will be used as an initial guess to search for the reference closed orbit. (default: :const:`nil`).
 
 	Example: :expr:`O0 = { x=1e-4, px=-2e-5, y=-2e-4, py=1e-5 }`.
 
 **deltap**
-	A *number* (or list of *number*) specifying the initial :math:`\delta_p` to convert (using the beam) and add to the :literal:`pt` of each tracked particle or damap. (default: :const:`nil`). 
+	A *number* (or list of *number*) specifying the initial :math:`\delta_p` to convert (using the beam) and add to the :literal:`pt` of each tracked particle or damap. (default: :const:`nil`).
 
 	Example: :expr:`s0 = 5000`.
 
 **chrom**
-	A *logical* specifying to calculate the chromatic functions by finite different using an extra :math:`\delta_p=` :const:`1e-6`. (default: :const:`false`). 
+	A *logical* specifying to calculate the chromatic functions by finite different using an extra :math:`\delta_p=` :const:`1e-6`. (default: :const:`false`).
 
 	Example: :expr:`chrom = true`.
 
 **coupling**
-	A *logical* specifying to calculate the optical functions for coupling terms in the normalized forms. (default: :const:`false`). 
+	A *logical* specifying to calculate the optical functions for coupling terms in the normalized forms. (default: :const:`false`).
 
-	Example: :expr:`chrom = true`.
+	Example: :expr:`coupling = true`.
+
+**trkopt**
+	A *list* of optical-function names requesting additional parametric optics columns to be tracked and stored in the output table. (default: :const:`false`).
+
+	Example: :expr:`trkopt = {'beta11_01', 'beta22_10'}`.
+
+**trkrdt**
+	A *list* of resonance-driving-term names requesting additional RDT columns to be tracked and stored in the output table. Each requested name must start with :literal:`'f'`. (default: :const:`false`).
+
+	Example: :expr:`trkrdt = {'f3000', 'f2100'}`.
 
 **nturn**
-	A *number* specifying the number of turn to track. (default: :const:`nil`). 
+	A *number* specifying the number of turn to track. (default: :const:`nil`).
 
 	Example: :expr:`nturn = 2`.
 
 **nstep**
-	A *number* specifying the number of element to track. A negative value will track all elements. (default: :const:`nil`). 
+	A *number* specifying the number of element to track. A negative value will track all elements. (default: :const:`nil`).
 
 	Example: :expr:`nstep = 1`.
 
 **nslice**
-	A *number* specifying the number of slices or an *iterable* of increasing relative positions or a *callable* :literal:`(elm, mflw, lw)` returning one of the two previous kind of positions to track in the elements. The arguments of the callable are in order, the current element, the tracked map flow, and the length weight of the step. This attribute can be locally overridden by the element. (default: :const:`nil`). 
+	A *number* specifying the number of slices or an *iterable* of increasing relative positions or a *callable* :literal:`(elm, mflw, lw)` returning one of the two previous kind of positions to track in the elements. The arguments of the callable are in order, the current element, the tracked map flow, and the length weight of the step. This attribute can be locally overridden by the element. (default: :const:`nil`).
 
 	Example: :expr:`nslice = 5`.
 
-**mapdef** 
-	A *logical* or a *damap* specification as defined by the :doc:`DAmap <mad_mod_diffmap>` module to track DA maps instead of particles coordinates. A value of :const:`true` is equivalent to invoke the *damap* constructor with :literal:`{}` as argument. A value of :const:`false` or :const:`nil` will be internally forced to :const:`true` for the tracking of the normalized forms. (default: :const:`true`). 
+**mapdef**
+	A *logical*, a *number*, or a *damap* specification as defined by the :doc:`DAmap <mad_mod_diffmap>` module to track DA maps instead of particles coordinates. A value of :const:`true` is equivalent to invoke the *damap* constructor with :literal:`{}` as argument. The default value :literal:`2` forces a second-order damap setup for the linear normal-form analysis. (default: :literal:`2`).
 
 	Example: :expr:`mapdef = { xy=2, pt=5 }`.
 
 **method**
-	A *number* specifying the order of integration from 1 to 8, or a *string* specifying a special method of integration. Odd orders are rounded to the next even order to select the corresponding Yoshida or Boole integration schemes. The special methods are :literal:`simple` (equiv. to :literal:`DKD` order 2), :literal:`collim` (equiv. to :literal:`MKM` order 2), and :literal:`teapot` (Teapot splitting order 2). (default: :const:`nil`). 
+	A *number* specifying the order of integration from 1 to 8, or a *string* specifying a special method of integration. Odd orders are rounded to the next even order to select the corresponding Yoshida or Boole integration schemes. The special methods are :literal:`simple` (equiv. to :literal:`DKD` order 2), :literal:`collim` (equiv. to :literal:`MKM` order 2), and :literal:`teapot` (Teapot splitting order 2). (default: :const:`nil`).
 
 	Example: :expr:`method = 'teapot'`.
 
 **model**
-	A *string* specifying the integration model, either :literal:`'DKD'` for *Drift-Kick-Drift* thin lens integration or :literal:`'TKT'` for *Thick-Kick-Thick* thick lens integration. [#f7]_ (default: :const:`nil`) 
+	A *string* specifying the integration model, either :literal:`'DKD'` for *Drift-Kick-Drift* thin lens integration or :literal:`'TKT'` for *Thick-Kick-Thick* thick lens integration. [#f7]_ (default: :const:`nil`)
 
 	Example: :expr:`model = 'DKD'`.
 
 **ptcmodel**
-	A *logical* indicating to use strict PTC model. [#f8]_ (default: :const:`nil`) 
+	A *logical* selecting the tracking backend: :const:`nil` keeps the MAD-NG model, :const:`true` selects the strict PTC model, and :const:`false` selects the MAD-X-compatible model. [#f8]_ (default: :const:`nil`)
 
 	Example: :expr:`ptcmodel = true`.
 
+The attributes :literal:`secnmul`, :literal:`aperture`, :literal:`frngmax`, :literal:`nocavity`, :literal:`cmap`, :literal:`aper` and :literal:`apersel` are forwarded unchanged to the underlying :var:`track` command and therefore keep the same semantics and default handling as in :doc:`track <mad_cmd_track>`.
+
 **implicit**
-	A *logical* indicating that implicit elements must be sliced too, e.g. for smooth plotting. (default: :const:`nil`). 
+	A *logical* indicating that implicit elements must be sliced too, e.g. for smooth plotting. (default: :const:`nil`).
 
 	Example: :expr:`implicit = true`.
 
 **misalign**
-	A *logical* indicating that misalignment must be considered. (default: :const:`nil`). 
+	A *logical* indicating that misalignment must be considered. (default: :const:`nil`).
 
 	Example: :expr:`misalign = true`.
 
 **fringe**
-	A *logical* indicating that fringe fields must be considered or a *number* specifying a bit mask to apply to all elements fringe flags defined by the element module. The value :const:`true` is equivalent to the bit mask , i.e. allow all elements (default) fringe fields. (default: :const:`nil`). 
+	A *logical* indicating that fringe fields must be considered or a *number* specifying a bit mask to apply to all elements fringe flags defined by the element module. The value :const:`true` is equivalent to the bit mask , i.e. allow all elements (default) fringe fields. (default: :const:`nil`).
 
 	Example: :expr:`fringe = false`.
 
 **radiate**
-	A *logical* enabling or disabling the radiation or the *string* specifying the :literal:`'average'` type of radiation during the closed orbit search. The value :const:`true` is equivalent to :literal:`'average'` and the value :literal:`'quantum'` is converted to :literal:`'average'`. (default: :const:`nil`). 
+	A *logical* enabling damping radiation during the closed-orbit and one-turn-map preparation phases. Any truthy value is collapsed to the damping-only tracking mode used internally by :var:`twiss`. (default: :const:`nil`).
 
-	Example: :expr:`radiate = 'average'`.
+	Example: :expr:`radiate = true`.
 
 **totalpath**
-	A *logical* indicating to use the totalpath for the fifth variable :literal:`'t'` instead of the local path. (default: :const:`nil`). 
+	A *logical* indicating to use the totalpath for the fifth variable :literal:`'t'` instead of the local path. (default: :const:`nil`).
 
 	Example: :expr:`totalpath = true`.
 
 **save**
-	A *logical* specifying to create a *mtable* and record tracking information at the observation points. The :literal:`save` attribute can also be a *string* specifying saving positions in the observed elements: :literal:`"atentry"`, :literal:`"atslice"`, :literal:`"atexit"` (i.e. :const:`true`), :literal:`"atbound"` (i.e. entry and exit), :literal:`"atbody"` (i.e. slices and exit) and :literal:`"atall"`. (default: :const:`false`). 
+	A *logical* specifying to create a *mtable* and record tracking information at the observation points. The :literal:`save` attribute can also be a *string* specifying saving positions in the observed elements: :literal:`"atentry"`, :literal:`"atslice"`, :literal:`"atexit"` (i.e. :const:`true`), :literal:`"atbound"` (i.e. entry and exit), :literal:`"atbody"` (i.e. slices and exit) and :literal:`"atall"`. (default: :const:`true`).
 
 	Example: :expr:`save = false`.
 
-**title**
-	A *string* specifying the title of the *mtable*. If no title is provided, the command looks for the name of the sequence, i.e. the attribute :literal:`seq.name`. (default: :const:`nil`). 
-
-	Example: :expr:`title = "track around IP5"`.
-
 **observe**
-	A *number* specifying the observation points to consider for recording the tracking information. A zero value will consider all elements, while a positive value will consider selected elements only, checked with method :meth:`:is_observed`, every :literal:`observe`\ :math:`>0` turns. (default: :const:`nil`). 
+	A *number* specifying the observation points to consider for recording the tracking information. A zero value will consider all elements, while a positive value will consider selected elements only, checked with method :meth:`:is_observed`, every :literal:`observe`\ :math:`>0` turns. (default: :const:`0`).
 
 	Example: :expr:`observe = 1`.
 
 **savesel**
-	A *callable* :literal:`(elm, mflw, lw, islc)` acting as a predicate on selected elements for observation, i.e. the element is discarded if the predicate returns :const:`false`. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :const:`fnil`) 
+	A *callable* :literal:`(elm, mflw, lw, islc)` acting as a predicate on selected elements for observation, i.e. the element is discarded if the predicate returns :const:`false`. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :const:`fnil`)
 
 	Example: :expr:`savesel = \\e -> mylist[e.name] ~= nil`.
 
 **savemap**
-	A *logical* indicating to save the damap in the column :literal:`__map` of the *mtable*. (default: :const:`nil`). 
+	A *logical* indicating to save the damap in the column :literal:`__map` of the *mtable*. (default: :const:`nil`).
 
 	Example: :expr:`savemap = true`.
 
+**saveanf**
+	A *logical* indicating to save the analysed normal form in the protected column :literal:`__nf` of the *mtable*. (default: :const:`nil`).
+
+	Example: :expr:`saveanf = true`.
+
 **atentry**
-	A *callable* :literal:`(elm, mflw, 0, -1)` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index :const:`-1`. (default: :const:`fnil`). 
-	  
+	A *callable* :literal:`(elm, mflw, 0, -1)` invoked at element entry. The arguments are in order, the current element, the tracked map flow, zero length and the slice index :const:`-1`. (default: :const:`fnil`).
+
 	Example: :expr:`atentry = myaction`.
 
 **atslice**
-	A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :const:`fnil`). 
+	A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :const:`fnil`).
 
 	Example: :expr:`atslice = myaction`.
 
-**atexit** 
-	A *callable* :literal:`(elm, mflw, 0, -2)` invoked at element exit. The arguments are in order, the current element, the tracked map flow, zero length and the slice index . (default: :const:`fnil`). 
+**atexit**
+	A *callable* :literal:`(elm, mflw, 0, -2)` invoked at element exit. The arguments are in order, the current element, the tracked map flow, zero length and the slice index . (default: :const:`fnil`).
 
 	Example: :expr:`atexit = myaction`.
 
 **ataper**
-	A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element aperture checks, by default at last slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. If a particle or a damap hits the aperture, then its :literal:`status="lost"` and it is removed from the list of tracked items. (default: :const:`fnil`). 
+	A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element aperture checks, by default at last slice. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. If a particle or a damap hits the aperture, then its :literal:`status="lost"` and it is removed from the list of tracked items. (default: :const:`fnil`).
 
 	Example: :expr:`ataper = myaction`.
 
 **atsave**
-	A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element saving steps, by default at exit. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :const:`fnil`). 
+	A *callable* :literal:`(elm, mflw, lw, islc)` invoked at element saving steps, by default at exit. The arguments are in order, the current element, the tracked map flow, the length weight of the slice and the slice index. (default: :const:`fnil`).
 
 	Example: :expr:`atsave = myaction`.
 
 **atdebug**
-	A *callable* :literal:`(elm, mflw, lw, [msg], [...])` invoked at the entry and exit of element maps during the integration steps, i.e. within the slices. The arguments are in order, the current element, the tracked map flow, the length weight of the integration step and a *string* specifying a debugging message, e.g. :literal:`"map_name:0"` for entry and :literal:`":1"` for exit. If the level :literal:`debug` :math:`\geq 4` and :literal:`atdebug` is not specified, the default *function* :literal:`mdump` is used. In some cases, extra arguments could be passed to the method. (default: :const:`fnil`). 
+	A *callable* :literal:`(elm, mflw, lw, [msg], [...])` invoked at the entry and exit of element maps during the integration steps, i.e. within the slices. The arguments are in order, the current element, the tracked map flow, the length weight of the integration step and a *string* specifying a debugging message, e.g. :literal:`"map_name:0"` for entry and :literal:`":1"` for exit. If the level :literal:`debug` :math:`\geq 4` and :literal:`atdebug` is not specified, the default *function* :literal:`mdump` is used. In some cases, extra arguments could be passed to the method. (default: :const:`fnil`).
 
 	Example: :expr:`atdebug = myaction`.
 
-**codiff**
-	A *number* specifying the finite difference step to approximate the Jacobian when damaps are disabled. If :literal:`codiff` is larger than :math:`100\times`\ :literal:`cotol`, it will be adjusted to :literal:`cotol` :math:`/100` and a warning will be emitted. (default: :const:`1e-8`). 
+**costp**
+	A *number* specifying the relative finite-difference scale to approximate the Jacobian when damaps are disabled. If :literal:`costp == true`, the closed-orbit preparation stage falls back to the default finite-difference scale from :var:`cofind`. (default: :const:`nil`).
 
-	Example: :expr:`codiff = 1e-10`.
+	Example: :expr:`costp = 1e-8`.
 
-**coiter**
-	A *number* specifying the maximum number of iteration. If this threshold is reached, all the remaining tracked objects are tagged as :literal:`"unstable"`. (default: 20). 
+**coitr**
+	A *number* specifying the maximum number of iteration for the closed-orbit search stage. If this threshold is reached, all the remaining tracked objects are tagged as :literal:`"unstable"`. (default: :const:`nil` and inherited from :var:`cofind`).
 
-	Example: :expr:`coiter = 5`.
+	Example: :expr:`coitr = 5`.
 
 **cotol**
-	A *number* specifying the closed orbit tolerance. If all coordinates update of a particle or a damap are smaller than :literal:`cotol`, then it is tagged as :literal:`"stable"`. (default: :const:`1e-8`). 
+	A *number* specifying the closed orbit tolerance. If all coordinates update of a particle or a damap are smaller than :literal:`cotol`, then it is tagged as :literal:`"stable"`. (default: :const:`nil` and inherited from :var:`cofind`).
 
 	Example: :expr:`cotol = 1e-6`.
 
-**X1**
-	A *mappable* specifying the coordinates :literal:`{x,px,y,py,t,pt}` to *subtract* to the final coordinates of the particles or the damaps. (default: :const:`0`). 
+**O1**
+	A *mappable* specifying the coordinates :literal:`{x,px,y,py,t,pt}` to *subtract* from the final closed-orbit coordinates. (default: :const:`nil`).
 
-	Example: :expr:`X1 = { t=100, pt=10 }`.
+	Example: :expr:`O1 = { t=100, pt=10 }`.
 
 **info**
-	A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`). 
-	
+	A *number* specifying the information level to control the verbosity of the output on the console. (default: :const:`nil`).
+
 	Example: :expr:`info = 2`.
 
 **debug**
-	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`). 
-	
+	A *number* specifying the debug level to perform extra assertions and to control the verbosity of the output on the console. (default: :const:`nil`).
+
 	Example: :expr:`debug = 2`.
 
 **usrdef**
-	Any user defined data that will be attached to the tracked map flow, which is internally passed to the elements method :literal:`:track` and to their underlying maps. (default: :const:`nil`). 
+	Any user defined data that will be attached to the tracked map flow, which is internally passed to the elements method :literal:`:track` and to their underlying maps. (default: :const:`nil`).
 
 	Example: :expr:`usrdef = { myvar=somevalue }`.
 
-**mflow** 
-	A *mflow* containing the current state of a :var:`track` command. If a map flow is provided, all attributes are discarded except :literal:`nstep`, :literal:`info` and :literal:`debug`, as the command was already set up upon its creation. (default: :const:`nil`). 
+**mflow**
+	A *mflow* containing the current state of a :var:`twiss` command. If a map flow is provided, all setup attributes are ignored and only the volatile fields already stored in the mflow are reused; in practice, :literal:`nstep`, :literal:`info` and :literal:`debug` are the fields refreshed by the command wrapper. (default: :const:`nil`).
 
 	Example: :expr:`mflow = mflow0`.
 
 
 The :var:`twiss` command returns the following objects in this order:
 
-**mtbl** 
+**mtbl**
 	A *mtable* corresponding to the augmented TFS table of the :var:`track` command with the :var:`twiss` command columns.
 
-**mflw** 
+**mflw**
 	A *mflow* corresponding to the augmented map flow of the :var:`track` command with the :var:`twiss` command data.
 
 **eidx**
@@ -283,18 +304,16 @@ The :var:`twiss` command returns the following objects in this order:
 
 Twiss mtable
 ------------
-.. _sec.track.mtable:
+.. _sec.twiss.mtable:
 
-The :var:`twiss` command returns a *mtable* where the information described hereafter is the default list of fields written to the TFS files. [#f2]_ 
+The :var:`twiss` command returns a *mtable* where the information described hereafter is the default list of fields written to the TFS files. [#f2]_
 
-The header of the *mtable* contains the fields in the default order: [#f3]_ 
+The header of the *mtable* contains the fields in the default order: [#f3]_
 
 **name**
-	The name of the command that created the *mtable*, e.g. :literal:`"track"`.
+	The name of the command that created the *mtable*, e.g. :literal:`"twiss"`.
 **type**
-	The type of the *mtable*, i.e. :literal:`"track"`.
-**title**
-	The value of the command attribute :literal:`title`.
+	The type of the *mtable*, i.e. :literal:`"twiss"`.
 **origin**
 	The origin of the application that created the *mtable*, e.g. :literal:`"MAD 1.0.0 OSX 64"`.
 **date**
@@ -311,6 +330,12 @@ The header of the *mtable* contains the fields in the default order: [#f3]_
 	The value of the command attribute :literal:`implicit`.
 **misalign**
 	The value of the command attribute :literal:`misalign`.
+**radiate**
+	The value of the command attribute :literal:`radiate`.
+**particle**
+	The reference beam particle name.
+**energy**
+	The reference beam energy.
 **deltap**
 	The value of the command attribute :literal:`deltap`.
 **lost**
@@ -319,6 +344,10 @@ The header of the *mtable* contains the fields in the default order: [#f3]_
 	The value of the command attribute :literal:`chrom`.
 **coupling**
 	The value of the command attribute :literal:`coupling`.
+**trkopt**
+	The value of the command attribute :literal:`trkopt`.
+**trkrdt**
+	The value of the command attribute :literal:`trkrdt`.
 **length**
 	The :math:`s`-length of the tracked design orbit.
 **q1**
@@ -347,10 +376,6 @@ The header of the *mtable* contains the fields in the default order: [#f3]_
 	The sixth synchroton radiation integral.
 **synch_8**
 	The eighth synchroton radiation integral.
-**range**
-	The value of the command attribute :literal:`range`. [#f4]_ 
-**__seq**
-	The *sequence* from the command attribute :var:`sequence`. [#f5]_
 
 The core of the *mtable* contains the columns in the default order: [#f6]_
 
@@ -376,6 +401,10 @@ The core of the *mtable* contains the columns in the default order: [#f6]_
 	The local coordinate :math:`t` at the :math:`s`-position.
 **pt**
 	The local coordinate :math:`p_t` at the :math:`s`-position.
+**pc**
+	The reference beam :math:`P_0c` in which :math:`p_t` is expressed.
+**ktap**
+	The tapering compensation factor stored at the current tracking position.
 **slc**
 	The slice index ranging from :literal:`-2` to :literal:`nslice`.
 **turn**
@@ -420,6 +449,10 @@ The core of the *mtable* contains the columns in the default order: [#f6]_
 	The phase advance :math:`\mu` of mode 3 at the :math:`s`-position.
 **__map**
 	The damap at the :math:`s`-position. [#f5]_
+
+If :literal:`saveanf == true`, the protected column :literal:`__nf` is also added and stores the analysed normal form at each saved row.
+
+The mtable also carries the in-memory attributes :literal:`taper`, :literal:`range` and the protected sequence handle :literal:`__seq`, but they are not part of the default header list written to TFS files.
 
 The :literal:`chrom` attribute will add the following fields to the *mtable* header:
 
@@ -506,11 +539,10 @@ TODO
 
 .. rubric:: Footnotes
 
-.. [#f1] Initial coordinates :var:`X0` may override it by providing a beam per particle or damap. 
+.. [#f1] Initial coordinates :var:`X0` may override it by providing a beam per particle or damap.
 .. [#f7] The :literal:`TKT` scheme (Yoshida) is automatically converted to the :literal:`MKM` scheme (Boole) when appropriate.
 .. [#f8] In all cases, MAD-NG uses PTC setup :literal:`time=true, exact=true`.
 .. [#f2] The output of mtable in TFS files can be fully customized by the user.
 .. [#f3] The fields from :literal:`name` to :literal:`lost` are set by the :var:`track` command
-.. [#f4] This field is not saved in the TFS table by default.
 .. [#f5] Fields and columns starting with two underscores are protected data and never saved to TFS files.
 .. [#f6] The column from :literal:`name` to :literal:`status` are set by the :var:`track` command.

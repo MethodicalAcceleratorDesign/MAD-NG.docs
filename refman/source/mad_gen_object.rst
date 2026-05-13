@@ -378,7 +378,7 @@ The root :literal:`object` provides the following methods:
 	 A *method*	:literal:`()` returning :literal:`self` after clearing the object except its private attributes.
 
 **set_methods**
-	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the methods set to the pairs (*key*, *value*) contained in :literal:`set`, where *key* must be a *string* (the method's name) and *value* must be a *callable* (the method itself). If :literal:`override ~= true`, the read-only methods (with *key* starting by :literal:`"__"`) cannot be updated. Classes cannot update their methods.
+	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the methods set to the pairs (*key*, *value*) contained in :literal:`set`, where *key* must be a *string* (the method's name) and *value* must be a *callable* (the method itself). If :literal:`override ~= true`, only the private methods (with *key* starting by :literal:`"__"`) remain protected.
 
 **set_metamethods**
 	 A *method*	:literal:`(set, [override])` returning :literal:`self` with the attributes set to the pairs (*key*, *value*) contained in :literal:`set`, where *key* must be a *string* (the metamethod's name) and *value* must be a *callable*\ (the metamethod itself). If :literal:`override == false`, the metamethods cannot be updated. Classes cannot update their metamethods.
@@ -562,4 +562,3 @@ Note that MAD-X workspace is case insensitive and everything is "global" (no sco
 .. [#f3] This feature is used to setup a command from another command, e.g. :var:`track` from :var:`twiss`
 .. [#f4] This approach is safer than the volatile option :literal:`RBARC` of MAD-X.
 .. [#f5] :literal:`bsearch` and :literal:`lsearch` stand for binary (ordered) search and linear (unordered) search respectively.
-
